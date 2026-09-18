@@ -1,0 +1,11 @@
+node_modules/
+dist/
+data/
+uploads/
+.env
+.env.*
+*.log
+.DS_Store
+test*.ts
+tsconfig.node.tsbuildinfo
+.start-dev.bat
