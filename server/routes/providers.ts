@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware';
-import { storage } from '../storage';
-import { generateId } from '../lib/auth/serverUtils';
-import type { Provider, RawModel } from '../types';
-import { validateBody, validateParams } from '../validation';
-import { providerSchema, rawModelSchema } from '../validation';
+import { requireAuth } from '../middleware.js';
+import { storage } from '../storage.js';
+import { generateId } from '../lib/auth/serverUtils.js';
+import type { Provider, RawModel } from '../types.js';
+import { validateBody, validateParams } from '../validation.js';
+import { providerSchema, rawModelSchema } from '../validation.js';
 
 const router = Router();
 

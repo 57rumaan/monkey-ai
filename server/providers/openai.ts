@@ -1,6 +1,6 @@
-import { BaseProviderAdapter } from './adapters';
-import type { ProviderAdapter, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, Message, CapabilityType, UsageData } from './adapters';
-import type { RawModel } from '../types';
+import { BaseProviderAdapter } from './adapters.js';
+import type { ProviderAdapter, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, Message, CapabilityType, UsageData } from './adapters.js';
+import type { RawModel } from '../types.js';
 
 const OPENAI_API_BASE = 'https://api.openai.com/v1';
 

@@ -1,9 +1,9 @@
-import { registerAdapter } from './adapters';
-import { openAIAdapter } from './openai';
-import { anthropicAdapter } from './anthropic';
-import { googleAdapter } from './google';
-import { replicateAdapter } from './replicate';
-import { huggingFaceAdapter } from './huggingface';
+import { registerAdapter } from './adapters.js';
+import { openAIAdapter } from './openai.js';
+import { anthropicAdapter } from './anthropic.js';
+import { googleAdapter } from './google.js';
+import { replicateAdapter } from './replicate.js';
+import { huggingFaceAdapter } from './huggingface.js';
 
 registerAdapter(openAIAdapter);
 registerAdapter(anthropicAdapter);

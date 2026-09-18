@@ -1,4 +1,4 @@
-import type { Message, CapabilityType, RawModel, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, UsageData } from '../types';
+import type { Message, CapabilityType, RawModel, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, UsageData } from '../types.js';
 
 export interface ProviderAdapter {
   readonly providerId: string;
@@ -196,7 +196,7 @@ function evaluateSafeMath(expression: string): number {
 }
 // ── End safe math evaluator ─────────────────────────────────────────────────
 
-export type { Message, CapabilityType, RawModel, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, UsageData } from '../types';
+export type { Message, CapabilityType, RawModel, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, UsageData } from '../types.js';
 
 const adapters = new Map<string, ProviderAdapter>();
 

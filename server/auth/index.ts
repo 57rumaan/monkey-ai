@@ -1,8 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { storage } from '../storage';
-import type { User, JwtPayload, AuthTokens } from '../types';
-import { hashPassword, verifyPassword, generateOTP, hashOTP, verifyOTP, generateId, isEmailValid, isUsernameValid, isPasswordStrong, authRateLimiter, otpRateLimiter, OTP_EXPIRY_MINUTES } from '../lib/auth/serverUtils';
-import { sendOTPEmail, isEmailConfigured } from '../services/email';
+import { storage } from '../storage.js';
+import type { User, JwtPayload, AuthTokens } from '../types.js';
+import { hashPassword, verifyPassword, generateOTP, hashOTP, verifyOTP, generateId, isEmailValid, isUsernameValid, isPasswordStrong, authRateLimiter, otpRateLimiter, OTP_EXPIRY_MINUTES } from '../lib/auth/serverUtils.js';
+import { sendOTPEmail, isEmailConfigured } from '../services/email.js';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret-change-in-production-min-32-chars');
 const JWT_REFRESH_SECRET = new TextEncoder().encode(process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret-change-in-production-min-32-chars');

@@ -1,6 +1,6 @@
-import type { FileStorageProvider } from './fileStorage';
-import { LocalFileStorage } from './fileStorage';
-import { S3FileStorage } from './s3FileStorage';
+import type { FileStorageProvider } from './fileStorage.js';
+import { LocalFileStorage } from './fileStorage.js';
+import { S3FileStorage } from './s3FileStorage.js';
 
 let fileStorageInstance: FileStorageProvider | undefined = undefined;
 

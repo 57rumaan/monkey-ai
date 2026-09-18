@@ -1,4 +1,4 @@
-import type { StorageAdapter } from '../storage';
+import type { StorageAdapter } from '../storage.js';
 
 const JSONBIN_API_BASE = 'https://api.jsonbin.io/v3';
 const FETCH_TIMEOUT_MS = 10_000;

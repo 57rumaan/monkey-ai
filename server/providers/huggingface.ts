@@ -1,6 +1,6 @@
-import { BaseProviderAdapter } from './adapters';
-import type { ProviderAdapter, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, Message, CapabilityType } from './adapters';
-import type { RawModel } from '../types';
+import { BaseProviderAdapter } from './adapters.js';
+import type { ProviderAdapter, ChatOptions, ImageOptions, ImageResult, AnalysisOptions, TranscribeOptions, TTSOptions, AudioResult, Message, CapabilityType } from './adapters.js';
+import type { RawModel } from '../types.js';
 
 const HF_API_BASE = 'https://api-inference.huggingface.co/models';
 

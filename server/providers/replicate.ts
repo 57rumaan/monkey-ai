@@ -1,6 +1,6 @@
-import { BaseProviderAdapter } from './adapters';
-import type { ProviderAdapter, ChatOptions, ImageOptions, ImageResult, AudioResult, Message } from './adapters';
-import type { RawModel } from '../types';
+import { BaseProviderAdapter } from './adapters.js';
+import type { ProviderAdapter, ChatOptions, ImageOptions, ImageResult, AudioResult, Message } from './adapters.js';
+import type { RawModel } from '../types.js';
 
 const REPLICATE_API_BASE = 'https://api.replicate.com/v1';
 

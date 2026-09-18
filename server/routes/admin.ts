@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware';
-import { storage } from '../storage';
-import type { User } from '../types';
-import { validateBody, validateParams } from '../validation';
-import { userRoleSchema, settingsSchema } from '../validation';
+import { requireAuth } from '../middleware.js';
+import { storage } from '../storage.js';
+import type { User } from '../types.js';
+import { validateBody, validateParams } from '../validation.js';
+import { userRoleSchema, settingsSchema } from '../validation.js';
 import { z } from 'zod';
 
 const router = Router();

@@ -1,10 +1,10 @@
-import { getAdapter, type ProviderAdapter } from '../providers/adapters';
-import { storage } from '../storage';
-import { getUploadPath, downloadFile } from '../routes/upload';
-import { extractTextFromFile, isTextFile } from '../lib/documentExtractor';
+import { getAdapter, type ProviderAdapter } from '../providers/adapters.js';
+import { storage } from '../storage.js';
+import { getUploadPath, downloadFile } from '../routes/upload.js';
+import { extractTextFromFile, isTextFile } from '../lib/documentExtractor.js';
 import { readFile } from 'fs/promises';
 import { extname } from 'path';
-import type { Bundle, BundleCapability, RawModel, Provider, CapabilityType, Message, Attachment } from '../types';
+import type { Bundle, BundleCapability, RawModel, Provider, CapabilityType, Message, Attachment } from '../types.js';
 
 function resolveAttachmentPath(attachment: Attachment): string | null {
   const url = attachment.url;
@@ -314,7 +314,7 @@ export class Router {
     const docBuffer = await downloadFile(docUserId, docFilename);
 
     if (isTextFile(docAttachment.mimeType, docAttachment.name)) {
-      const { extractTextFromBuffer } = await import('../lib/documentExtractor');
+      const { extractTextFromBuffer } = await import('../lib/documentExtractor.js');
       const extracted = await extractTextFromBuffer(docBuffer, docAttachment.name, docAttachment.mimeType);
 
       const analysisMessages: Message[] = [

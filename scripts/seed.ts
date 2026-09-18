@@ -1,6 +1,6 @@
-import { storage } from '../server/storage';
-import { hashPassword, generateId } from '../server/lib/auth/serverUtils';
-import type { Provider, RawModel, Bundle, User } from '../server/types';
+import { storage } from '../server/storage.js';
+import { hashPassword, generateId } from '../server/lib/auth/serverUtils.js';
+import type { Provider, RawModel, Bundle, User } from '../server/types.js';
 
 const adminPasswordEnv = process.env.SEED_ADMIN_PASSWORD;
 if (!adminPasswordEnv) {

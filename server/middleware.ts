@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from './auth';
+import { verifyToken } from './auth/index.js';
 
 export function requireAuth(requiredRole?: 'user' | 'admin') {
   return async (req: express.Request, res: express.Response, next: express.NextFunction) => {

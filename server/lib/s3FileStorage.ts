@@ -1,4 +1,4 @@
-import type { FileStorageProvider } from '../lib/fileStorage';
+import type { FileStorageProvider } from '../lib/fileStorage.js';
 
 interface S3Config {
   endpoint: string;

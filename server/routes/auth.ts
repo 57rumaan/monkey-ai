@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { signup, verifySignupOTP, resendOTP, login, forgotPassword, resetPassword, changePassword, updateProfile, createTokens, verifyToken, verifyRefreshToken } from '../auth/index';
-import { storage } from '../storage';
-import type { User } from '../types';
-import { validateBody } from '../validation';
-import { signupSchema, verifySignupSchema, resendOtpSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, changePasswordSchema, updateProfileSchema } from '../validation';
+import { signup, verifySignupOTP, resendOTP, login, forgotPassword, resetPassword, changePassword, updateProfile, createTokens, verifyToken, verifyRefreshToken } from '../auth/index.js';
+import { storage } from '../storage.js';
+import type { User } from '../types.js';
+import { validateBody } from '../validation.js';
+import { signupSchema, verifySignupSchema, resendOtpSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, changePasswordSchema, updateProfileSchema } from '../validation.js';
 
 const router = Router();
 

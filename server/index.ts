@@ -4,9 +4,9 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import './providers';
+import './providers/index.js';
 
-export { requireAuth, optionalAuth } from './middleware';
+export { requireAuth, optionalAuth } from './middleware.js';
 
 const app = express();
 
@@ -49,12 +49,12 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() });
 });
 
-import authRoutes from './routes/auth';
-import bundleRoutes from './routes/bundles';
-import providerRoutes from './routes/providers';
-import chatRoutes from './routes/chat';
-import adminRoutes from './routes/admin';
-import uploadRoutes from './routes/upload';
+import authRoutes from './routes/auth.js';
+import bundleRoutes from './routes/bundles.js';
+import providerRoutes from './routes/providers.js';
+import chatRoutes from './routes/chat.js';
+import adminRoutes from './routes/admin.js';
+import uploadRoutes from './routes/upload.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/bundles', bundleRoutes);

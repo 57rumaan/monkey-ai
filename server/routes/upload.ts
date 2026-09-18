@@ -2,9 +2,9 @@ import { Router } from 'express';
 import multer, { MulterError } from 'multer';
 import { randomBytes } from 'crypto';
 import { extname } from 'path';
-import { requireAuth } from '../middleware';
-import { getFileStorage } from '../lib/fileStorageFactory';
-import type { Attachment } from '../types';
+import { requireAuth } from '../middleware.js';
+import { getFileStorage } from '../lib/fileStorageFactory.js';
+import type { Attachment } from '../types.js';
 
 const router = Router();
 

@@ -127,7 +127,7 @@ class FileStorageAdapter implements StorageAdapter {
   }
 }
 
-import { JsonBinStorageAdapter } from './storage/jsonbin';
+import { JsonBinStorageAdapter } from './storage/jsonbin.js';
 
 let activeAdapter: StorageAdapter = (() => {
   const isProduction = process.env.NODE_ENV === 'production';

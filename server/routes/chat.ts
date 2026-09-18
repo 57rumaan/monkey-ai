@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware';
-import { storage } from '../storage';
-import { generateId } from '../lib/auth/serverUtils';
-import { router as routeEngine } from '../routing/router';
-import type { Message, CapabilityType, Chat, Folder, MessageReaction } from '../types';
-import { validateBody, validateParams } from '../validation';
-import { chatSendSchema } from '../validation';
+import { requireAuth } from '../middleware.js';
+import { storage } from '../storage.js';
+import { generateId } from '../lib/auth/serverUtils.js';
+import { router as routeEngine } from '../routing/router.js';
+import type { Message, CapabilityType, Chat, Folder, MessageReaction } from '../types.js';
+import { validateBody, validateParams } from '../validation.js';
+import { chatSendSchema } from '../validation.js';
 import { z } from 'zod';
 
 const router = Router();

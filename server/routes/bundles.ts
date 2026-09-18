@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware';
-import { storage } from '../storage';
-import { generateId } from '../lib/auth/serverUtils';
-import type { Bundle, Provider, RawModel } from '../types';
-import { CAPABILITY_REGISTRY } from '../capabilities';
-import { validateBody, validateParams } from '../validation';
-import { bundleSchema, bundleCapabilitySchema } from '../validation';
+import { requireAuth } from '../middleware.js';
+import { storage } from '../storage.js';
+import { generateId } from '../lib/auth/serverUtils.js';
+import type { Bundle, Provider, RawModel } from '../types.js';
+import { CAPABILITY_REGISTRY } from '../capabilities.js';
+import { validateBody, validateParams } from '../validation.js';
+import { bundleSchema, bundleCapabilitySchema } from '../validation.js';
 import { z } from 'zod';
 
 const router = Router();
