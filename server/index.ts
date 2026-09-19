@@ -64,7 +64,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 
 const clientDistPath = join(
-  import.meta.dirname ? join(import.meta.dirname, '..') : process.cwd(),
+  import.meta.dirname ? join(import.meta.dirname, '../../..') : process.cwd(),
   'dist',
   'client',
 );
