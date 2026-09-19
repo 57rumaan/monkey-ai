@@ -42,6 +42,9 @@ beforeAll(async () => {
   process.env.RATE_LIMIT_AUTH = '1000';
   process.env.RATE_LIMIT_UPLOAD = '1000';
 
+  delete process.env.JSONBIN_API_KEY;
+  delete process.env.JSONBIN_BIN_ID;
+
   await rm(TEST_DATA_DIR, { recursive: true, force: true });
   await mkdir(join(TEST_DATA_DIR, 'data'), { recursive: true });
 

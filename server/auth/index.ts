@@ -119,7 +119,7 @@ export async function verifySignupOTP(email: string, otp: string, username: stri
     throw new Error('Username must be 3-30 characters, alphanumeric, underscore, or hyphen');
   }
 
-  const users = await storage.query<User>('users', { email: email.toLowerCase() });
+  const users = await storage.query<User>('users', { email: email.toLowerCase() }, { bypassCache: true });
   const user = users[0];
   if (!user) {
     throw new Error('User not found');
@@ -147,7 +147,7 @@ export async function verifySignupOTP(email: string, otp: string, username: stri
     throw new Error('Invalid OTP');
   }
 
-  const existingUsername = await storage.query<User>('users', { username });
+  const existingUsername = await storage.query<User>('users', { username }, { bypassCache: true });
   if (existingUsername.length > 0) {
     throw new Error('Username already taken');
   }

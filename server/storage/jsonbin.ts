@@ -36,9 +36,9 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     this.binId = config?.binId || getEnvOrThrow('JSONBIN_BIN_ID');
   }
 
-  private async fetchBin(): Promise<Record<string, any>> {
+  private async fetchBin(forceRefresh = false): Promise<Record<string, any>> {
     const now = Date.now();
-    if (this.cache && (now - this.lastFetchAt) < this.CACHE_TTL_MS) {
+    if (!forceRefresh && this.cache && (now - this.lastFetchAt) < this.CACHE_TTL_MS) {
       return this.cache;
     }
 
@@ -70,13 +70,13 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     this.lastFetchAt = Date.now();
   }
 
-  private async getCollection(collection: string): Promise<Record<string, any>> {
-    const root = await this.fetchBin();
+  private async getCollection(collection: string, forceRefresh = false): Promise<Record<string, any>> {
+    const root = await this.fetchBin(forceRefresh);
     return root[collection] || {};
   }
 
   private async setCollection(collection: string, data: Record<string, any>): Promise<void> {
-    const root = { ...await this.fetchBin() };
+    const root = { ...await this.fetchBin(false) };
     root[collection] = data;
     await this.writeBin(root);
   }
@@ -116,9 +116,9 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     }
   }
 
-  async list<T>(collection: string): Promise<T[]> {
+  async list<T>(collection: string, forceRefresh = false): Promise<T[]> {
     try {
-      const col = await this.getCollection(collection);
+      const col = await this.getCollection(collection, forceRefresh);
       return Object.values(col) as T[];
     } catch (e) {
       console.error(`[JsonBin] list(${collection}) failed:`, e);
@@ -126,8 +126,8 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     }
   }
 
-  async query<T>(collection: string, filter: Partial<T>): Promise<T[]> {
-    const all = await this.list<T>(collection);
+  async query<T>(collection: string, filter: Partial<T>, options?: { bypassCache?: boolean }): Promise<T[]> {
+    const all = await this.list<T>(collection, options?.bypassCache === true);
     return all.filter(item => {
       return Object.entries(filter).every(([key, value]) => (item as any)[key] === value);
     });
@@ -137,9 +137,10 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     collection: string,
     page: number,
     pageSize: number,
-    filter?: Partial<T>
+    filter?: Partial<T>,
+    options?: { bypassCache?: boolean }
   ): Promise<{ items: T[]; total: number; page: number; pageSize: number; totalPages: number }> {
-    let items = await this.list<T>(collection);
+    let items = await this.list<T>(collection, options?.bypassCache === true);
 
     if (filter) {
       items = items.filter(item => {

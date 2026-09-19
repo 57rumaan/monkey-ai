@@ -6,12 +6,13 @@ export interface StorageAdapter {
   set<T>(collection: string, id: string, data: T): Promise<void>;
   delete(collection: string, id: string): Promise<void>;
   list<T>(collection: string): Promise<T[]>;
-  query<T>(collection: string, filter: Partial<T>): Promise<T[]>;
+  query<T>(collection: string, filter: Partial<T>, options?: { bypassCache?: boolean }): Promise<T[]>;
   getPaginated<T>(
     collection: string,
     page: number,
     pageSize: number,
-    filter?: Partial<T>
+    filter?: Partial<T>,
+    options?: { bypassCache?: boolean }
   ): Promise<{ items: T[]; total: number; page: number; pageSize: number; totalPages: number }>;
 }
 
@@ -101,7 +102,7 @@ class FileStorageAdapter implements StorageAdapter {
     return listImpl<T>(collection);
   }
 
-  async query<T>(collection: string, filter: Partial<T>): Promise<T[]> {
+  async query<T>(collection: string, filter: Partial<T>, _options?: { bypassCache?: boolean }): Promise<T[]> {
     return queryImpl<T>(collection, filter);
   }
 
@@ -109,7 +110,8 @@ class FileStorageAdapter implements StorageAdapter {
     collection: string,
     page = 1,
     pageSize = 20,
-    filter?: Partial<T>
+    filter?: Partial<T>,
+    _options?: { bypassCache?: boolean }
   ): Promise<{ items: T[]; total: number; page: number; pageSize: number; totalPages: number }> {
     const items = filter ? await this.query<T>(collection, filter) : await this.list<T>(collection);
     const total = items.length;
@@ -162,6 +164,6 @@ export const storage: StorageAdapter = {
   set: (collection, id, data) => activeAdapter.set(collection, id, data),
   delete: (collection, id) => activeAdapter.delete(collection, id),
   list: (collection) => activeAdapter.list(collection),
-  query: (collection, filter) => activeAdapter.query(collection, filter),
-  getPaginated: (collection, page, pageSize, filter) => activeAdapter.getPaginated(collection, page, pageSize, filter),
+  query: (collection, filter, options?) => activeAdapter.query(collection, filter, options),
+  getPaginated: (collection, page, pageSize, filter, options?) => activeAdapter.getPaginated(collection, page, pageSize, filter, options),
 };
