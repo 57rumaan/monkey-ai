@@ -28,7 +28,7 @@ interface VerifyOTPFormProps {
 }
 
 export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOTPFormProps) {
-  const { verifySignup, resendOTP } = useAuth();
+  const { verifySignup, resendOTP, validateOTP } = useAuth();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(60);
@@ -65,12 +65,6 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
       inputRefs.current[0]?.focus();
     }
   }, [step]);
-
-  useEffect(() => {
-    if (initialOtp && initialOtp.length === 6) {
-      setStep('username');
-    }
-  }, [initialOtp]);
 
   const handleOtpChange = useCallback((index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -129,6 +123,7 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
     setIsLoading(true);
     setOtpError('');
     try {
+      await validateOTP(email, otp);
       setStep('username');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Verification failed';
@@ -138,13 +133,15 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
         setOtpError('Invalid code. Please check and try again.');
         setOtpDigits(Array(6).fill(''));
         inputRefs.current[0]?.focus();
+      } else if (message.toLowerCase().includes('too many')) {
+        setOtpError('Too many failed attempts. Please request a new OTP.');
       } else {
         setOtpError(message);
       }
     } finally {
       setIsLoading(false);
     }
-  }, [otp, isLoading]);
+  }, [otp, isLoading, email, validateOTP]);
 
   const handleSetUsername = useCallback(async (data: UsernameFormData) => {
     if (isLoading) return;

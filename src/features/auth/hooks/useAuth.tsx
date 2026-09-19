@@ -6,6 +6,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<{ requiresVerification: boolean; email: string; otp?: string }>;
+  validateOTP: (email: string, otp: string) => Promise<void>;
   verifySignup: (email: string, otp: string, username: string) => Promise<void>;
   resendOTP: (email: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -82,6 +83,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user);
   };
 
+  const validateOTP = async (email: string, otp: string) => {
+    const response = await fetch('/api/auth/validate-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, otp }),
+    });
+    await handleResponse(response);
+  };
+
   const resendOTP = async (email: string) => {
     const response = await fetch('/api/auth/resend-otp', {
       method: 'POST',
@@ -144,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading,
       login,
       signup,
+      validateOTP,
       verifySignup,
       resendOTP,
       forgotPassword,

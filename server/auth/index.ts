@@ -109,6 +109,63 @@ export async function signup(email: string, password: string): Promise<{ user: U
   return { user, otp };
 }
 
+function safeLogDomain(email: string): string {
+  const parts = email.split('@');
+  return parts.length === 2 ? `@${parts[1]}` : 'unknown';
+}
+
+async function lookupUserByEmail(email: string, source: string): Promise<{ user: User | undefined; source: string }> {
+  const normalizedEmail = email.toLowerCase();
+
+  let users = await storage.query<User>('users', { email: normalizedEmail });
+  let lookupSource = `${source}:cache`;
+  if (users.length === 0) {
+    console.log(`[Auth] ${source} cache miss for domain ${safeLogDomain(email)}, retrying with fresh fetch`);
+    users = await storage.query<User>('users', { email: normalizedEmail }, { bypassCache: true });
+    lookupSource = `${source}:fresh`;
+  }
+
+  console.log(`[Auth] ${source} lookup: domain=${safeLogDomain(email)} found=${users.length > 0} source=${lookupSource}`);
+
+  return { user: users[0], source: lookupSource };
+}
+
+export async function validateSignupOTP(email: string, otp: string): Promise<void> {
+  const rateLimit = otpRateLimiter.check(`verify:${email}`);
+  if (!rateLimit.allowed) {
+    throw new Error('Too many verification attempts. Please try again later.');
+  }
+
+  const { user, source } = await lookupUserByEmail(email, 'validateOTP');
+
+  if (!user) {
+    console.log(`[Auth] validateOTP: user not found after ${source}`);
+    throw new Error('User not found');
+  }
+
+  if (user.emailVerified) {
+    throw new Error('Account already verified');
+  }
+
+  if (!user.otpHash || !user.otpExpiresAt) {
+    throw new Error('No OTP pending');
+  }
+
+  if (new Date(user.otpExpiresAt) < new Date()) {
+    throw new Error('OTP expired. Please request a new one.');
+  }
+
+  if (user.otpAttempts >= 3) {
+    throw new Error('Too many failed attempts. Please request a new OTP.');
+  }
+
+  if (!verifyOTP(otp, user.otpHash)) {
+    user.otpAttempts++;
+    await storage.set('users', user.id, user);
+    throw new Error('Invalid OTP');
+  }
+}
+
 export async function verifySignupOTP(email: string, otp: string, username: string): Promise<User> {
   const rateLimit = otpRateLimiter.check(`verify:${email}`);
   if (!rateLimit.allowed) {
@@ -119,9 +176,10 @@ export async function verifySignupOTP(email: string, otp: string, username: stri
     throw new Error('Username must be 3-30 characters, alphanumeric, underscore, or hyphen');
   }
 
-  const users = await storage.query<User>('users', { email: email.toLowerCase() }, { bypassCache: true });
-  const user = users[0];
+  const { user, source } = await lookupUserByEmail(email, 'verifySignupOTP');
+
   if (!user) {
+    console.log(`[Auth] verifySignupOTP: user not found after ${source}`);
     throw new Error('User not found');
   }
 
@@ -160,6 +218,9 @@ export async function verifySignupOTP(email: string, otp: string, username: stri
   user.updatedAt = new Date().toISOString();
 
   await storage.set('users', user.id, user);
+
+  console.log(`[Auth] verifySignupOTP success: domain=${safeLogDomain(email)} userId=${user.id}`);
+
   return user;
 }
 

@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { signup, verifySignupOTP, resendOTP, login, forgotPassword, resetPassword, changePassword, updateProfile, createTokens, verifyToken, verifyRefreshToken } from '../auth/index.js';
+import { signup, verifySignupOTP, validateSignupOTP, resendOTP, login, forgotPassword, resetPassword, changePassword, updateProfile, createTokens, verifyToken, verifyRefreshToken } from '../auth/index.js';
 import { storage } from '../storage.js';
 import type { User } from '../types.js';
 import { validateBody } from '../validation.js';
-import { signupSchema, verifySignupSchema, resendOtpSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, changePasswordSchema, updateProfileSchema } from '../validation.js';
+import { signupSchema, verifySignupSchema, validateOtpSchema, resendOtpSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, changePasswordSchema, updateProfileSchema } from '../validation.js';
 
 const router = Router();
 
@@ -47,6 +47,16 @@ router.post('/verify-signup', validateBody(verifySignupSchema), async (req, res)
     res.json({ success: true, data: { user: sanitizeUser(user) } });
   } catch (error) {
     res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Verification failed' });
+  }
+});
+
+router.post('/validate-otp', validateBody(validateOtpSchema), async (req, res) => {
+  try {
+    const { email, otp } = req.validatedBody;
+    await validateSignupOTP(email, otp);
+    res.json({ success: true, data: { valid: true } });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Validation failed' });
   }
 });
 

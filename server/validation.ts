@@ -17,6 +17,11 @@ export const verifySignupSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscore, and hyphen'),
 });
 
+export const validateOtpSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  otp: z.string().length(6, 'OTP must be 6 digits'),
+});
+
 export const resendOtpSchema = z.object({
   email: z.string().email('Invalid email address'),
 });
