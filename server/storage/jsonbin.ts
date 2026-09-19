@@ -1,4 +1,5 @@
 import type { StorageAdapter } from '../storage.js';
+import { execSync } from 'child_process';
 
 const JSONBIN_API_BASE = 'https://api.jsonbin.io/v3';
 const FETCH_TIMEOUT_MS = 10_000;
@@ -22,6 +23,14 @@ function safeBinFingerprint(binId: string): string {
 function safeRootKeys(root: Record<string, any>): string {
   const keys = Object.keys(root);
   return keys.length > 0 ? keys.join(',') : '<empty>';
+}
+
+function getDeployedCommit(): string {
+  try {
+    return execSync('git rev-parse --short HEAD', { timeout: 3000 }).toString().trim();
+  } catch {
+    return 'unknown';
+  }
 }
 
 function deepClone<T>(obj: T): T {
@@ -65,7 +74,8 @@ export class JsonBinStorageAdapter implements StorageAdapter {
 
     if (!loggedStartup) {
       loggedStartup = true;
-      console.log(`[JsonBin] INIT adapter=JsonBinStorageAdapter bin=${safeBinFingerprint(this.binId)} cache_ttl=${this.CACHE_TTL_MS}ms`);
+      const commit = getDeployedCommit();
+      console.log(`[JsonBin] INIT adapter=JsonBinStorageAdapter commit=${commit} pid=${process.pid} node=${process.version} env=${process.env.NODE_ENV || 'development'} bin=${safeBinFingerprint(this.binId)} cache_ttl=${this.CACHE_TTL_MS}ms`);
     }
   }
 
@@ -101,7 +111,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
 
     const cacheAge = this.lastFetchAt > 0 ? `${now - this.lastFetchAt}ms` : 'never';
     const reason = forceRefresh ? 'bypass' : (this.cache === null ? 'cold' : `ttl_expired(age=${cacheAge})`);
-    console.log(`[JsonBin] GET /latest reason=${reason}`);
+    console.log(`[JsonBin] GET /latest reason=${reason} bin=${safeBinFingerprint(this.binId)}`);
 
     const res = await fetchWithTimeout(`${JSONBIN_API_BASE}/b/${this.binId}/latest`, {
       headers: { 'X-Master-Key': this.apiKey },
@@ -127,7 +137,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
   private async writeBin(data: Record<string, any>): Promise<void> {
     this.putCount++;
     const usersCount = data.users ? collectionEntryCount(data.users) : 0;
-    console.log(`[JsonBin] PUT /b/{bin} #${this.putCount} root_keys=[${safeRootKeys(data)}] users_count=${usersCount}`);
+    console.log(`[JsonBin] PUT /b/{bin} #${this.putCount} bin=${safeBinFingerprint(this.binId)} root_keys=[${safeRootKeys(data)}] users_count=${usersCount}`);
 
     const res = await fetchWithTimeout(`${JSONBIN_API_BASE}/b/${this.binId}`, {
       method: 'PUT',
@@ -153,7 +163,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     const resVersion = resBody?.version ?? 'n/a';
     const resId = resBody?.id ?? 'n/a';
     const resRecordKeys = resBody?.record ? Object.keys(resBody.record).length : 'no_record_field';
-    console.log(`[JsonBin] PUT OK #${this.putCount} status=${res.status} resVersion=${resVersion} resId=${resId} resRecordKeys=${resRecordKeys}`);
+    console.log(`[JsonBin] PUT OK #${this.putCount} bin=${safeBinFingerprint(this.binId)} status=${res.status} resVersion=${resVersion} resId=${resId} resRecordKeys=${resRecordKeys}`);
 
     this.cache = deepClone(data);
     this.lastFetchAt = Date.now();
@@ -270,5 +280,18 @@ export class JsonBinStorageAdapter implements StorageAdapter {
   invalidateCache(): void {
     this.cache = null;
     this.lastFetchAt = 0;
+  }
+
+  async verifyPersistence(collection: string, id: string): Promise<{ persisted: boolean; binFingerprint: string; cacheUsers: number; freshUsers: number }> {
+    const fp = safeBinFingerprint(this.binId);
+    const cacheCount = this.cache?.users ? collectionEntryCount(this.cache.users) : 0;
+
+    this.invalidateCache();
+    const freshRoot = await this.fetchBin(true);
+    const freshUsers = freshRoot.users ? collectionEntryCount(freshRoot.users) : 0;
+    const found = freshRoot[collection]?.[id] !== undefined;
+
+    console.log(`[JsonBin] VERIFY bin=${fp} cache_users=${cacheCount} fresh_users=${freshUsers} found=${found}`);
+    return { persisted: found, binFingerprint: fp, cacheUsers: cacheCount, freshUsers };
   }
 }

@@ -14,6 +14,8 @@ export interface StorageAdapter {
     filter?: Partial<T>,
     options?: { bypassCache?: boolean }
   ): Promise<{ items: T[]; total: number; page: number; pageSize: number; totalPages: number }>;
+  invalidateCache?(): void;
+  verifyPersistence?(collection: string, id: string): Promise<{ persisted: boolean; binFingerprint: string; cacheUsers: number; freshUsers: number }>;
 }
 
 const DATA_DIR = join(process.env.DATA_DIR || process.cwd(), 'data');
@@ -170,4 +172,6 @@ export const storage: StorageAdapter = {
   list: (collection) => activeAdapter.list(collection),
   query: (collection, filter, options?) => activeAdapter.query(collection, filter, options),
   getPaginated: (collection, page, pageSize, filter, options?) => activeAdapter.getPaginated(collection, page, pageSize, filter, options),
+  invalidateCache: () => activeAdapter.invalidateCache?.(),
+  verifyPersistence: (collection, id) => activeAdapter.verifyPersistence?.(collection, id) ?? Promise.resolve({ persisted: false, binFingerprint: 'n/a', cacheUsers: 0, freshUsers: 0 }),
 };

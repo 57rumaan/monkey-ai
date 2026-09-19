@@ -4,9 +4,22 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { execSync } from 'child_process';
 import './providers/index.js';
 
 export { requireAuth, optionalAuth } from './middleware.js';
+
+import { getStorageAdapterName } from './storage.js';
+
+function getDeployedCommit(): string {
+  try {
+    return execSync('git rev-parse --short HEAD', { timeout: 3000 }).toString().trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+console.log(`[Startup] commit=${getDeployedCommit()} pid=${process.pid} node=${process.version} env=${process.env.NODE_ENV || 'development'} adapter=${getStorageAdapterName()}`);
 
 const app = express();
 

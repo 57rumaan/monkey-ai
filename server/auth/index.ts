@@ -67,7 +67,7 @@ export async function signup(email: string, password: string): Promise<{ user: U
   }
 
   const existingUser = await storage.query<User>('users', { email });
-  console.log(`[Auth] signup dup_check: domain=${safeLogDomain(email)} query_email_raw="${email}" found=${existingUser.length}`);
+  console.log(`[Auth] signup dup_check: domain=${safeLogDomain(email)} query_email_raw="${email}" found=${existingUser.length} pid=${process.pid}`);
   if (existingUser.length > 0) {
     throw new Error('Email already registered');
   }
@@ -90,11 +90,16 @@ export async function signup(email: string, password: string): Promise<{ user: U
     updatedAt: new Date().toISOString(),
   };
 
-  console.log(`[Auth] signup preparing write: domain=${safeLogDomain(email)} email_normalization=${email === email.toLowerCase() ? 'already_lower' : 'raw_to_lower'} userId=${user.id}`);
+  console.log(`[Auth] signup preparing write: domain=${safeLogDomain(email)} email_normalization=${email === email.toLowerCase() ? 'already_lower' : 'raw_to_lower'} userId=${user.id} pid=${process.pid}`);
   await storage.set('users', user.id, user);
 
   const adapterName = getStorageAdapter().constructor.name;
-  console.log(`[Auth] signup write: domain=${safeLogDomain(email)} userId=${user.id} adapter=${adapterName}`);
+  console.log(`[Auth] signup write complete: domain=${safeLogDomain(email)} userId=${user.id} adapter=${adapterName} pid=${process.pid}`);
+
+  const verification = await storage.verifyPersistence?.('users', user.id);
+  if (verification) {
+    console.log(`[Auth] signup persistence verify: domain=${safeLogDomain(email)} userId=${user.id} persisted=${verification.persisted} bin=${verification.binFingerprint} fresh_users=${verification.freshUsers} pid=${process.pid}`);
+  }
 
   if (isEmailConfigured()) {
     const emailResult = await sendOTPEmail(email, otp, 'signup');
@@ -124,7 +129,7 @@ async function lookupUserByEmail(email: string, source: string): Promise<{ user:
   const adapterName = getStorageAdapter().constructor.name;
   const emailChanged = normalizedEmail !== email;
 
-  console.log(`[Auth] ${source} lookup_start: adapter=${adapterName} domain=${safeLogDomain(email)} normalized=${normalizedEmail !== email ? 'changed' : 'same'} raw_domain=${safeLogDomain(email)}`);
+  console.log(`[Auth] ${source} lookup_start: adapter=${adapterName} domain=${safeLogDomain(email)} normalized=${normalizedEmail !== email ? 'changed' : 'same'} pid=${process.pid}`);
 
   let users = await storage.query<User>('users', { email: normalizedEmail });
   let lookupSource = `${source}:cache`;
@@ -134,7 +139,7 @@ async function lookupUserByEmail(email: string, source: string): Promise<{ user:
     lookupSource = `${source}:fresh`;
   }
 
-  console.log(`[Auth] ${source} lookup_result: adapter=${adapterName} domain=${safeLogDomain(email)} matched=${users.length} source=${lookupSource}`);
+  console.log(`[Auth] ${source} lookup_result: adapter=${adapterName} domain=${safeLogDomain(email)} matched=${users.length} source=${lookupSource} pid=${process.pid}`);
 
   return { user: users[0], source: lookupSource };
 }
@@ -153,7 +158,7 @@ export async function validateSignupOTP(email: string, otp: string): Promise<voi
 
   if (!user) {
     const adapterName = getStorageAdapter().constructor.name;
-    console.log(`[Auth] validateOTP FAIL: adapter=${adapterName} domain=${safeLogDomain(email)} user not found after ${source}`);
+    console.log(`[Auth] validateOTP FAIL: adapter=${adapterName} domain=${safeLogDomain(email)} user not found after ${source} pid=${pid}`);
     throw new Error('User not found');
   }
 
