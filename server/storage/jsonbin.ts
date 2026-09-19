@@ -24,10 +24,15 @@ function safeRootKeys(root: Record<string, any>): string {
   return keys.length > 0 ? keys.join(',') : '<empty>';
 }
 
-function safeCollectionSummary(root: Record<string, any>): string {
-  return Object.entries(root)
-    .map(([k, v]) => `${k}:${Array.isArray(v) ? v.length : (typeof v === 'object' && v !== null ? Object.keys(v).length : '?')}`)
-    .join(' ');
+function deepClone<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function collectionEntryCount(col: unknown): number {
+  if (!col) return 0;
+  if (Array.isArray(col)) return col.length;
+  if (typeof col === 'object') return Object.keys(col).length;
+  return 0;
 }
 
 async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Response> {
@@ -42,6 +47,8 @@ async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Respon
 
 let loggedStartup = false;
 
+type WriteTask = () => Promise<void>;
+
 export class JsonBinStorageAdapter implements StorageAdapter {
   private apiKey: string;
   private binId: string;
@@ -49,6 +56,8 @@ export class JsonBinStorageAdapter implements StorageAdapter {
   private lastFetchAt = 0;
   private readonly CACHE_TTL_MS = 5_000;
   private putCount = 0;
+  private writeQueue: WriteTask[] = [];
+  private writeRunning = false;
 
   constructor(config?: JsonBinConfig) {
     this.apiKey = config?.apiKey || getEnvOrThrow('JSONBIN_API_KEY');
@@ -58,6 +67,30 @@ export class JsonBinStorageAdapter implements StorageAdapter {
       loggedStartup = true;
       console.log(`[JsonBin] INIT adapter=JsonBinStorageAdapter bin=${safeBinFingerprint(this.binId)} cache_ttl=${this.CACHE_TTL_MS}ms`);
     }
+  }
+
+  private enqueueWrite(task: WriteTask): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.writeQueue.push(async () => {
+        try {
+          await task();
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      });
+      this.processWriteQueue();
+    });
+  }
+
+  private async processWriteQueue(): Promise<void> {
+    if (this.writeRunning) return;
+    this.writeRunning = true;
+    while (this.writeQueue.length > 0) {
+      const task = this.writeQueue.shift()!;
+      await task();
+    }
+    this.writeRunning = false;
   }
 
   private async fetchBin(forceRefresh = false): Promise<Record<string, any>> {
@@ -83,7 +116,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     const record = body.record || {};
 
     const rootKeys = Object.keys(record);
-    const usersCount = record.users ? (Array.isArray(record.users) ? record.users.length : Object.keys(record.users).length) : 0;
+    const usersCount = record.users ? collectionEntryCount(record.users) : 0;
     console.log(`[JsonBin] GET /latest OK status=200 root_keys=[${safeRootKeys(record)}] users_count=${usersCount} version=${body.version ?? 'n/a'}`);
 
     this.cache = record;
@@ -93,8 +126,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
 
   private async writeBin(data: Record<string, any>): Promise<void> {
     this.putCount++;
-    const usersCount = data.users ? (Array.isArray(data.users) ? data.users.length : Object.keys(data.users).length) : 0;
-    const rootKeys = Object.keys(data);
+    const usersCount = data.users ? collectionEntryCount(data.users) : 0;
     console.log(`[JsonBin] PUT /b/{bin} #${this.putCount} root_keys=[${safeRootKeys(data)}] users_count=${usersCount}`);
 
     const res = await fetchWithTimeout(`${JSONBIN_API_BASE}/b/${this.binId}`, {
@@ -123,35 +155,14 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     const resRecordKeys = resBody?.record ? Object.keys(resBody.record).length : 'no_record_field';
     console.log(`[JsonBin] PUT OK #${this.putCount} status=${res.status} resVersion=${resVersion} resId=${resId} resRecordKeys=${resRecordKeys}`);
 
-    this.cache = data;
+    this.cache = deepClone(data);
     this.lastFetchAt = Date.now();
-  }
-
-  private async getCollection(collection: string, forceRefresh = false): Promise<Record<string, any>> {
-    const root = await this.fetchBin(forceRefresh);
-    return root[collection] || {};
-  }
-
-  private async setCollection(collection: string, data: Record<string, any>): Promise<void> {
-    const rootBefore = await this.fetchBin(false);
-    const keysBefore = safeRootKeys(rootBefore);
-    const usersBefore = rootBefore.users ? (Array.isArray(rootBefore.users) ? rootBefore.users.length : Object.keys(rootBefore.users).length) : 0;
-
-    const newRoot = { ...rootBefore };
-    newRoot[collection] = data;
-
-    const keysAfter = safeRootKeys(newRoot);
-    const usersAfter = data ? (Array.isArray(data) ? data.length : Object.keys(data).length) : 0;
-
-    console.log(`[JsonBin] setCollection ${collection}: keys_before=[${keysBefore}] keys_after=[${keysAfter}] entries_before=${usersBefore} entries_after=${usersAfter}`);
-
-    await this.writeBin(newRoot);
-    console.log(`[JsonBin] setCollection OK: ${collection} entries=${Object.keys(data).length}`);
   }
 
   async get<T>(collection: string, id: string): Promise<T | null> {
     try {
-      const col = await this.getCollection(collection);
+      const root = await this.fetchBin(false);
+      const col = root[collection] || {};
       const val = col[id];
       return val !== undefined ? (val as T) : null;
     } catch (e) {
@@ -161,34 +172,58 @@ export class JsonBinStorageAdapter implements StorageAdapter {
   }
 
   async set<T>(collection: string, id: string, data: T): Promise<void> {
-    try {
-      const col = await this.getCollection(collection);
-      col[id] = data;
-      await this.setCollection(collection, col);
-      const userCount = collection === 'users' ? Object.keys(col).length : undefined;
-      console.log(`[JsonBin] set OK: ${collection}/${id} users_count=${userCount ?? 'n/a'} cache_age=${Date.now() - this.lastFetchAt}ms`);
-    } catch (e) {
-      this.cache = null;
-      console.error(`[JsonBin] set(${collection}/${id}) failed:`, e);
-      throw e;
-    }
+    return this.enqueueWrite(async () => {
+      try {
+        const root = await this.fetchBin(false);
+        const existingCol = root[collection] || {};
+        const updatedCol = deepClone(existingCol);
+        updatedCol[id] = data;
+
+        const keysBefore = safeRootKeys(root);
+        const entriesBefore = collectionEntryCount(existingCol);
+        const entriesAfter = collectionEntryCount(updatedCol);
+
+        const newRoot = deepClone(root);
+        newRoot[collection] = updatedCol;
+
+        console.log(`[JsonBin] set ${collection}/${id}: keys=[${keysBefore}] entries_before=${entriesBefore} entries_after=${entriesAfter}`);
+
+        await this.writeBin(newRoot);
+
+        const usersCount = collection === 'users' ? collectionEntryCount(updatedCol) : undefined;
+        console.log(`[JsonBin] set OK: ${collection}/${id} users_count=${usersCount ?? 'n/a'}`);
+      } catch (e) {
+        this.cache = null;
+        console.error(`[JsonBin] set(${collection}/${id}) failed:`, e);
+        throw e;
+      }
+    });
   }
 
   async delete(collection: string, id: string): Promise<void> {
-    try {
-      const col = await this.getCollection(collection);
-      delete col[id];
-      await this.setCollection(collection, col);
-    } catch (e) {
-      this.cache = null;
-      console.error(`[JsonBin] delete(${collection}/${id}) failed:`, e);
-      throw e;
-    }
+    return this.enqueueWrite(async () => {
+      try {
+        const root = await this.fetchBin(false);
+        const existingCol = root[collection] || {};
+        const updatedCol = deepClone(existingCol);
+        delete updatedCol[id];
+
+        const newRoot = deepClone(root);
+        newRoot[collection] = updatedCol;
+
+        await this.writeBin(newRoot);
+      } catch (e) {
+        this.cache = null;
+        console.error(`[JsonBin] delete(${collection}/${id}) failed:`, e);
+        throw e;
+      }
+    });
   }
 
   async list<T>(collection: string, forceRefresh = false): Promise<T[]> {
     try {
-      const col = await this.getCollection(collection, forceRefresh);
+      const root = await this.fetchBin(forceRefresh);
+      const col = root[collection] || {};
       return Object.values(col) as T[];
     } catch (e) {
       console.error(`[JsonBin] list(${collection}) failed:`, e);

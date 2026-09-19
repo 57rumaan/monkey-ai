@@ -20,47 +20,39 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+function makeServerData() {
+  return {} as Record<string, any>;
+}
+
+function mockFetchFrom(serverData: Record<string, any>) {
+  return async (_url: string, init?: RequestInit) => {
+    const method = init?.method || 'GET';
+    if (method === 'PUT') {
+      const body = JSON.parse(init!.body as string);
+      Object.keys(serverData).forEach(k => delete serverData[k]);
+      Object.assign(serverData, body);
+      return new Response(JSON.stringify({ version: 1 }), { status: 200 });
+    }
+    return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
+  };
+}
+
 describe('JsonBinStorageAdapter cache bypass', () => {
   it('set user -> new adapter instance -> query with bypassCache finds the user', async () => {
-    const storedData: Record<string, any> = {};
-
-    const mockFetch = async (url: string, init?: RequestInit) => {
-      const method = init?.method || 'GET';
-      if (method === 'PUT') {
-        const body = JSON.parse(init!.body as string);
-        Object.assign(storedData, body);
-        return new Response(JSON.stringify({}), { status: 200 });
-      }
-      return new Response(JSON.stringify(makeFakeBinRecord(storedData)), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
 
     const user = {
-      id: 'usr_abc123',
-      email: 'test@example.com',
-      username: '',
-      passwordHash: 'hashed',
-      role: 'user',
-      emailVerified: false,
-      otpHash: 'otp-hash',
-      otpExpiresAt: new Date(Date.now() + 600_000).toISOString(),
-      otpAttempts: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      id: 'usr_abc123', email: 'test@example.com', username: '',
+      passwordHash: 'hashed', role: 'user', emailVerified: false,
+      otpHash: 'otp-hash', otpExpiresAt: new Date(Date.now() + 600_000).toISOString(),
+      otpAttempts: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     };
 
-    const adapter1 = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
-
+    const adapter1 = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
     await adapter1.set('users', user.id, user);
 
-    const adapter2 = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
-
+    const adapter2 = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
     const found = await adapter2.query('users', { email: 'test@example.com' }, { bypassCache: true });
     expect(found).toHaveLength(1);
     expect(found[0].id).toBe('usr_abc123');
@@ -70,156 +62,129 @@ describe('JsonBinStorageAdapter cache bypass', () => {
   });
 
   it('stale cache is bypassed when bypassCache is true', async () => {
-    const storedData: Record<string, any> = {};
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
 
-    const mockFetch = async (url: string, init?: RequestInit) => {
-      const method = init?.method || 'GET';
-      if (method === 'PUT') {
-        const body = JSON.parse(init!.body as string);
-        Object.assign(storedData, body);
-        return new Response(JSON.stringify({}), { status: 200 });
-      }
-      return new Response(JSON.stringify(makeFakeBinRecord(storedData)), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
-
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
-
-    await adapter.set('users', 'user1', {
-      id: 'user1', email: 'a@test.com', username: '',
-    });
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'user1', { id: 'user1', email: 'a@test.com', username: '' });
 
     const beforeCount = fetchSpy.mock.calls.length;
-
     const result1 = await adapter.query('users', { email: 'a@test.com' });
     expect(result1).toHaveLength(1);
+    expect(fetchSpy.mock.calls.length).toBe(beforeCount);
 
-    const afterCached = fetchSpy.mock.calls.length;
-    expect(afterCached).toBe(beforeCount);
-
-    await adapter.set('users', 'user1', {
-      id: 'user1', email: 'a@test.com', username: 'updated',
-    });
+    await adapter.set('users', 'user1', { id: 'user1', email: 'a@test.com', username: 'updated' });
 
     const result2 = await adapter.query('users', { email: 'a@test.com' }, { bypassCache: true });
     expect(result2).toHaveLength(1);
     expect(result2[0].username).toBe('updated');
   });
 
-  it('without bypassCache, adapter may return stale data from its own cache', async () => {
-    let apiData: Record<string, any> = {};
+  it('without bypassCache, adapter returns data from its own cache', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
 
-    const mockFetch = async (url: string, init?: RequestInit) => {
-      const method = init?.method || 'GET';
-      if (method === 'PUT') {
-        const body = JSON.parse(init!.body as string);
-        Object.assign(apiData, body);
-        return new Response(JSON.stringify({}), { status: 200 });
-      }
-      return new Response(JSON.stringify(makeFakeBinRecord(apiData)), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
-
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
-
-    const user = { id: 'u1', email: 'x@test.com', username: '' };
-    await adapter.set('users', 'u1', user);
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'u1', { id: 'u1', email: 'x@test.com', username: '' });
 
     const result = await adapter.query('users', { email: 'x@test.com' });
     expect(result).toHaveLength(1);
   });
 });
 
-describe('JSONBin eventual consistency simulation', () => {
-  it('PUT succeeds but fresh GET returns empty server data — user not found via bypassCache', async () => {
-    let putCount = 0;
+describe('REGRESSION: set persists to JSONBin (production bug fix)', () => {
+  it('1. set on empty collection persists via PUT with correct data', async () => {
+    const serverData = makeServerData();
+    let lastPutBody: Record<string, any> | null = null;
 
-    const mockFetch = async (_url: string, init?: RequestInit) => {
+    fetchSpy.mockImplementation(async (_url: string, init?: RequestInit) => {
       const method = init?.method || 'GET';
       if (method === 'PUT') {
-        putCount++;
-        return new Response(JSON.stringify({}), { status: 200 });
+        lastPutBody = JSON.parse(init!.body as string);
+        Object.keys(serverData).forEach(k => delete serverData[k]);
+        Object.assign(serverData, lastPutBody);
+        return new Response(JSON.stringify({ version: 1 }), { status: 200 });
       }
-      return new Response(JSON.stringify(makeFakeBinRecord({})), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
-
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
+      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
     });
 
-    const user = { id: 'usr_stale', email: 'stale@test.com', username: '' };
-    await adapter.set('users', user.id, user);
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'usr_new1', { id: 'usr_new1', email: 'new@test.com', username: '' });
 
-    const foundInCache = await adapter.query('users', { email: 'stale@test.com' });
-    expect(foundInCache).toHaveLength(1);
+    expect(lastPutBody).not.toBeNull();
+    expect(lastPutBody!['users']).toBeDefined();
+    expect(Object.keys(lastPutBody!['users'])).toContain('usr_new1');
+    expect(lastPutBody!['users']['usr_new1'].email).toBe('new@test.com');
+  });
+
+  it('2. query immediately after set finds the user', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
+
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'usr_q1', { id: 'usr_q1', email: 'q1@test.com', username: '' });
+
+    const found = await adapter.query('users', { email: 'q1@test.com' });
+    expect(found).toHaveLength(1);
+    expect(found[0].id).toBe('usr_q1');
+  });
+
+  it('3. forced fresh fetch after set finds the user', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
+
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'usr_f1', { id: 'usr_f1', email: 'f1@test.com', username: '' });
 
     adapter.invalidateCache();
-
-    const foundAfterBypass = await adapter.query('users', { email: 'stale@test.com' }, { bypassCache: true });
-    expect(foundAfterBypass).toHaveLength(0);
-
-    expect(putCount).toBe(1);
-  });
-
-  it('within same adapter, cache reflects write and cache lookup finds user', async () => {
-    const serverData: Record<string, any> = {};
-
-    const mockFetch = async (_url: string, init?: RequestInit) => {
-      const method = init?.method || 'GET';
-      if (method === 'PUT') {
-        const body = JSON.parse(init!.body as string);
-        Object.assign(serverData, body);
-        return new Response(JSON.stringify({}), { status: 200 });
-      }
-      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
-
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
-
-    const user = { id: 'usr_ok', email: 'ok@test.com', username: '' };
-    await adapter.set('users', user.id, user);
-
-    const found = await adapter.query('users', { email: 'ok@test.com' });
+    const found = await adapter.query('users', { email: 'f1@test.com' }, { bypassCache: true });
     expect(found).toHaveLength(1);
+    expect(found[0].id).toBe('usr_f1');
   });
-});
 
-describe('JsonBin concurrent write race condition', () => {
-  // SKIPPED: These tests PROVE the race condition exists.
-  // They fail because the bug is not yet fixed. Un-skip after implementing the fix.
-  it.skip('concurrent set() on empty collection — both users should be preserved', async () => {
-    const serverData: Record<string, any> = {};
+  it('4. existing collections preserved during a users write', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
 
-    const mockFetch = async (_url: string, init?: RequestInit) => {
-      const method = init?.method || 'GET';
-      if (method === 'PUT') {
-        const body = JSON.parse(init!.body as string);
-        Object.assign(serverData, body);
-        return new Response(JSON.stringify({}), { status: 200 });
-      }
-      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('providers', 'prv_1', { id: 'prv_1', label: 'HF' });
+    await adapter.set('bundles', 'bdl_1', { id: 'bdl_1', name: 'Free' });
+    await adapter.set('users', 'usr_1', { id: 'usr_1', email: 'u1@test.com', username: '' });
 
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
+    const providers = await adapter.query('providers', {});
+    expect(providers).toHaveLength(1);
+    expect(providers[0].id).toBe('prv_1');
 
-    const userA = { id: 'usr_A', email: 'a@test.com', username: '' };
-    const userB = { id: 'usr_B', email: 'b@test.com', username: '' };
+    const bundles = await adapter.query('bundles', {});
+    expect(bundles).toHaveLength(1);
+    expect(bundles[0].id).toBe('bdl_1');
+
+    const users = await adapter.query('users', {});
+    expect(users).toHaveLength(1);
+    expect(users[0].id).toBe('usr_1');
+  });
+
+  it('5. existing users preserved when adding another user', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
+
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'usr_a', { id: 'usr_a', email: 'a@test.com', username: '' });
+    await adapter.set('users', 'usr_b', { id: 'usr_b', email: 'b@test.com', username: '' });
+
+    const all = await adapter.query('users', {});
+    expect(all).toHaveLength(2);
+    const ids = all.map((u: any) => u.id).sort();
+    expect(ids).toEqual(['usr_a', 'usr_b']);
+  });
+
+  it('6. two concurrent set() calls do not lose either user', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
+
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    const userA = { id: 'usr_cA', email: 'cA@test.com', username: '' };
+    const userB = { id: 'usr_cB', email: 'cB@test.com', username: '' };
 
     await Promise.all([
       adapter.set('users', userA.id, userA),
@@ -228,86 +193,62 @@ describe('JsonBin concurrent write race condition', () => {
 
     const finalResult = await adapter.query('users', {}, { bypassCache: true });
     const userIds = finalResult.map((u: any) => u.id).sort();
-    expect(userIds).toEqual(['usr_A', 'usr_B']);
+    expect(userIds).toEqual(['usr_cA', 'usr_cB']);
   });
 
-  it.skip('staggered concurrent set() — second write MUST include first user', async () => {
-    let resolveFirstPut: (() => void) | null = null;
-    const firstPutDone = new Promise<void>(r => { resolveFirstPut = r; });
-
+  it('7. failed PUT does NOT update local cache', async () => {
     let putCount = 0;
 
-    const mockFetch = async (_url: string, init?: RequestInit) => {
+    fetchSpy.mockImplementation(async (_url: string, init?: RequestInit) => {
       const method = init?.method || 'GET';
       if (method === 'PUT') {
         putCount++;
-        const body = JSON.parse(init!.body as string);
-        if (putCount === 1 && resolveFirstPut) {
-          resolveFirstPut();
-          resolveFirstPut = null;
+        if (putCount === 1) {
+          return new Response(JSON.stringify({ error: 'server error' }), { status: 500 });
         }
-        return new Response(JSON.stringify({}), { status: 200 });
+        return new Response(JSON.stringify({ version: 2 }), { status: 200 });
       }
       return new Response(JSON.stringify(makeFakeBinRecord({})), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
-
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
     });
 
-    const userA = { id: 'usr_A', email: 'a@test.com', username: '' };
-    const userB = { id: 'usr_B', email: 'b@test.com', username: '' };
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
 
-    const writeA = adapter.set('users', userA.id, userA);
-    await firstPutDone;
+    await expect(
+      adapter.set('users', 'usr_fail', { id: 'usr_fail', email: 'fail@test.com', username: '' })
+    ).rejects.toThrow();
 
-    const writeB = adapter.set('users', userB.id, userB);
-    await Promise.all([writeA, writeB]);
+    const found = await adapter.query('users', { email: 'fail@test.com' }, { bypassCache: true });
+    expect(found).toHaveLength(0);
+  });
+});
 
-    const finalResult = await adapter.query('users', {}, { bypassCache: true });
-    const userIds = finalResult.map((u: any) => u.id).sort();
-    expect(userIds).toEqual(['usr_A', 'usr_B']);
+describe('Write serialization', () => {
+  it('serialized writes maintain correct final state', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
+
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'usr_s1', { id: 'usr_s1', email: 's1@test.com', username: '' });
+    await adapter.set('users', 'usr_s2', { id: 'usr_s2', email: 's2@test.com', username: '' });
+    await adapter.set('users', 'usr_s3', { id: 'usr_s3', email: 's3@test.com', username: '' });
+
+    const all = await adapter.query('users', {}, { bypassCache: true });
+    expect(all).toHaveLength(3);
+    const ids = all.map((u: any) => u.id).sort();
+    expect(ids).toEqual(['usr_s1', 'usr_s2', 'usr_s3']);
   });
 
-  it.skip('staggered set() with server-side state tracking', async () => {
-    let resolveFirstPut: (() => void) | null = null;
-    const firstPutDone = new Promise<void>(r => { resolveFirstPut = r; });
+  it('delete after set correctly removes user', async () => {
+    const serverData = makeServerData();
+    fetchSpy.mockImplementation(mockFetchFrom(serverData));
 
-    const serverData: Record<string, any> = {};
+    const adapter = new JsonBinStorageAdapter({ apiKey: FAKE_API_KEY, binId: FAKE_BIN_ID });
+    await adapter.set('users', 'usr_d1', { id: 'usr_d1', email: 'd1@test.com', username: '' });
+    await adapter.set('users', 'usr_d2', { id: 'usr_d2', email: 'd2@test.com', username: '' });
+    await adapter.delete('users', 'usr_d1');
 
-    const mockFetch = async (_url: string, init?: RequestInit) => {
-      const method = init?.method || 'GET';
-      if (method === 'PUT') {
-        const body = JSON.parse(init!.body as string);
-        Object.assign(serverData, body);
-        if (resolveFirstPut) {
-          resolveFirstPut();
-          resolveFirstPut = null;
-        }
-        return new Response(JSON.stringify({}), { status: 200 });
-      }
-      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
-    };
-    fetchSpy.mockImplementation(mockFetch);
-
-    const adapter = new JsonBinStorageAdapter({
-      apiKey: FAKE_API_KEY,
-      binId: FAKE_BIN_ID,
-    });
-
-    const userA = { id: 'usr_A', email: 'a@test.com', username: '' };
-    const userB = { id: 'usr_B', email: 'b@test.com', username: '' };
-
-    const writeA = adapter.set('users', userA.id, userA);
-    await firstPutDone;
-
-    const writeB = adapter.set('users', userB.id, userB);
-    await Promise.all([writeA, writeB]);
-
-    const finalResult = await adapter.query('users', {}, { bypassCache: true });
-    const userIds = finalResult.map((u: any) => u.id).sort();
-    expect(userIds).toEqual(['usr_A', 'usr_B']);
+    const all = await adapter.query('users', {}, { bypassCache: true });
+    expect(all).toHaveLength(1);
+    expect(all[0].id).toBe('usr_d2');
   });
 });
