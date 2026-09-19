@@ -44,6 +44,12 @@ function collectionEntryCount(col: unknown): number {
   return 0;
 }
 
+function toObjectCollection(col: unknown): Record<string, unknown> {
+  if (Array.isArray(col)) return {};
+  if (col && typeof col === 'object') return col as Record<string, unknown>;
+  return {};
+}
+
 async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Response> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -185,7 +191,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     return this.enqueueWrite(async () => {
       try {
         const root = await this.fetchBin(false);
-        const existingCol = root[collection] || {};
+        const existingCol = toObjectCollection(root[collection]);
         const updatedCol = deepClone(existingCol);
         updatedCol[id] = data;
 
@@ -197,6 +203,10 @@ export class JsonBinStorageAdapter implements StorageAdapter {
         newRoot[collection] = updatedCol;
 
         console.log(`[JsonBin] set ${collection}/${id}: keys=[${keysBefore}] entries_before=${entriesBefore} entries_after=${entriesAfter}`);
+
+        const writePayloadUsersCount = newRoot.users ? collectionEntryCount(newRoot.users) : 0;
+        const writePayloadContainsNewId = newRoot[collection] ? (id in newRoot[collection]) : false;
+        console.log(`[JsonBin] BEFORE WRITE: collection=${collection} entry_count=${entriesAfter} contains_new_id=${writePayloadContainsNewId} root_users_count=${writePayloadUsersCount}`);
 
         await this.writeBin(newRoot);
 
@@ -214,7 +224,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     return this.enqueueWrite(async () => {
       try {
         const root = await this.fetchBin(false);
-        const existingCol = root[collection] || {};
+        const existingCol = toObjectCollection(root[collection]);
         const updatedCol = deepClone(existingCol);
         delete updatedCol[id];
 
