@@ -92,7 +92,18 @@ export async function signup(email: string, password: string): Promise<{ user: U
   await storage.set('users', user.id, user);
 
   if (isEmailConfigured()) {
-    await sendOTPEmail(email, otp, 'signup');
+    const emailResult = await sendOTPEmail(email, otp, 'signup');
+    if (!emailResult.sent) {
+      console.error(`[Auth] OTP email failed for ${email.split('@')[1] || 'unknown'}: ${emailResult.error}`);
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Failed to send verification email. Please try again later.');
+      }
+    }
+  } else {
+    console.warn(`[Auth] Email not configured, OTP not sent to ${email.split('@')[1] || 'unknown'}`);
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Email service is not configured. Please contact support.');
+    }
   }
 
   return { user, otp };
@@ -178,7 +189,18 @@ export async function resendOTP(email: string): Promise<string> {
   await storage.set('users', user.id, user);
 
   if (isEmailConfigured()) {
-    await sendOTPEmail(email, otp, 'signup');
+    const emailResult = await sendOTPEmail(email, otp, 'signup');
+    if (!emailResult.sent) {
+      console.error(`[Auth] OTP resend email failed for ${email.split('@')[1] || 'unknown'}: ${emailResult.error}`);
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Failed to send verification email. Please try again later.');
+      }
+    }
+  } else {
+    console.warn(`[Auth] Email not configured, OTP not resent to ${email.split('@')[1] || 'unknown'}`);
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Email service is not configured. Please contact support.');
+    }
   }
 
   return otp;
@@ -242,7 +264,18 @@ export async function forgotPassword(email: string): Promise<string | void> {
   await storage.set('users', user.id, user);
 
   if (isEmailConfigured()) {
-    await sendOTPEmail(email, otp, 'reset');
+    const emailResult = await sendOTPEmail(email, otp, 'reset');
+    if (!emailResult.sent) {
+      console.error(`[Auth] Password reset email failed for ${email.split('@')[1] || 'unknown'}: ${emailResult.error}`);
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('Failed to send reset email. Please try again later.');
+      }
+    }
+  } else {
+    console.warn(`[Auth] Email not configured, reset OTP not sent to ${email.split('@')[1] || 'unknown'}`);
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Email service is not configured. Please contact support.');
+    }
   }
 
   return otp;

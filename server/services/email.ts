@@ -17,14 +17,18 @@ export function isEmailConfigured(): boolean {
   return !!process.env.RESEND_API_KEY && !!process.env.EMAIL_FROM;
 }
 
-export async function sendEmail(to: string, subject: string, html: string, text?: string): Promise<void> {
+export async function sendEmail(to: string, subject: string, html: string, text?: string): Promise<{ sent: boolean; error?: string }> {
   const client = getResendClient();
   if (!client) {
-    console.warn('[Email] Resend not configured, skipping email to:', to);
-    return;
+    const reason = !process.env.RESEND_API_KEY ? 'RESEND_API_KEY not set' : 'Unknown initialization failure';
+    console.warn(`[Email] Resend not configured (${reason}), skipping email to domain: ${to.split('@')[1] || 'unknown'}`);
+    return { sent: false, error: reason };
   }
 
   const from = process.env.EMAIL_FROM!;
+  const recipientDomain = to.split('@')[1] || 'unknown';
+
+  console.log(`[Email] Sending "${subject}" to domain: ${recipientDomain}`);
 
   try {
     const result = await client.emails.send({
@@ -36,19 +40,21 @@ export async function sendEmail(to: string, subject: string, html: string, text?
     });
 
     if (result.error) {
-      console.error('[Email] Resend API error:', result.error.message || 'Unknown error');
-      throw new Error('Failed to send email');
+      const errorMsg = result.error.message || 'Unknown Resend API error';
+      console.error(`[Email] Resend API error for domain ${recipientDomain}: ${errorMsg}`);
+      return { sent: false, error: errorMsg };
     }
+
+    console.log(`[Email] Email sent successfully to domain: ${recipientDomain}, id: ${result.data?.id || 'unknown'}`);
+    return { sent: true };
   } catch (error) {
-    if (error instanceof Error && error.message === 'Failed to send email') {
-      throw error;
-    }
-    console.error('[Email] Unexpected error sending email:', error instanceof Error ? error.message : 'Unknown error');
-    throw new Error('Failed to send email');
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`[Email] Unexpected error sending to domain ${recipientDomain}: ${errorMsg}`);
+    return { sent: false, error: errorMsg };
   }
 }
 
-export async function sendOTPEmail(email: string, otp: string, type: 'signup' | 'reset' | 'verify'): Promise<void> {
+export async function sendOTPEmail(email: string, otp: string, type: 'signup' | 'reset' | 'verify'): Promise<{ sent: boolean; error?: string }> {
   const subjects = {
     signup: 'Verify your MONKEY AI account',
     reset: 'Reset your MONKEY AI password',
@@ -90,5 +96,5 @@ This code will expire in 10 minutes. If you didn't request this, please ignore t
 MONKEY AI - Professional AI Assistant
   `;
 
-  await sendEmail(email, subjects[type], html, text);
+  return await sendEmail(email, subjects[type], html, text);
 }
