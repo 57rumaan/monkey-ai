@@ -84,7 +84,7 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 
 const PORT = parseInt(process.env.PORT || '3001', 10);
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT} pid=${process.pid} node=${process.version} env=${process.env.NODE_ENV || 'development'}`);
 });
 
 export default app;

@@ -14,6 +14,22 @@ function getEnvOrThrow(key: string): string {
   return val;
 }
 
+function safeBinFingerprint(binId: string): string {
+  if (binId.length <= 8) return '****';
+  return `${binId.slice(0, 4)}...${binId.slice(-4)}`;
+}
+
+function safeRootKeys(root: Record<string, any>): string {
+  const keys = Object.keys(root);
+  return keys.length > 0 ? keys.join(',') : '<empty>';
+}
+
+function safeCollectionSummary(root: Record<string, any>): string {
+  return Object.entries(root)
+    .map(([k, v]) => `${k}:${Array.isArray(v) ? v.length : (typeof v === 'object' && v !== null ? Object.keys(v).length : '?')}`)
+    .join(' ');
+}
+
 async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Response> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -24,16 +40,24 @@ async function fetchWithTimeout(url: string, init?: RequestInit): Promise<Respon
   }
 }
 
+let loggedStartup = false;
+
 export class JsonBinStorageAdapter implements StorageAdapter {
   private apiKey: string;
   private binId: string;
   private cache: Record<string, any> | null = null;
   private lastFetchAt = 0;
   private readonly CACHE_TTL_MS = 5_000;
+  private putCount = 0;
 
   constructor(config?: JsonBinConfig) {
     this.apiKey = config?.apiKey || getEnvOrThrow('JSONBIN_API_KEY');
     this.binId = config?.binId || getEnvOrThrow('JSONBIN_BIN_ID');
+
+    if (!loggedStartup) {
+      loggedStartup = true;
+      console.log(`[JsonBin] INIT adapter=JsonBinStorageAdapter bin=${safeBinFingerprint(this.binId)} cache_ttl=${this.CACHE_TTL_MS}ms`);
+    }
   }
 
   private async fetchBin(forceRefresh = false): Promise<Record<string, any>> {
@@ -42,19 +66,37 @@ export class JsonBinStorageAdapter implements StorageAdapter {
       return this.cache;
     }
 
+    const cacheAge = this.lastFetchAt > 0 ? `${now - this.lastFetchAt}ms` : 'never';
+    const reason = forceRefresh ? 'bypass' : (this.cache === null ? 'cold' : `ttl_expired(age=${cacheAge})`);
+    console.log(`[JsonBin] GET /latest reason=${reason}`);
+
     const res = await fetchWithTimeout(`${JSONBIN_API_BASE}/b/${this.binId}/latest`, {
       headers: { 'X-Master-Key': this.apiKey },
     });
 
-    if (!res.ok) throw new Error(`JSONBin read failed: ${res.status}`);
-    const body = await res.json() as { record?: Record<string, any> };
+    if (!res.ok) {
+      console.error(`[JsonBin] GET /latest FAILED status=${res.status} statusText=${res.statusText}`);
+      throw new Error(`JSONBin read failed: ${res.status}`);
+    }
+
+    const body = await res.json() as { record?: Record<string, any>; id?: string; version?: number };
     const record = body.record || {};
+
+    const rootKeys = Object.keys(record);
+    const usersCount = record.users ? (Array.isArray(record.users) ? record.users.length : Object.keys(record.users).length) : 0;
+    console.log(`[JsonBin] GET /latest OK status=200 root_keys=[${safeRootKeys(record)}] users_count=${usersCount} version=${body.version ?? 'n/a'}`);
+
     this.cache = record;
     this.lastFetchAt = now;
     return record;
   }
 
   private async writeBin(data: Record<string, any>): Promise<void> {
+    this.putCount++;
+    const usersCount = data.users ? (Array.isArray(data.users) ? data.users.length : Object.keys(data.users).length) : 0;
+    const rootKeys = Object.keys(data);
+    console.log(`[JsonBin] PUT /b/{bin} #${this.putCount} root_keys=[${safeRootKeys(data)}] users_count=${usersCount}`);
+
     const res = await fetchWithTimeout(`${JSONBIN_API_BASE}/b/${this.binId}`, {
       method: 'PUT',
       headers: {
@@ -64,7 +106,22 @@ export class JsonBinStorageAdapter implements StorageAdapter {
       body: JSON.stringify(data),
     });
 
-    if (!res.ok) throw new Error(`JSONBin write failed: ${res.status}`);
+    if (!res.ok) {
+      console.error(`[JsonBin] PUT FAILED #${this.putCount} status=${res.status} statusText=${res.statusText}`);
+      throw new Error(`JSONBin write failed: ${res.status}`);
+    }
+
+    let resBody: any = null;
+    try {
+      resBody = await res.json();
+    } catch {
+      // response body may not be JSON
+    }
+
+    const resVersion = resBody?.version ?? 'n/a';
+    const resId = resBody?.id ?? 'n/a';
+    const resRecordKeys = resBody?.record ? Object.keys(resBody.record).length : 'no_record_field';
+    console.log(`[JsonBin] PUT OK #${this.putCount} status=${res.status} resVersion=${resVersion} resId=${resId} resRecordKeys=${resRecordKeys}`);
 
     this.cache = data;
     this.lastFetchAt = Date.now();
@@ -76,9 +133,19 @@ export class JsonBinStorageAdapter implements StorageAdapter {
   }
 
   private async setCollection(collection: string, data: Record<string, any>): Promise<void> {
-    const root = { ...await this.fetchBin(false) };
-    root[collection] = data;
-    await this.writeBin(root);
+    const rootBefore = await this.fetchBin(false);
+    const keysBefore = safeRootKeys(rootBefore);
+    const usersBefore = rootBefore.users ? (Array.isArray(rootBefore.users) ? rootBefore.users.length : Object.keys(rootBefore.users).length) : 0;
+
+    const newRoot = { ...rootBefore };
+    newRoot[collection] = data;
+
+    const keysAfter = safeRootKeys(newRoot);
+    const usersAfter = data ? (Array.isArray(data) ? data.length : Object.keys(data).length) : 0;
+
+    console.log(`[JsonBin] setCollection ${collection}: keys_before=[${keysBefore}] keys_after=[${keysAfter}] entries_before=${usersBefore} entries_after=${usersAfter}`);
+
+    await this.writeBin(newRoot);
     console.log(`[JsonBin] setCollection OK: ${collection} entries=${Object.keys(data).length}`);
   }
 

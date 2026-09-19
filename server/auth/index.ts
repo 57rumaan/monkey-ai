@@ -67,6 +67,7 @@ export async function signup(email: string, password: string): Promise<{ user: U
   }
 
   const existingUser = await storage.query<User>('users', { email });
+  console.log(`[Auth] signup dup_check: domain=${safeLogDomain(email)} query_email_raw="${email}" found=${existingUser.length}`);
   if (existingUser.length > 0) {
     throw new Error('Email already registered');
   }
@@ -89,6 +90,7 @@ export async function signup(email: string, password: string): Promise<{ user: U
     updatedAt: new Date().toISOString(),
   };
 
+  console.log(`[Auth] signup preparing write: domain=${safeLogDomain(email)} email_normalization=${email === email.toLowerCase() ? 'already_lower' : 'raw_to_lower'} userId=${user.id}`);
   await storage.set('users', user.id, user);
 
   const adapterName = getStorageAdapter().constructor.name;
@@ -120,16 +122,19 @@ function safeLogDomain(email: string): string {
 async function lookupUserByEmail(email: string, source: string): Promise<{ user: User | undefined; source: string }> {
   const normalizedEmail = email.toLowerCase();
   const adapterName = getStorageAdapter().constructor.name;
+  const emailChanged = normalizedEmail !== email;
+
+  console.log(`[Auth] ${source} lookup_start: adapter=${adapterName} domain=${safeLogDomain(email)} normalized=${normalizedEmail !== email ? 'changed' : 'same'} raw_domain=${safeLogDomain(email)}`);
 
   let users = await storage.query<User>('users', { email: normalizedEmail });
   let lookupSource = `${source}:cache`;
   if (users.length === 0) {
-    console.log(`[Auth] ${source} cache miss for domain ${safeLogDomain(email)}, retrying with fresh fetch`);
+    console.log(`[Auth] ${source} cache miss: domain=${safeLogDomain(email)} total_cached_users=0, retrying with bypassCache=true`);
     users = await storage.query<User>('users', { email: normalizedEmail }, { bypassCache: true });
     lookupSource = `${source}:fresh`;
   }
 
-  console.log(`[Auth] ${source} lookup: adapter=${adapterName} domain=${safeLogDomain(email)} found=${users.length > 0} source=${lookupSource}`);
+  console.log(`[Auth] ${source} lookup_result: adapter=${adapterName} domain=${safeLogDomain(email)} matched=${users.length} source=${lookupSource}`);
 
   return { user: users[0], source: lookupSource };
 }
@@ -139,6 +144,10 @@ export async function validateSignupOTP(email: string, otp: string): Promise<voi
   if (!rateLimit.allowed) {
     throw new Error('Too many verification attempts. Please try again later.');
   }
+
+  const adapterName = getStorageAdapter().constructor.name;
+  const pid = process.pid;
+  console.log(`[Auth] validateOTP ENTER: adapter=${adapterName} domain=${safeLogDomain(email)} pid=${pid}`);
 
   const { user, source } = await lookupUserByEmail(email, 'validateOTP');
 
