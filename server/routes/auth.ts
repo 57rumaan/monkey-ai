@@ -10,23 +10,16 @@ const router = Router();
 router.post('/signup', validateBody(signupSchema), async (req, res) => {
   try {
     const { email, password } = req.validatedBody;
-    const { user, otp } = await signup(email, password);
+    const { otp } = await signup(email, password);
 
-    const tokens = await createTokens(user);
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+    res.json({
+      success: true,
+      data: {
+        requiresVerification: true,
+        email: email.toLowerCase(),
+        otp: process.env.NODE_ENV === 'development' ? otp : undefined,
+      },
     });
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-
-    res.json({ success: true, data: { user: sanitizeUser(user), otp: process.env.NODE_ENV === 'development' ? otp : undefined } });
   } catch (error) {
     res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Signup failed' });
   }

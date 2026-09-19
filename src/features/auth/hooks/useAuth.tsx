@@ -5,7 +5,7 @@ interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<string | undefined>;
+  signup: (email: string, password: string) => Promise<{ requiresVerification: boolean; email: string; otp?: string }>;
   verifySignup: (email: string, otp: string, username: string) => Promise<void>;
   resendOTP: (email: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -67,8 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
     const data = await handleResponse(response);
-    setUser(data.user);
-    return data.otp;
+    setUser(null);
+    return data;
   };
 
   const verifySignup = async (email: string, otp: string, username: string) => {

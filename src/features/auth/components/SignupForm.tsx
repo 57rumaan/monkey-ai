@@ -73,9 +73,9 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      const otp = await signup(data.email, data.password);
+      const result = await signup(data.email, data.password);
       showToast('Account created! Please verify your email.', { variant: 'success' });
-      onSuccess(data.email, otp);
+      onSuccess(result.email, result.otp);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Signup failed';
       if (message.toLowerCase().includes('already') || message.toLowerCase().includes('exists')) {

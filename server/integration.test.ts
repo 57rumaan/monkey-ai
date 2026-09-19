@@ -75,7 +75,8 @@ describe('Auth Routes', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data.user.email).toBe('signup1@test.com');
+    expect(res.body.data.requiresVerification).toBe(true);
+    expect(res.body.data.email).toBe('signup1@test.com');
     expect(res.body.data.otp).toMatch(/^\d{6}$/);
   });
 
