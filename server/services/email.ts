@@ -1,82 +1,51 @@
-export interface EmailConfig {
-  host: string;
-  port: number;
-  secure: boolean;
-  auth: {
-    user: string;
-    pass: string;
-  };
-  from: string;
-}
+import { Resend } from 'resend';
 
-export interface EmailService {
-  send(to: string, subject: string, html: string, text?: string): Promise<void>;
-  sendOTP(email: string, otp: string, type: 'signup' | 'reset' | 'verify'): Promise<void>;
-}
+let resendClient: Resend | null = null;
 
-function getEmailConfig(): EmailConfig | null {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM || 'noreply@monkey-ai.com';
-
-  if (!host || !user || !pass) {
+function getResendClient(): Resend | null {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
     return null;
   }
-
-  return {
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-    from,
-  };
+  if (!resendClient) {
+    resendClient = new Resend(apiKey);
+  }
+  return resendClient;
 }
 
-let emailTransporter: any = null;
-
-async function getTransporter() {
-  if (emailTransporter) return emailTransporter;
-
-  const config = getEmailConfig();
-  if (!config) {
-    return null;
-  }
-
-  try {
-    const nodemailer = await import('nodemailer');
-    emailTransporter = nodemailer.createTransport({
-      host: config.host,
-      port: config.port,
-      secure: config.secure,
-      auth: config.auth,
-    });
-    await emailTransporter.verify();
-    return emailTransporter;
-  } catch (error) {
-    console.error('Failed to create email transporter:', error);
-    return null;
-  }
+export function isEmailConfigured(): boolean {
+  return !!process.env.RESEND_API_KEY && !!process.env.EMAIL_FROM;
 }
 
 export async function sendEmail(to: string, subject: string, html: string, text?: string): Promise<void> {
-  const transporter = await getTransporter();
-  if (!transporter) {
-    console.warn('Email service not configured, skipping email to:', to);
+  const client = getResendClient();
+  if (!client) {
+    console.warn('[Email] Resend not configured, skipping email to:', to);
     return;
   }
 
-  const config = getEmailConfig();
-  if (!config) return;
+  const from = process.env.EMAIL_FROM!;
 
-  await transporter.sendMail({
-    from: config.from,
-    to,
-    subject,
-    html,
-    text: text || html.replace(/<[^>]*>/g, ''),
-  });
+  try {
+    const result = await client.emails.send({
+      from,
+      to: [to],
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, ''),
+    });
+
+    if (result.error) {
+      console.error('[Email] Resend API error:', result.error.message || 'Unknown error');
+      throw new Error('Failed to send email');
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Failed to send email') {
+      throw error;
+    }
+    console.error('[Email] Unexpected error sending email:', error instanceof Error ? error.message : 'Unknown error');
+    throw new Error('Failed to send email');
+  }
 }
 
 export async function sendOTPEmail(email: string, otp: string, type: 'signup' | 'reset' | 'verify'): Promise<void> {
@@ -122,8 +91,4 @@ MONKEY AI - Professional AI Assistant
   `;
 
   await sendEmail(email, subjects[type], html, text);
-}
-
-export function isEmailConfigured(): boolean {
-  return getEmailConfig() !== null;
 }
