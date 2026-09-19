@@ -79,6 +79,7 @@ export class JsonBinStorageAdapter implements StorageAdapter {
     const root = { ...await this.fetchBin(false) };
     root[collection] = data;
     await this.writeBin(root);
+    console.log(`[JsonBin] setCollection OK: ${collection} entries=${Object.keys(data).length}`);
   }
 
   async get<T>(collection: string, id: string): Promise<T | null> {
@@ -97,6 +98,8 @@ export class JsonBinStorageAdapter implements StorageAdapter {
       const col = await this.getCollection(collection);
       col[id] = data;
       await this.setCollection(collection, col);
+      const userCount = collection === 'users' ? Object.keys(col).length : undefined;
+      console.log(`[JsonBin] set OK: ${collection}/${id} users_count=${userCount ?? 'n/a'} cache_age=${Date.now() - this.lastFetchAt}ms`);
     } catch (e) {
       this.cache = null;
       console.error(`[JsonBin] set(${collection}/${id}) failed:`, e);
@@ -127,10 +130,16 @@ export class JsonBinStorageAdapter implements StorageAdapter {
   }
 
   async query<T>(collection: string, filter: Partial<T>, options?: { bypassCache?: boolean }): Promise<T[]> {
-    const all = await this.list<T>(collection, options?.bypassCache === true);
-    return all.filter(item => {
+    const bypass = options?.bypassCache === true;
+    const all = await this.list<T>(collection, bypass);
+    const filtered = all.filter(item => {
       return Object.entries(filter).every(([key, value]) => (item as any)[key] === value);
     });
+    if (collection === 'users') {
+      const filterKeys = Object.keys(filter);
+      console.log(`[JsonBin] query users: filter_keys=${filterKeys.join(',')} bypass=${bypass} total=${all.length} matched=${filtered.length}`);
+    }
+    return filtered;
   }
 
   async getPaginated<T>(

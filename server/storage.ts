@@ -159,6 +159,10 @@ export function getStorageAdapter(): StorageAdapter {
   return activeAdapter;
 }
 
+export function getStorageAdapterName(): string {
+  return activeAdapter.constructor.name;
+}
+
 export const storage: StorageAdapter = {
   get: (collection, id) => activeAdapter.get(collection, id),
   set: (collection, id, data) => activeAdapter.set(collection, id, data),

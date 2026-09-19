@@ -301,6 +301,64 @@ describe('JSONBin Cache Lookup After Signup', () => {
       expect(validateRes.status).toBe(200);
     });
   });
+
+  describe('15. Storage set then query round-trip', () => {
+    it('should find user via validate-otp immediately after signup', async () => {
+      const signupRes = await signupUser('roundtrip-immediate@test.com', password);
+      expect(signupRes.status).toBe(200);
+      const otp = signupRes.body.data.otp;
+
+      const validateRes = await request(app)
+        .post('/api/auth/validate-otp')
+        .send({ email: 'roundtrip-immediate@test.com', otp });
+
+      expect(validateRes.status).toBe(200);
+      expect(validateRes.body.data.valid).toBe(true);
+    });
+
+    it('should find user with lowercased email via validate-otp', async () => {
+      const signupRes = await signupUser('CaseSensitive@TEST.com', password);
+      expect(signupRes.status).toBe(200);
+      const otp = signupRes.body.data.otp;
+
+      const validateRes = await request(app)
+        .post('/api/auth/validate-otp')
+        .send({ email: 'casesensitive@test.com', otp });
+
+      expect(validateRes.status).toBe(200);
+      expect(validateRes.body.data.valid).toBe(true);
+    });
+  });
+
+  describe('16. Direct storage adapter round-trip', () => {
+    it('should find user via storage.query immediately after storage.set', async () => {
+      const { storage: storageProxy } = await import('../server/storage.js');
+      const testId = 'direct-test-' + Date.now();
+      const testUser = {
+        id: testId,
+        email: 'direct-storage-test@test.com',
+        username: '',
+        passwordHash: 'fakehash',
+        role: 'user',
+        emailVerified: false,
+        otpHash: 'fakeotp',
+        otpExpiresAt: new Date(Date.now() + 600000).toISOString(),
+        otpAttempts: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      await storageProxy.set('users', testId, testUser);
+
+      const found = await storageProxy.query('users', { email: 'direct-storage-test@test.com' });
+      expect(found.length).toBe(1);
+      expect(found[0].id).toBe(testId);
+
+      const foundBypass = await storageProxy.query('users', { email: 'direct-storage-test@test.com' }, { bypassCache: true });
+      expect(foundBypass.length).toBe(1);
+      expect(foundBypass[0].id).toBe(testId);
+    });
+  });
 });
 
 describe('Input Validation', () => {

@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { storage } from '../storage.js';
+import { storage, getStorageAdapter } from '../storage.js';
 import type { User, JwtPayload, AuthTokens } from '../types.js';
 import { hashPassword, verifyPassword, generateOTP, hashOTP, verifyOTP, generateId, isEmailValid, isUsernameValid, isPasswordStrong, authRateLimiter, otpRateLimiter, OTP_EXPIRY_MINUTES } from '../lib/auth/serverUtils.js';
 import { sendOTPEmail, isEmailConfigured } from '../services/email.js';
@@ -91,6 +91,9 @@ export async function signup(email: string, password: string): Promise<{ user: U
 
   await storage.set('users', user.id, user);
 
+  const adapterName = getStorageAdapter().constructor.name;
+  console.log(`[Auth] signup write: domain=${safeLogDomain(email)} userId=${user.id} adapter=${adapterName}`);
+
   if (isEmailConfigured()) {
     const emailResult = await sendOTPEmail(email, otp, 'signup');
     if (!emailResult.sent) {
@@ -116,6 +119,7 @@ function safeLogDomain(email: string): string {
 
 async function lookupUserByEmail(email: string, source: string): Promise<{ user: User | undefined; source: string }> {
   const normalizedEmail = email.toLowerCase();
+  const adapterName = getStorageAdapter().constructor.name;
 
   let users = await storage.query<User>('users', { email: normalizedEmail });
   let lookupSource = `${source}:cache`;
@@ -125,7 +129,7 @@ async function lookupUserByEmail(email: string, source: string): Promise<{ user:
     lookupSource = `${source}:fresh`;
   }
 
-  console.log(`[Auth] ${source} lookup: domain=${safeLogDomain(email)} found=${users.length > 0} source=${lookupSource}`);
+  console.log(`[Auth] ${source} lookup: adapter=${adapterName} domain=${safeLogDomain(email)} found=${users.length > 0} source=${lookupSource}`);
 
   return { user: users[0], source: lookupSource };
 }
@@ -139,7 +143,8 @@ export async function validateSignupOTP(email: string, otp: string): Promise<voi
   const { user, source } = await lookupUserByEmail(email, 'validateOTP');
 
   if (!user) {
-    console.log(`[Auth] validateOTP: user not found after ${source}`);
+    const adapterName = getStorageAdapter().constructor.name;
+    console.log(`[Auth] validateOTP FAIL: adapter=${adapterName} domain=${safeLogDomain(email)} user not found after ${source}`);
     throw new Error('User not found');
   }
 

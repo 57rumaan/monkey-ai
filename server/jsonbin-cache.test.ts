@@ -21,7 +21,7 @@ afterEach(() => {
 });
 
 describe('JsonBinStorageAdapter cache bypass', () => {
-  it('set user → new adapter instance → query with bypassCache finds the user', async () => {
+  it('set user -> new adapter instance -> query with bypassCache finds the user', async () => {
     const storedData: Record<string, any> = {};
 
     const mockFetch = async (url: string, init?: RequestInit) => {
@@ -133,5 +133,181 @@ describe('JsonBinStorageAdapter cache bypass', () => {
 
     const result = await adapter.query('users', { email: 'x@test.com' });
     expect(result).toHaveLength(1);
+  });
+});
+
+describe('JSONBin eventual consistency simulation', () => {
+  it('PUT succeeds but fresh GET returns empty server data — user not found via bypassCache', async () => {
+    let putCount = 0;
+
+    const mockFetch = async (_url: string, init?: RequestInit) => {
+      const method = init?.method || 'GET';
+      if (method === 'PUT') {
+        putCount++;
+        return new Response(JSON.stringify({}), { status: 200 });
+      }
+      return new Response(JSON.stringify(makeFakeBinRecord({})), { status: 200 });
+    };
+    fetchSpy.mockImplementation(mockFetch);
+
+    const adapter = new JsonBinStorageAdapter({
+      apiKey: FAKE_API_KEY,
+      binId: FAKE_BIN_ID,
+    });
+
+    const user = { id: 'usr_stale', email: 'stale@test.com', username: '' };
+    await adapter.set('users', user.id, user);
+
+    const foundInCache = await adapter.query('users', { email: 'stale@test.com' });
+    expect(foundInCache).toHaveLength(1);
+
+    adapter.invalidateCache();
+
+    const foundAfterBypass = await adapter.query('users', { email: 'stale@test.com' }, { bypassCache: true });
+    expect(foundAfterBypass).toHaveLength(0);
+
+    expect(putCount).toBe(1);
+  });
+
+  it('within same adapter, cache reflects write and cache lookup finds user', async () => {
+    const serverData: Record<string, any> = {};
+
+    const mockFetch = async (_url: string, init?: RequestInit) => {
+      const method = init?.method || 'GET';
+      if (method === 'PUT') {
+        const body = JSON.parse(init!.body as string);
+        Object.assign(serverData, body);
+        return new Response(JSON.stringify({}), { status: 200 });
+      }
+      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
+    };
+    fetchSpy.mockImplementation(mockFetch);
+
+    const adapter = new JsonBinStorageAdapter({
+      apiKey: FAKE_API_KEY,
+      binId: FAKE_BIN_ID,
+    });
+
+    const user = { id: 'usr_ok', email: 'ok@test.com', username: '' };
+    await adapter.set('users', user.id, user);
+
+    const found = await adapter.query('users', { email: 'ok@test.com' });
+    expect(found).toHaveLength(1);
+  });
+});
+
+describe('JsonBin concurrent write race condition', () => {
+  // SKIPPED: These tests PROVE the race condition exists.
+  // They fail because the bug is not yet fixed. Un-skip after implementing the fix.
+  it.skip('concurrent set() on empty collection — both users should be preserved', async () => {
+    const serverData: Record<string, any> = {};
+
+    const mockFetch = async (_url: string, init?: RequestInit) => {
+      const method = init?.method || 'GET';
+      if (method === 'PUT') {
+        const body = JSON.parse(init!.body as string);
+        Object.assign(serverData, body);
+        return new Response(JSON.stringify({}), { status: 200 });
+      }
+      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
+    };
+    fetchSpy.mockImplementation(mockFetch);
+
+    const adapter = new JsonBinStorageAdapter({
+      apiKey: FAKE_API_KEY,
+      binId: FAKE_BIN_ID,
+    });
+
+    const userA = { id: 'usr_A', email: 'a@test.com', username: '' };
+    const userB = { id: 'usr_B', email: 'b@test.com', username: '' };
+
+    await Promise.all([
+      adapter.set('users', userA.id, userA),
+      adapter.set('users', userB.id, userB),
+    ]);
+
+    const finalResult = await adapter.query('users', {}, { bypassCache: true });
+    const userIds = finalResult.map((u: any) => u.id).sort();
+    expect(userIds).toEqual(['usr_A', 'usr_B']);
+  });
+
+  it.skip('staggered concurrent set() — second write MUST include first user', async () => {
+    let resolveFirstPut: (() => void) | null = null;
+    const firstPutDone = new Promise<void>(r => { resolveFirstPut = r; });
+
+    let putCount = 0;
+
+    const mockFetch = async (_url: string, init?: RequestInit) => {
+      const method = init?.method || 'GET';
+      if (method === 'PUT') {
+        putCount++;
+        const body = JSON.parse(init!.body as string);
+        if (putCount === 1 && resolveFirstPut) {
+          resolveFirstPut();
+          resolveFirstPut = null;
+        }
+        return new Response(JSON.stringify({}), { status: 200 });
+      }
+      return new Response(JSON.stringify(makeFakeBinRecord({})), { status: 200 });
+    };
+    fetchSpy.mockImplementation(mockFetch);
+
+    const adapter = new JsonBinStorageAdapter({
+      apiKey: FAKE_API_KEY,
+      binId: FAKE_BIN_ID,
+    });
+
+    const userA = { id: 'usr_A', email: 'a@test.com', username: '' };
+    const userB = { id: 'usr_B', email: 'b@test.com', username: '' };
+
+    const writeA = adapter.set('users', userA.id, userA);
+    await firstPutDone;
+
+    const writeB = adapter.set('users', userB.id, userB);
+    await Promise.all([writeA, writeB]);
+
+    const finalResult = await adapter.query('users', {}, { bypassCache: true });
+    const userIds = finalResult.map((u: any) => u.id).sort();
+    expect(userIds).toEqual(['usr_A', 'usr_B']);
+  });
+
+  it.skip('staggered set() with server-side state tracking', async () => {
+    let resolveFirstPut: (() => void) | null = null;
+    const firstPutDone = new Promise<void>(r => { resolveFirstPut = r; });
+
+    const serverData: Record<string, any> = {};
+
+    const mockFetch = async (_url: string, init?: RequestInit) => {
+      const method = init?.method || 'GET';
+      if (method === 'PUT') {
+        const body = JSON.parse(init!.body as string);
+        Object.assign(serverData, body);
+        if (resolveFirstPut) {
+          resolveFirstPut();
+          resolveFirstPut = null;
+        }
+        return new Response(JSON.stringify({}), { status: 200 });
+      }
+      return new Response(JSON.stringify(makeFakeBinRecord(serverData)), { status: 200 });
+    };
+    fetchSpy.mockImplementation(mockFetch);
+
+    const adapter = new JsonBinStorageAdapter({
+      apiKey: FAKE_API_KEY,
+      binId: FAKE_BIN_ID,
+    });
+
+    const userA = { id: 'usr_A', email: 'a@test.com', username: '' };
+    const userB = { id: 'usr_B', email: 'b@test.com', username: '' };
+
+    const writeA = adapter.set('users', userA.id, userA);
+    await firstPutDone;
+
+    const writeB = adapter.set('users', userB.id, userB);
+    await Promise.all([writeA, writeB]);
+
+    const finalResult = await adapter.query('users', {}, { bypassCache: true });
+    const userIds = finalResult.map((u: any) => u.id).sort();
+    expect(userIds).toEqual(['usr_A', 'usr_B']);
   });
 });
