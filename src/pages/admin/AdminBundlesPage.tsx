@@ -208,9 +208,12 @@ export function AdminBundlesPage() {
             <h1 className="text-heading-xl font-bold text-content-primary">Model Bundles</h1>
             <p className="text-body text-content-tertiary mt-1">Create and manage user-facing AI product bundles</p>
           </div>
-          <Button onClick={() => setIsCreatingBundle(true)}>
-            <Plus className="h-4 w-4 mr-2" /> Create Bundle
-          </Button>
+          <div className="flex items-center gap-3">
+            <Badge variant="neutral">{bundles.length} bundles</Badge>
+            <Button onClick={() => setIsCreatingBundle(true)}>
+              <Plus className="h-4 w-4 mr-2" /> Create Bundle
+            </Button>
+          </div>
         </div>
 
         {bundlesLoading ? (

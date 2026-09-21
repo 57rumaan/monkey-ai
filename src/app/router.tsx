@@ -15,6 +15,8 @@ const AdminBundlesPage = lazy(() => import('@/pages/admin/AdminBundlesPage').the
 const AdminCapabilitiesPage = lazy(() => import('@/pages/admin/AdminCapabilitiesPage').then(m => ({ default: m.AdminCapabilitiesPage })));
 const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
 const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
+const AdminChatsPage = lazy(() => import('@/pages/admin/AdminChatsPage').then(m => ({ default: m.AdminChatsPage })));
+const AdminUsagePage = lazy(() => import('@/pages/admin/AdminUsagePage').then(m => ({ default: m.AdminUsagePage })));
 
 function PageSpinner() {
   return (
@@ -87,6 +89,8 @@ export function AppRouter() {
           <Route path="/admin/bundles" element={<Suspense fallback={<PageSpinner />}><AdminBundlesPage /></Suspense>} />
           <Route path="/admin/capabilities" element={<Suspense fallback={<PageSpinner />}><AdminCapabilitiesPage /></Suspense>} />
           <Route path="/admin/users" element={<Suspense fallback={<PageSpinner />}><AdminUsersPage /></Suspense>} />
+          <Route path="/admin/chats" element={<Suspense fallback={<PageSpinner />}><AdminChatsPage /></Suspense>} />
+          <Route path="/admin/usage" element={<Suspense fallback={<PageSpinner />}><AdminUsagePage /></Suspense>} />
           <Route path="/admin/settings" element={<Suspense fallback={<PageSpinner />}><AdminSettingsPage /></Suspense>} />
         </Route>
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, MoreVertical, Shield, User, Trash2, Edit, Users } from 'lucide-react';
+import { Search, MoreVertical, Shield, User, Trash2, Edit, Users, AlertCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/Toast';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { formatRelativeTime } from '@/lib/utils';
 
 const userSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters').max(30, 'Username must be at most 30 characters').regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, underscore, and hyphen'),
@@ -62,7 +63,7 @@ export function AdminUsersPage() {
   const [search, setSearch] = useState('');
   const [editingUser, setEditingUser] = useState<User | null>(null);
 
-  const { data: users = [], isLoading } = useQuery({ queryKey: ['admin-users'], queryFn: fetchUsers });
+  const { data: users = [], isLoading, error } = useQuery({ queryKey: ['admin-users'], queryFn: fetchUsers });
 
   const filteredUsers = users.filter(u =>
     u.username.toLowerCase().includes(search.toLowerCase()) ||
@@ -89,6 +90,9 @@ export function AdminUsersPage() {
             <h1 className="text-heading-xl font-bold text-content-primary">Users</h1>
             <p className="text-body text-content-tertiary mt-1">Manage user accounts and roles</p>
           </div>
+          <div className="flex items-center gap-2">
+            <Badge variant="neutral">{users.length} users</Badge>
+          </div>
         </div>
 
         <Card>
@@ -108,7 +112,16 @@ export function AdminUsersPage() {
         {isLoading ? (
           <Card>
             <CardContent className="h-64 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-4 border-brand-500 border-t-transparent" />
+              <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+            </CardContent>
+          </Card>
+        ) : error ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <AlertCircle className="h-10 w-10 text-state-error mx-auto mb-3" />
+              <h3 className="text-heading-md font-medium text-content-primary mb-1">Failed to load users</h3>
+              <p className="text-body-sm text-content-tertiary mb-4">{error instanceof Error ? error.message : 'An error occurred'}</p>
+              <Button variant="secondary" onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-users'] })}>Retry</Button>
             </CardContent>
           </Card>
         ) : filteredUsers.length === 0 ? (
@@ -144,7 +157,7 @@ export function AdminUsersPage() {
                     <tr key={user.id} className="border-b border-border-default last:border-b-0 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-400 text-body-sm font-semibold flex-shrink-0">
+                          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-body-sm font-semibold flex-shrink-0">
                             {user.username[0].toUpperCase()}
                           </div>
                           <div className="min-w-0">
@@ -160,7 +173,7 @@ export function AdminUsersPage() {
                       <td className="px-4 py-3 hidden md:table-cell">
                         <Badge variant={user.emailVerified ? 'success' : 'warning'}>{user.emailVerified ? 'Verified' : 'Pending'}</Badge>
                       </td>
-                      <td className="px-4 py-3 text-body-sm text-content-tertiary hidden lg:table-cell">{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-body-sm text-content-tertiary hidden lg:table-cell">{formatRelativeTime(user.createdAt)}</td>
                       <td className="px-4 py-3 text-right">
                         <Dropdown
                           trigger={<Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>}

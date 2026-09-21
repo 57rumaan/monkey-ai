@@ -45,7 +45,7 @@ router.post('/send', requireAuth(), validateBody(chatSendSchema), async (req, re
     await storage.set('messages', userMessage.id, userMessage);
 
     try {
-      const response = await routeEngine.executeRoute({
+      const route = await routeEngine.resolveRoute({
         bundleId,
         capability: capability as CapabilityType,
         messages,
@@ -54,6 +54,19 @@ router.post('/send', requireAuth(), validateBody(chatSendSchema), async (req, re
         userId: user.userId,
       });
 
+      const { adapter, rawModel } = route;
+      const rules = rawModel.rules;
+      const execOptions = {
+        temperature: rules.temperature ?? 0.7,
+        maxTokens: rules.maxTokens ?? 2048,
+        systemPrompt: rules.systemPrompt,
+        ...options,
+      };
+
+      const startTime = Date.now();
+      const response = await adapter.chat(messages, rawModel, execOptions);
+      const latencyMs = Date.now() - startTime;
+
       const assistantMessage: Message = {
         id: generateId('msg_'),
         chatId: resolvedChatId,
@@ -61,8 +74,15 @@ router.post('/send', requireAuth(), validateBody(chatSendSchema), async (req, re
         content: response,
         capability,
         metadata: {
-          modelUsed: req.body.modelUsed,
-          providerUsed: req.body.providerUsed,
+          modelUsed: rawModel.customName,
+          providerUsed: route.provider.label,
+          tokensUsed: adapter.lastUsage?.totalTokens,
+          usage: adapter.lastUsage ? {
+            promptTokens: adapter.lastUsage.promptTokens,
+            completionTokens: adapter.lastUsage.completionTokens,
+            totalTokens: adapter.lastUsage.totalTokens,
+          } : undefined,
+          latencyMs,
         },
         createdAt: new Date().toISOString(),
       };
@@ -160,7 +180,7 @@ router.post('/stream', requireAuth(), validateBody(chatSendSchema), async (req, 
       userId: user.userId,
     });
 
-    const { adapter, rawModel, bundleCapability } = route;
+    const { adapter, rawModel } = route;
     const rules = rawModel.rules;
     const execOptions = {
       temperature: rules.temperature ?? 0.7,
@@ -172,6 +192,7 @@ router.post('/stream', requireAuth(), validateBody(chatSendSchema), async (req, 
     let fullResponse = '';
     let hasError = false;
 
+    const startTime = Date.now();
     try {
       if ('chatStream' in adapter && typeof adapter.chatStream === 'function') {
         for await (const chunk of adapter.chatStream(messages, rawModel, execOptions)) {
@@ -188,6 +209,7 @@ router.post('/stream', requireAuth(), validateBody(chatSendSchema), async (req, 
       const errorMsg = error instanceof Error ? error.message : 'Generation failed';
       res.write(`data: ${JSON.stringify({ error: errorMsg })}\n\n`);
     }
+    const latencyMs = Date.now() - startTime;
 
     const assistantMessage: Message = {
       id: generateId('msg_'),
@@ -204,6 +226,7 @@ router.post('/stream', requireAuth(), validateBody(chatSendSchema), async (req, 
           completionTokens: adapter.lastUsage.completionTokens,
           totalTokens: adapter.lastUsage.totalTokens,
         } : undefined,
+        latencyMs,
         error: hasError ? (fullResponse || 'Generation failed') : undefined,
       },
       createdAt: new Date().toISOString(),

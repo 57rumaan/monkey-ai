@@ -16,8 +16,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 px-4 py-12 sm:px-6 lg:px-8">
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-brand-100/40 dark:bg-brand-900/20 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-brand-50/60 dark:bg-brand-950/30 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-brand-100/30 dark:bg-brand-900/15 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-brand-50/40 dark:bg-brand-950/20 blur-3xl" />
       </div>
 
       <div
@@ -28,10 +28,10 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         `}
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-600 text-white font-bold text-xl mb-5 shadow-lg shadow-brand-600/25 transition-transform hover:scale-105">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand-600 text-white font-bold text-lg mb-4 shadow-lg shadow-brand-600/20">
             M
           </div>
-          <h1 className="text-heading-lg font-bold text-brand-600 dark:text-brand-400 tracking-tight">
+          <h1 className="text-heading-lg font-bold text-content-primary tracking-tight">
             MONKEY AI
           </h1>
           <h2 className="text-heading-md font-semibold text-content-primary mt-4">{title}</h2>
@@ -42,7 +42,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           )}
         </div>
 
-        <div className="card p-6 sm:p-8 shadow-elevation-3 dark:shadow-elevation-4">
+        <div className="bg-white dark:bg-surface-900 rounded-xl border border-border-default shadow-elevation-3 p-6 sm:p-8">
           {children}
         </div>
 

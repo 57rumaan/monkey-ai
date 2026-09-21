@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { SidebarNavItem, SidebarSection } from '@/components/layout/Sidebar';
@@ -11,6 +11,7 @@ import { useBundles } from '@/features/bundles/hooks/useBundles';
 export function Layout() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data: bundles = [] } = useBundles();
 
@@ -21,22 +22,22 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-surface-50 dark:bg-surface-950 flex">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
-        <nav className="space-y-6">
+        <nav className="space-y-1">
           <SidebarSection>
             <SidebarNavItem
               label="New Chat"
-              icon={<Plus className="h-5 w-5" />}
+              icon={<Plus className="h-4 w-4" />}
               active={isChat}
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             />
             <SidebarNavItem
               label="Search"
-              icon={<Search className="h-5 w-5" />}
+              icon={<Search className="h-4 w-4" />}
               onClick={() => {}}
             />
             <SidebarNavItem
               label="History"
-              icon={<History className="h-5 w-5" />}
+              icon={<History className="h-4 w-4" />}
               onClick={() => {}}
             />
           </SidebarSection>
@@ -45,33 +46,33 @@ export function Layout() {
             <SidebarSection title="Admin">
               <SidebarNavItem
                 label="Dashboard"
-                icon={<SidebarIcon className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin'}
+                icon={<SidebarIcon className="h-4 w-4" />}
+                onClick={() => navigate('/admin')}
               />
               <SidebarNavItem
                 label="Providers"
-                icon={<Cpu className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/providers'}
+                icon={<Cpu className="h-4 w-4" />}
+                onClick={() => navigate('/admin/providers')}
               />
               <SidebarNavItem
                 label="Bundles"
-                icon={<Box className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/bundles'}
+                icon={<Box className="h-4 w-4" />}
+                onClick={() => navigate('/admin/bundles')}
               />
               <SidebarNavItem
                 label="Capabilities"
-                icon={<Layers className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/capabilities'}
+                icon={<Layers className="h-4 w-4" />}
+                onClick={() => navigate('/admin/capabilities')}
               />
               <SidebarNavItem
                 label="Users"
-                icon={<Users className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/users'}
+                icon={<Users className="h-4 w-4" />}
+                onClick={() => navigate('/admin/users')}
               />
               <SidebarNavItem
                 label="Settings"
-                icon={<Settings className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/settings'}
+                icon={<Settings className="h-4 w-4" />}
+                onClick={() => navigate('/admin/settings')}
               />
             </SidebarSection>
           )}
@@ -79,9 +80,9 @@ export function Layout() {
           <SidebarSection title="Account">
             <SidebarNavItem
               label="Settings"
-              icon={<Settings className="h-5 w-5" />}
+              icon={<Settings className="h-4 w-4" />}
               active={isSettings}
-              onClick={() => window.location.href = '/settings'}
+              onClick={() => navigate('/settings')}
             />
           </SidebarSection>
         </nav>
@@ -91,7 +92,7 @@ export function Layout() {
         <Header onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 overflow-hidden">
           {isChat && (
-            <div className="border-b border-border-default px-4 py-3 bg-white/50 dark:bg-surface-950/50 backdrop-blur-sm">
+            <div className="border-b border-border-default px-4 py-2.5 bg-white/50 dark:bg-surface-950/50 backdrop-blur-sm">
               <ModelSelector
                 bundles={bundles}
                 selectedBundleId={localStorage.getItem('selectedBundleId') || bundles[0]?.id || ''}

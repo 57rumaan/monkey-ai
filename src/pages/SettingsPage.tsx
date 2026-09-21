@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useToast } from '@/components/ui/Toast';
+import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 const profileSchema = z.object({
@@ -66,18 +67,12 @@ function ToggleSwitch({ checked, onChange, disabled }: ToggleSwitchProps) {
 export function SettingsPage() {
   const { user, updateProfile, changePassword } = useAuth();
   const { showToast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'preferences'>('profile');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('darkMode');
-      if (stored !== null) return stored === 'true';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const darkMode = theme === 'dark';
 
   const [emailNotifications, setEmailNotifications] = useState(() => {
     const stored = localStorage.getItem('emailNotifications');
@@ -89,17 +84,8 @@ export function SettingsPage() {
     return stored !== null ? stored === 'true' : false;
   });
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', String(darkMode));
-  }, [darkMode]);
-
   const handleToggleDarkMode = (checked: boolean) => {
-    setDarkMode(checked);
+    setTheme(checked ? 'dark' : 'light');
     showToast(checked ? 'Dark mode enabled' : 'Light mode enabled', { variant: 'success', duration: 2000 });
   };
 
@@ -169,7 +155,7 @@ export function SettingsPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2.5 text-body font-medium rounded-lg transition-all',
+              'flex items-center gap-2 px-4 py-2.5 text-body-sm font-medium rounded-lg transition-all',
               activeTab === tab.id
                 ? 'bg-white dark:bg-surface-700 text-content-primary shadow-sm'
                 : 'text-content-tertiary hover:text-content-secondary'
@@ -197,7 +183,7 @@ export function SettingsPage() {
               <div>
                 <label htmlFor="username" className="label">Username</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary" />
                   <Input
                     id="username"
                     className="pl-10"
@@ -212,7 +198,7 @@ export function SettingsPage() {
               <div>
                 <label htmlFor="email" className="label">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary" />
                   <Input
                     id="email"
                     type="email"
@@ -250,7 +236,7 @@ export function SettingsPage() {
               <div>
                 <label htmlFor="currentPassword" className="label">Current Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary" />
                   <Input
                     id="currentPassword"
                     type="password"
@@ -267,7 +253,7 @@ export function SettingsPage() {
                 <div>
                   <label htmlFor="newPassword" className="label">New Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary" />
                     <Input
                       id="newPassword"
                       type="password"
@@ -283,7 +269,7 @@ export function SettingsPage() {
                 <div>
                   <label htmlFor="confirmPassword" className="label">Confirm New Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary" />
                     <Input
                       id="confirmPassword"
                       type="password"

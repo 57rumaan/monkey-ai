@@ -63,8 +63,8 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-surface-900 border border-border-default',
-          'hover:border-border-strong focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none',
+          'flex items-center gap-3 w-full px-3.5 py-2 rounded-xl bg-white dark:bg-surface-900 border border-border-default',
+          'hover:border-border-strong focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none',
           'text-left transition-all duration-200 shadow-sm'
         )}
         aria-haspopup="listbox"
@@ -88,7 +88,7 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
           ref={dropdownRef}
           className={cn(
             'absolute top-full left-0 right-0 mt-1.5 z-50',
-            'bg-white dark:bg-surface-900 rounded-xl border border-border-default shadow-lg',
+            'bg-white dark:bg-surface-900 rounded-xl border border-border-default shadow-elevation-3',
             'max-h-80 overflow-y-auto overflow-x-hidden'
           )}
           role="listbox"
@@ -110,7 +110,7 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
               >
                 <div className="flex items-start gap-3">
                   <div className={cn(
-                    'h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold',
+                    'h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 text-[10px] font-bold',
                     bundle.tier === 'pro' && 'bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300',
                     bundle.tier === 'enterprise' && 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
                     bundle.tier === 'free' && 'bg-surface-100 text-content-secondary dark:bg-surface-800 dark:text-content-secondary'
@@ -133,14 +133,14 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
                       {bundle.capabilities.slice(0, 6).map(cap => (
                         <span
                           key={cap.capabilityId}
-                          className="inline-flex items-center gap-1 h-6 px-1.5 rounded-md bg-surface-50 dark:bg-surface-800 text-content-tertiary border border-border-default text-xs"
+                          className="inline-flex items-center gap-1 h-5 px-1.5 rounded bg-surface-50 dark:bg-surface-800 text-content-tertiary border border-border-default text-[10px]"
                           title={getCapabilityLabel(cap.capabilityId)}
                         >
                           {capabilityIcons[cap.capabilityId]}
                         </span>
                       ))}
                       {bundle.capabilities.length > 6 && (
-                        <span className="text-xs text-content-tertiary px-1.5 py-0.5 rounded bg-surface-50 dark:bg-surface-800 border border-border-default">
+                        <span className="text-[10px] text-content-tertiary px-1.5 py-0.5 rounded bg-surface-50 dark:bg-surface-800 border border-border-default">
                           +{bundle.capabilities.length - 6}
                         </span>
                       )}
