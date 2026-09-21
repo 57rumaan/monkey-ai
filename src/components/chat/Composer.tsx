@@ -102,7 +102,7 @@ export function Composer({ onSend, disabled, placeholder = 'Message MONKEY AI...
           'relative rounded-2xl border transition-all duration-200',
           'bg-white dark:bg-surface-900',
           isFocused
-            ? 'border-brand-400 dark:border-brand-500 shadow-elevation-2'
+            ? 'border-brand-400 dark:border-brand-500 shadow-elevation-2 ring-1 ring-brand-400/20 dark:ring-brand-500/20'
             : 'border-border-default shadow-elevation-1 hover:border-border-strong'
         )}
       >
@@ -111,7 +111,7 @@ export function Composer({ onSend, disabled, placeholder = 'Message MONKEY AI...
             {attachments.map(att => (
               <div
                 key={att.id}
-                className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-lg bg-surface-50 dark:bg-surface-800 border border-border-default text-sm"
+                className="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-lg bg-surface-50 dark:bg-surface-800 border border-border-default text-sm group"
               >
                 {att.type === 'image' && <Image className="h-4 w-4 text-content-tertiary flex-shrink-0" />}
                 {att.type === 'document' && <FileText className="h-4 w-4 text-content-tertiary flex-shrink-0" />}
@@ -179,7 +179,7 @@ export function Composer({ onSend, disabled, placeholder = 'Message MONKEY AI...
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={disabled}
-            className="flex-1 min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent focus:ring-0 focus-visible:ring-0 p-2 text-sm leading-relaxed"
+            className="flex-1 min-h-[44px] max-h-[200px] resize-none border-0 bg-transparent focus:ring-0 focus-visible:ring-0 p-2 text-sm leading-relaxed placeholder:text-content-tertiary/70"
             aria-label="Message input"
             rows={1}
           />
@@ -191,7 +191,7 @@ export function Composer({ onSend, disabled, placeholder = 'Message MONKEY AI...
             className={cn(
               'flex-shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-xl transition-all duration-200',
               canSend && !disabled
-                ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/20'
+                ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/20 active:scale-95'
                 : 'bg-surface-100 dark:bg-surface-800 text-content-tertiary cursor-not-allowed'
             )}
           >

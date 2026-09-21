@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Sparkles, Code, Image, FileText, Calculator, Calendar, Zap, Video, Mic2, Plus, MessageSquare, ChevronDown, Search, X as XIcon, Pencil, Check, AlertCircle, Download, Pin, FolderPlus, Folder, FolderOpen, GitBranch } from 'lucide-react';
+import { Loader2, Sparkles, Code, Image, FileText, Calculator, Calendar, Zap, Video, Mic2, Plus, MessageSquare, ChevronDown, Search, X as XIcon, Pencil, Check, AlertCircle, Download, Pin, FolderPlus, Folder, FolderOpen, GitBranch, PenTool, BarChart3, BookOpen, RefreshCw, Send } from 'lucide-react';
 import { MessageList } from '@/components/chat/MessageList';
 import { Composer } from '@/components/chat/Composer';
 import { ModelSelector } from '@/components/chat/ModelSelector';
@@ -514,25 +514,33 @@ export function ChatPage() {
 
           <div className="flex-1 flex flex-col min-w-0">
             {chat.streamError && !chat.isStreaming && (
-              <div className="mx-4 mt-3 flex items-center gap-2 px-3 py-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50">
-                <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 flex-shrink-0" />
-                <p className="text-sm text-red-700 dark:text-red-300 flex-1">{chat.streamError}</p>
-                {chat.failedStream && (
+              <div className="mx-4 md:mx-8 mt-3 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200/80 dark:border-red-800/40">
+                <div className="h-8 w-8 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-red-800 dark:text-red-200">Something went wrong</p>
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-0.5 truncate">{chat.streamError}</p>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  {chat.failedStream && (
+                    <button
+                      type="button"
+                      onClick={() => chat.handleRetry('')}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-900/50 hover:bg-red-200 dark:hover:bg-red-800/50 transition-colors"
+                    >
+                      <RefreshCw className="h-3 w-3" />
+                      Retry
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => chat.handleRetry('')}
-                    className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
+                    onClick={() => chat.setStreamError(null)}
+                    className="p-1.5 rounded-lg text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
                   >
-                    Retry
+                    <XIcon className="h-3.5 w-3.5" />
                   </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => chat.setStreamError(null)}
-                  className="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300"
-                >
-                  <XIcon className="h-3.5 w-3.5" />
-                </button>
+                </div>
               </div>
             )}
 
@@ -550,25 +558,81 @@ export function ChatPage() {
                 onCopy={(content) => navigator.clipboard.writeText(content)}
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center p-8">
-                <div className="text-center max-w-lg">
-                  <div className="h-20 w-20 rounded-2xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center mx-auto mb-6">
-                    <Sparkles className="h-10 w-10 text-brand-600 dark:text-brand-400" />
+              <div className="flex-1 flex items-center justify-center p-6 sm:p-8">
+                <div className="text-center max-w-2xl w-full">
+                  <div className="relative mx-auto mb-8 w-fit">
+                    <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                      <svg className="h-8 w-8 sm:h-10 sm:w-10 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.24c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                      </svg>
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-brand-100 dark:bg-brand-800 flex items-center justify-center">
+                      <Sparkles className="h-3 w-3 text-brand-600 dark:text-brand-300" />
+                    </div>
                   </div>
-                  <h2 className="text-heading-lg font-semibold text-content-primary mb-2">Welcome to MONKEY AI</h2>
-                  <p className="text-body text-content-tertiary mb-6">
-                    Select a model and capability above, then start a conversation.
+                  <h2 className="text-heading-xl font-bold text-content-primary mb-2 tracking-tight">
+                    How can I help you today?
+                  </h2>
+                  <p className="text-body text-content-tertiary mb-8 max-w-md mx-auto leading-relaxed">
+                    I can help with writing, analysis, coding, math, and much more. Start a conversation or try one of these suggestions.
                   </p>
+
                   {chat.availableCapabilities.length > 0 && (
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {chat.availableCapabilities.filter(c => !UNSUPPORTED_CAPABILITIES.has(c)).map(cap => (
-                        <span key={cap} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-100 dark:bg-surface-800 text-body-sm text-content-secondary border border-border-default">
-                          {capabilityIcons[cap]}
-                          {CAPABILITY_LABELS[cap] || cap.replace(/_/g, ' ')}
-                        </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto mb-6">
+                      {[
+                        { icon: PenTool, label: 'Creative writing', prompt: 'Help me write a creative short story about a journey through space' },
+                        { icon: Code, label: 'Code assistance', prompt: 'Explain how async/await works in JavaScript with examples' },
+                        { icon: BarChart3, label: 'Data analysis', prompt: 'Help me analyze and visualize this dataset to find trends' },
+                        { icon: BookOpen, label: 'Research', prompt: 'Summarize the key concepts of machine learning for a beginner' },
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => {
+                            if (chat.selectedChatId) return;
+                            chat.handleNewChat();
+                            setTimeout(() => {
+                              const textarea = document.querySelector('textarea[aria-label="Message input"]') as HTMLTextAreaElement;
+                              if (textarea) {
+                                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')?.set;
+                                if (nativeInputValueSetter) {
+                                  nativeInputValueSetter.call(textarea, item.prompt);
+                                  textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                                }
+                              }
+                            }, 100);
+                          }}
+                          className={cn(
+                            'group flex items-center gap-3 p-3 sm:p-4 rounded-xl text-left transition-all duration-200',
+                            'bg-white dark:bg-surface-900 border border-border-default',
+                            'hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-md hover:shadow-brand-500/5',
+                            'active:scale-[0.98]'
+                          )}
+                        >
+                          <div className={cn(
+                            'h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors',
+                            'bg-surface-50 dark:bg-surface-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-950/50'
+                          )}>
+                            <item.icon className="h-5 w-5 text-content-tertiary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-body-sm font-medium text-content-primary">{item.label}</p>
+                            <p className="text-body-xs text-content-tertiary truncate mt-0.5">{item.prompt.slice(0, 50)}...</p>
+                          </div>
+                          <Send className="h-4 w-4 text-content-tertiary group-hover:text-brand-500 transition-colors flex-shrink-0" />
+                        </button>
                       ))}
                     </div>
                   )}
+
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {chat.availableCapabilities.filter(c => !UNSUPPORTED_CAPABILITIES.has(c)).slice(0, 6).map(cap => (
+                      <span key={cap} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-50 dark:bg-surface-800/50 text-body-xs text-content-tertiary border border-border-default/50">
+                        {capabilityIcons[cap]}
+                        {CAPABILITY_LABELS[cap] || cap.replace(/_/g, ' ')}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}

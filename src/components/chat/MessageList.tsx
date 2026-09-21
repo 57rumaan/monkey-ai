@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { cn, formatRelativeTime } from '@/lib/utils';
 import { RefreshCw, Copy, Check, Paperclip, FileText, Image as ImageIcon, Pencil, Trash2, X, Save, ChevronUp, Loader2, GitBranch, SmilePlus, ThumbsUp, ThumbsDown, Heart, Laugh, Frown } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
@@ -25,6 +25,37 @@ interface MessageBubbleProps {
   onToggleReaction?: (messageId: string, emoji: string) => void;
 }
 
+function parseMarkdown(content: string): string {
+  let result = content;
+
+  result = result.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="prose-code"><code class="language-$1">$2</code></pre>');
+  result = result.replace(/`([^`]+)`/g, '<code class="prose-inline-code">$1</code>');
+  result = result.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  result = result.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  result = result.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  result = result.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  result = result.replace(/~~(.+?)~~/g, '<del>$1</del>');
+
+  result = result.replace(/^- (.+)$/gm, '<li>$1</li>');
+  result = result.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+  result = result.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+  result = result.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  result = result.replace(/((?:<blockquote>.*<\/blockquote>\n?)+)/g, (match) => {
+    return match.replace(/<\/blockquote>\n?<blockquote>/g, '<br/>');
+  });
+
+  result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="prose-link">$1</a>');
+
+  result = result.replace(/^(?!<[hublod]|<\/|<li|<strong|<em|<del|<a|<code|<pre)(.+)$/gm, (match) => {
+    if (match.trim() === '') return '';
+    return `<p>${match}</p>`;
+  });
+
+  return result;
+}
+
 export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, reactions = [], onToggleReaction }: MessageBubbleProps) {
   const { showToast } = useToast();
   const [copied, setCopied] = useState(false);
@@ -37,6 +68,11 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
 
   const isUser = message.role === 'user';
   const isError = !!message.metadata?.error;
+
+  const parsedContent = useMemo(() => {
+    if (isUser) return null;
+    return parseMarkdown(message.content);
+  }, [message.content, isUser]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -113,9 +149,9 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
   }, {});
 
   return (
-    <div className={cn('group flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300', isUser && 'flex-row-reverse')}>
+    <div className={cn('group flex gap-3 px-4 md:px-0', isUser && 'flex-row-reverse')}>
       {isUser ? (
-        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-brand-600 flex items-center justify-center">
+        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-sm">
           <span className="text-xs font-semibold text-white">You</span>
         </div>
       ) : (
@@ -126,20 +162,20 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
         </div>
       )}
 
-      <div className={cn('flex-1 min-w-0', isUser ? 'flex flex-col items-end' : '')}>
+      <div className={cn('flex-1 min-w-0', isUser ? 'flex flex-col items-end' : 'max-w-3xl')}>
         {isUser && (
           <span className="text-[11px] font-medium text-content-tertiary mb-1 mr-1">You</span>
         )}
         <div
           className={cn(
-            'relative rounded-2xl px-4 py-2.5 max-w-[80%]',
+            'relative rounded-2xl px-4 py-3',
             isUser
-              ? 'bg-brand-600 text-white rounded-br-md'
-              : 'bg-surface-100 dark:bg-surface-800 text-content-primary border border-border-default rounded-bl-md'
+              ? 'bg-brand-600 text-white rounded-br-md max-w-[85%]'
+              : 'bg-surface-50 dark:bg-surface-800/50 text-content-primary border border-border-default/50 rounded-bl-md'
           )}
         >
           {message.attachments?.length ? (
-            <div className="mb-2 flex flex-wrap gap-2">
+            <div className="mb-2.5 flex flex-wrap gap-2">
               {message.attachments.map(att => (
                 <AttachmentPreview key={att.id} attachment={att} />
               ))}
@@ -186,19 +222,20 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                 'text-[14px] leading-relaxed',
                 isUser ? 'text-white' : 'prose-chat prose-chat-sm'
               )}
+              dangerouslySetInnerHTML={isUser ? undefined : { __html: parsedContent || '' }}
             >
-              {message.content}
+              {isUser ? message.content : undefined}
             </div>
           )}
           {isError && (
-            <div className="mt-2 p-2 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm border border-red-200 dark:border-red-800/50">
+            <div className="mt-2.5 p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm border border-red-200 dark:border-red-800/50">
               {message.metadata?.error}
             </div>
           )}
         </div>
 
         {Object.keys(groupedReactions).length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1 px-1">
+          <div className="flex flex-wrap gap-1 mt-1.5 px-1">
             {Object.entries(groupedReactions).map(([emoji, items]) => (
               <button
                 key={emoji}
@@ -218,7 +255,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
           </div>
         )}
 
-        <div className={cn('flex items-center gap-1 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200', isUser && 'flex-row-reverse')}>
+        <div className={cn('flex items-center gap-0.5 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200', isUser && 'flex-row-reverse')}>
           {!isUser && (
             <>
               <button
@@ -276,13 +313,13 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                   <SmilePlus className="h-3.5 w-3.5" />
                 </button>
                 {showReactionPicker && (
-                  <div className="absolute bottom-full left-0 mb-1 z-50 bg-white dark:bg-surface-900 rounded-lg border border-border-default shadow-lg py-1.5 px-1 flex gap-0.5">
+                  <div className="absolute bottom-full left-0 mb-1 z-50 bg-white dark:bg-surface-900 rounded-xl border border-border-default shadow-elevation-3 py-1.5 px-1.5 flex gap-0.5">
                     {REACTION_EMOJIS.map(({ id, label }) => (
                       <button
                         key={id}
                         type="button"
                         onClick={() => { onToggleReaction?.(message.id, id); setShowReactionPicker(false); }}
-                        className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-100 dark:hover:bg-surface-800 text-lg transition-colors"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 text-lg transition-colors"
                         title={label}
                       >
                         {id}
@@ -352,7 +389,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
               Cancel
             </button>
           )}
-          <span className="text-[11px] text-content-tertiary select-none">{formatRelativeTime(message.createdAt)}</span>
+          <span className="text-[11px] text-content-tertiary select-none ml-1">{formatRelativeTime(message.createdAt)}</span>
         </div>
       </div>
     </div>
@@ -365,8 +402,8 @@ function AttachmentPreview({ attachment }: { attachment: Attachment }) {
   if (isImage) {
     return (
       <div className="relative rounded-xl overflow-hidden border border-border-default bg-surface-50 dark:bg-surface-800">
-        <img src={attachment.url} alt={attachment.name} className="h-28 w-auto object-cover" />
-        <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-gradient-to-t from-black/60 to-transparent text-white text-xs truncate">
+        <img src={attachment.url} alt={attachment.name} className="h-32 w-auto object-cover" />
+        <div className="absolute bottom-0 left-0 right-0 px-2.5 py-1.5 bg-gradient-to-t from-black/60 to-transparent text-white text-xs truncate">
           {attachment.name}
         </div>
       </div>
@@ -383,7 +420,7 @@ function AttachmentPreview({ attachment }: { attachment: Attachment }) {
 
   return (
     <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-border-default bg-surface-50 dark:bg-surface-800/50">
-      <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-content-tertiary">
+      <div className="flex-shrink-0 h-9 w-9 rounded-lg bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-content-tertiary">
         {iconMap[attachment.type] || <Paperclip className="h-4 w-4" />}
       </div>
       <div className="flex-1 min-w-0">
@@ -497,7 +534,7 @@ export function MessageList({ messages, isLoading, isLoadingOlder, hasOlderMessa
     return (
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="flex flex-col items-center text-center max-w-md">
-          <div className="h-16 w-16 rounded-2xl bg-brand-50 dark:bg-brand-950/50 flex items-center justify-center mb-5 border border-brand-100 dark:border-brand-900/50">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-brand-500/10 to-brand-700/10 dark:from-brand-500/20 dark:to-brand-700/20 flex items-center justify-center mb-5 border border-brand-100 dark:border-brand-800/50">
             <svg className="h-8 w-8 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.24c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
             </svg>
@@ -553,14 +590,14 @@ export function MessageList({ messages, isLoading, isLoadingOlder, hasOlderMessa
         />
       ))}
       {isLoading && (
-        <div className="flex gap-3 animate-in fade-in duration-300">
+        <div className="flex gap-3 px-4 md:px-0 animate-in fade-in duration-300">
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-surface-100 dark:bg-surface-800 border border-border-default flex items-center justify-center">
             <svg className="h-4 w-4 text-brand-600 dark:text-brand-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.24c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
             </svg>
           </div>
-          <div className="flex-1 pt-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-surface-100 dark:bg-surface-800 border border-border-default rounded-bl-md">
+          <div className="flex-1 max-w-3xl pt-1">
+            <div className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-surface-50 dark:bg-surface-800/50 border border-border-default/50 rounded-bl-md">
               <span className="h-1.5 w-1.5 rounded-full bg-brand-400 animate-bounce [animation-delay:0ms]" />
               <span className="h-1.5 w-1.5 rounded-full bg-brand-400 animate-bounce [animation-delay:150ms]" />
               <span className="h-1.5 w-1.5 rounded-full bg-brand-400 animate-bounce [animation-delay:300ms]" />
