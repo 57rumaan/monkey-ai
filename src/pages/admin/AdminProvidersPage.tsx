@@ -196,9 +196,12 @@ export function AdminProvidersPage() {
             <h1 className="text-heading-xl font-bold text-content-primary">Providers & Raw Models</h1>
             <p className="text-body text-content-tertiary mt-1">Manage AI providers and their raw models</p>
           </div>
-          <Button onClick={() => setIsCreatingProvider(true)}>
-            <Plus className="h-4 w-4 mr-2" /> Add Provider
-          </Button>
+          <div className="flex items-center gap-3">
+            <Badge variant="neutral">{providers.length} providers</Badge>
+            <Button onClick={() => setIsCreatingProvider(true)}>
+              <Plus className="h-4 w-4 mr-2" /> Add Provider
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (

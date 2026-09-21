@@ -5,6 +5,13 @@ import { Badge } from '@/components/ui/Badge';
 import { formatRelativeTime } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
+interface AuditLog {
+  id: string;
+  action: string;
+  details?: string;
+  createdAt: string;
+}
+
 async function fetchStats() {
   const response = await fetch('/api/admin/stats', { credentials: 'include' });
   const data = await response.json();
@@ -24,16 +31,16 @@ export function AdminDashboardPage() {
   const { data: activity = [] } = useQuery({ queryKey: ['admin-activity'], queryFn: fetchRecentActivity });
 
   const statCards = [
-    { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300', ring: 'ring-blue-500/20' },
-    { label: 'Providers', value: stats?.providers || 0, icon: Server, color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300', ring: 'ring-emerald-500/20' },
-    { label: 'Bundles', value: stats?.bundles || 0, icon: Box, color: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300', ring: 'ring-purple-500/20' },
-    { label: 'Chats', value: stats?.chats || 0, icon: MessageSquare, color: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300', ring: 'ring-orange-500/20' },
+    { label: 'Total Users', value: stats?.users || 0, icon: Users, iconBg: 'bg-blue-100 dark:bg-blue-900', iconColor: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Providers', value: stats?.providers || 0, icon: Server, iconBg: 'bg-emerald-100 dark:bg-emerald-900', iconColor: 'text-emerald-600 dark:text-emerald-400' },
+    { label: 'Bundles', value: stats?.bundles || 0, icon: Box, iconBg: 'bg-violet-100 dark:bg-violet-900', iconColor: 'text-violet-600 dark:text-violet-400' },
+    { label: 'Chats', value: stats?.chats || 0, icon: MessageSquare, iconBg: 'bg-amber-100 dark:bg-amber-900', iconColor: 'text-amber-600 dark:text-amber-400' },
   ];
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
               <CardContent className="h-28">
@@ -62,12 +69,12 @@ export function AdminDashboardPage() {
         <p className="text-body text-content-tertiary mt-1">Overview of your MONKEY AI instance</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {statCards.map(({ label, value, icon: Icon, color, ring }) => (
-          <Card key={label}>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {statCards.map(({ label, value, icon: Icon, iconBg, iconColor }) => (
+          <Card key={label} className="hover:shadow-elevation-2 transition-shadow">
             <CardContent className="flex items-center gap-4 py-5">
-              <div className={cn('h-12 w-12 rounded-xl flex items-center justify-center ring-1', color, ring)}>
-                <Icon className="h-6 w-6" />
+              <div className={cn('h-12 w-12 rounded-xl flex items-center justify-center', iconBg)}>
+                <Icon className={cn('h-6 w-6', iconColor)} />
               </div>
               <div>
                 <p className="text-2xl font-bold text-content-primary tracking-tight">{value.toLocaleString()}</p>
@@ -95,7 +102,7 @@ export function AdminDashboardPage() {
               </div>
             ) : (
               <div className="space-y-1">
-                {activity.map((log: any) => (
+                {activity.map((log: AuditLog) => (
                   <div key={log.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
                     <div className="h-8 w-8 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center flex-shrink-0">
                       <TrendingUp className="h-4 w-4 text-brand-600 dark:text-brand-400" />

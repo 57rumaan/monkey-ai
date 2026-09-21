@@ -2,15 +2,16 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { CAPABILITY_CATEGORIES, getCapabilitiesByCategory, type CapabilityDefinition } from '@/lib/capabilities/registry';
 import { cn } from '@/lib/utils';
+import { Sparkles, Code, Image, Video, Mic, FileText, Zap } from 'lucide-react';
 
-const categoryIcons: Record<string, string> = {
-  text: 'T',
-  image: 'I',
-  video: 'V',
-  audio: 'A',
-  document: 'D',
-  utility: 'U',
-  custom: 'C',
+const categoryIcons: Record<string, React.ReactNode> = {
+  text: <Sparkles className="h-4 w-4" />,
+  image: <Image className="h-4 w-4" />,
+  video: <Video className="h-4 w-4" />,
+  audio: <Mic className="h-4 w-4" />,
+  document: <FileText className="h-4 w-4" />,
+  utility: <Zap className="h-4 w-4" />,
+  custom: <Code className="h-4 w-4" />,
 };
 
 const categoryColors: Record<string, string> = {
@@ -19,16 +20,18 @@ const categoryColors: Record<string, string> = {
   video: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
   audio: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
   document: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900 dark:text-cyan-300',
-  utility: 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300',
+  utility: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
   custom: 'bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300',
 };
 
 function CapabilityCard({ cap }: { cap: CapabilityDefinition }) {
   return (
-    <div className="p-4 rounded-lg border border-border-default bg-surface-50 dark:bg-surface-800/50 hover:border-brand-300 dark:hover:border-brand-700 transition-colors">
+    <div className="p-4 rounded-xl border border-border-default bg-white dark:bg-surface-900 hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-sm transition-all">
       <div className="flex items-start gap-3">
-        <div className="h-10 w-10 rounded-xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center flex-shrink-0">
-          <span className="text-brand-600 dark:text-brand-400 text-lg">{cap.icon}</span>
+        <div className="h-10 w-10 rounded-lg bg-brand-50 dark:bg-brand-950/50 flex items-center justify-center flex-shrink-0">
+          <span className="text-brand-600 dark:text-brand-400">
+            {categoryIcons[cap.category] || <Sparkles className="h-4 w-4" />}
+          </span>
         </div>
         <div className="flex-1 min-w-0">
           <h4 className="text-body font-medium text-content-primary">{cap.label}</h4>
@@ -64,11 +67,16 @@ function CapabilityCard({ cap }: { cap: CapabilityDefinition }) {
 }
 
 export function AdminCapabilitiesPage() {
+  const totalCapabilities = CAPABILITY_CATEGORIES.reduce((acc, cat) => acc + getCapabilitiesByCategory(cat.id).length, 0);
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-heading-xl font-bold text-content-primary">Capabilities Registry</h1>
-        <p className="text-body text-content-tertiary mt-1">Centralized registry of all available AI capabilities</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-heading-xl font-bold text-content-primary">Capabilities Registry</h1>
+          <p className="text-body text-content-tertiary mt-1">Centralized registry of all available AI capabilities</p>
+        </div>
+        <Badge variant="neutral">{totalCapabilities} capabilities</Badge>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -80,8 +88,8 @@ export function AdminCapabilitiesPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={cn('h-8 w-8 rounded-lg flex items-center justify-center text-body-sm font-bold', categoryColors[category.id] || 'bg-surface-100 text-content-secondary')}>
-                      {categoryIcons[category.id] || '?'}
+                    <div className={cn('h-8 w-8 rounded-lg flex items-center justify-center', categoryColors[category.id] || 'bg-surface-100 text-content-secondary')}>
+                      {categoryIcons[category.id]}
                     </div>
                     <span className="text-heading-md font-semibold text-content-primary">{category.label}</span>
                   </div>
