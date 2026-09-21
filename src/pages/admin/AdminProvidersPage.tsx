@@ -28,6 +28,9 @@ const modelSchema = z.object({
     maxTokens: z.number().optional(),
     temperature: z.number().optional(),
     topP: z.number().optional(),
+    frequencyPenalty: z.number().optional(),
+    presencePenalty: z.number().optional(),
+    stopSequences: z.array(z.string()).optional(),
     systemPrompt: z.string().optional(),
   }).optional(),
 });
@@ -462,7 +465,20 @@ function ModelFormModal({ model, onClose, onSubmit, isLoading }: { providerId: s
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<ModelFormData>({
     resolver: zodResolver(modelSchema) as any,
     defaultValues: model
-      ? { customName: model.customName, capabilities: model.capabilities, enabled: model.enabled, rules: model.rules as ModelFormData['rules'] }
+      ? {
+          customName: model.customName,
+          capabilities: model.capabilities,
+          enabled: model.enabled,
+          rules: {
+            maxTokens: (model.rules as Record<string, unknown>)?.maxTokens as number | undefined,
+            temperature: (model.rules as Record<string, unknown>)?.temperature as number | undefined,
+            topP: (model.rules as Record<string, unknown>)?.topP as number | undefined,
+            frequencyPenalty: (model.rules as Record<string, unknown>)?.frequencyPenalty as number | undefined,
+            presencePenalty: (model.rules as Record<string, unknown>)?.presencePenalty as number | undefined,
+            stopSequences: (model.rules as Record<string, unknown>)?.stopSequences as string[] | undefined,
+            systemPrompt: (model.rules as Record<string, unknown>)?.systemPrompt as string | undefined,
+          },
+        }
       : { customName: '', capabilities: [], enabled: true, rules: {} },
   });
 
@@ -514,6 +530,22 @@ function ModelFormModal({ model, onClose, onSubmit, isLoading }: { providerId: s
               <Input label="Max Tokens" type="number" placeholder="2048" {...register('rules.maxTokens', { valueAsNumber: true })} />
               <Input label="Temperature" type="number" step="0.1" min="0" max="2" placeholder="0.7" {...register('rules.temperature', { valueAsNumber: true })} />
               <Input label="Top P" type="number" step="0.1" min="0" max="1" placeholder="0.9" {...register('rules.topP', { valueAsNumber: true })} />
+              <Input label="Frequency Penalty" type="number" step="0.1" min="-2" max="2" placeholder="0" {...register('rules.frequencyPenalty', { valueAsNumber: true })} />
+              <Input label="Presence Penalty" type="number" step="0.1" min="-2" max="2" placeholder="0" {...register('rules.presencePenalty', { valueAsNumber: true })} />
+              <div>
+                <label className="block text-body-sm font-medium text-content-primary mb-1.5">Stop Sequences</label>
+                <textarea
+                  rows={3}
+                  placeholder="Enter one stop sequence per line"
+                  className="w-full rounded-lg border bg-white text-content-primary placeholder:text-content-tertiary transition-all duration-fast hover:border-border-strong focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none disabled:bg-surface-100 disabled:text-content-disabled disabled:cursor-not-allowed dark:bg-surface-900 dark:border-border-default dark:hover:border-border-strong dark:focus:border-brand-400 dark:focus:ring-brand-400/15 px-4 py-2.5 text-body"
+                  value={((watch('rules.stopSequences') as string[] | undefined) || []).join('\n')}
+                  onChange={(e) => {
+                    const lines = e.target.value.split('\n').filter(l => l.trim());
+                    setValue('rules.stopSequences', lines.length > 0 ? lines : undefined, { shouldValidate: true });
+                  }}
+                />
+                <p className="mt-1.5 text-body-sm text-content-tertiary">Separate multiple stop sequences with newlines</p>
+              </div>
               <Input label="System Prompt" placeholder="Optional system prompt" {...register('rules.systemPrompt')} />
             </div>
           </details>

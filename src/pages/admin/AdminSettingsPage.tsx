@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQuery } from '@tanstack/react-query';
 import { Save, Shield, Database, Mail, Globe } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -28,6 +29,13 @@ const settingsSchema = z.object({
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
+
+async function fetchSettings(): Promise<Partial<SettingsFormData>> {
+  const response = await fetch('/api/admin/settings', { credentials: 'include' });
+  const result = await response.json();
+  if (!result.success) throw new Error(result.error || 'Failed to fetch settings');
+  return result.data || {};
+}
 
 async function updateSettings(data: Partial<SettingsFormData>) {
   const response = await fetch('/api/admin/settings', {
@@ -72,6 +80,11 @@ export function AdminSettingsPage() {
   const { showToast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
+  const { data: savedSettings, isLoading: isLoadingSettings } = useQuery({
+    queryKey: ['admin-settings'],
+    queryFn: fetchSettings,
+  });
+
   const {
     register,
     handleSubmit,
@@ -96,6 +109,27 @@ export function AdminSettingsPage() {
     },
   });
 
+  useEffect(() => {
+    if (savedSettings) {
+      reset({
+        appName: savedSettings.appName || 'MONKEY AI',
+        appDescription: savedSettings.appDescription || '',
+        maintenanceMode: savedSettings.maintenanceMode ?? false,
+        allowSignup: savedSettings.allowSignup ?? true,
+        defaultBundleId: savedSettings.defaultBundleId || '',
+        smtpHost: savedSettings.smtpHost || '',
+        smtpPort: savedSettings.smtpPort || 587,
+        smtpUser: savedSettings.smtpUser || '',
+        smtpFrom: savedSettings.smtpFrom || '',
+        smtpPass: '',
+        rateLimitAuth: savedSettings.rateLimitAuth || 5,
+        rateLimitApi: savedSettings.rateLimitApi || 60,
+        sessionDurationDays: savedSettings.sessionDurationDays || 7,
+        refreshTokenDurationDays: savedSettings.refreshTokenDurationDays || 30,
+      });
+    }
+  }, [savedSettings, reset]);
+
   const maintenanceMode = watch('maintenanceMode');
   const allowSignup = watch('allowSignup');
 
@@ -110,6 +144,26 @@ export function AdminSettingsPage() {
       setIsSaving(false);
     }
   };
+
+  if (isLoadingSettings) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-heading-xl font-bold text-content-primary">Settings</h1>
+          <p className="text-body text-content-tertiary mt-1">Configure application settings and behavior</p>
+        </div>
+        <div className="space-y-6">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="h-48">
+                <div className="h-full rounded-lg bg-surface-100 dark:bg-surface-800 animate-pulse" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -220,7 +274,28 @@ export function AdminSettingsPage() {
         </Card>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-border-default">
-          <Button type="button" variant="secondary" onClick={() => reset()}>Reset</Button>
+          <Button type="button" variant="secondary" onClick={() => {
+            if (savedSettings) {
+              reset({
+                appName: savedSettings.appName || 'MONKEY AI',
+                appDescription: savedSettings.appDescription || '',
+                maintenanceMode: savedSettings.maintenanceMode ?? false,
+                allowSignup: savedSettings.allowSignup ?? true,
+                defaultBundleId: savedSettings.defaultBundleId || '',
+                smtpHost: savedSettings.smtpHost || '',
+                smtpPort: savedSettings.smtpPort || 587,
+                smtpUser: savedSettings.smtpUser || '',
+                smtpFrom: savedSettings.smtpFrom || '',
+                smtpPass: '',
+                rateLimitAuth: savedSettings.rateLimitAuth || 5,
+                rateLimitApi: savedSettings.rateLimitApi || 60,
+                sessionDurationDays: savedSettings.sessionDurationDays || 7,
+                refreshTokenDurationDays: savedSettings.refreshTokenDurationDays || 30,
+              });
+            } else {
+              reset();
+            }
+          }}>Reset</Button>
           <Button type="submit" loading={isSaving} className="min-w-[140px]">
             <Save className="h-4 w-4 mr-2" /> Save Settings
           </Button>

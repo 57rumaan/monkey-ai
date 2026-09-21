@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { SidebarNavItem, SidebarSection } from '@/components/layout/Sidebar';
-import { LayoutDashboard, Server, Box, Layers, Users, Settings } from 'lucide-react';
+import { LayoutDashboard, Server, Box, Layers, Users, MessageSquare, BarChart3, Settings } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useState } from 'react';
 
@@ -18,6 +18,8 @@ export function AdminLayout() {
     { path: '/admin/bundles', label: 'Model Bundles', icon: Box },
     { path: '/admin/capabilities', label: 'Capabilities', icon: Layers },
     { path: '/admin/users', label: 'Users', icon: Users },
+    { path: '/admin/chats', label: 'Chats', icon: MessageSquare },
+    { path: '/admin/usage', label: 'Usage', icon: BarChart3 },
     { path: '/admin/settings', label: 'Settings', icon: Settings },
   ];
 
