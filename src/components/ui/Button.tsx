@@ -13,8 +13,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-elevation-1 hover:shadow-elevation-2 active:shadow-elevation-1',
-      secondary: 'bg-white text-content-primary border border-border-default hover:bg-surface-50 active:bg-surface-100 dark:bg-surface-800 dark:border-border-default dark:hover:bg-surface-700 dark:active:bg-surface-600',
-      ghost: 'bg-transparent text-content-secondary hover:bg-surface-100 active:bg-surface-200 dark:hover:bg-surface-800 dark:active:bg-surface-700',
+      secondary: 'bg-white text-content-primary border border-border-default hover:border-border-strong hover:bg-surface-50 active:bg-surface-100 dark:bg-surface-800 dark:border-border-default dark:hover:border-border-strong dark:hover:bg-surface-700 dark:active:bg-surface-600 shadow-elevation-1',
+      ghost: 'bg-transparent text-content-secondary hover:bg-surface-100 hover:text-content-primary active:bg-surface-200 dark:hover:bg-surface-800 dark:hover:text-content-primary dark:active:bg-surface-700',
       danger: 'bg-state-error text-white hover:bg-red-600 active:bg-red-700 shadow-elevation-1 hover:shadow-elevation-2 active:shadow-elevation-1',
     };
 

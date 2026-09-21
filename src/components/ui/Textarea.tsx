@@ -32,13 +32,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={id}
           className={cn(
-            'w-full rounded-lg border bg-white text-content-primary placeholder:text-content-tertiary transition-colors duration-fast resize-y min-h-[80px]',
+            'w-full rounded-lg border bg-white text-content-primary placeholder:text-content-tertiary transition-all duration-fast resize-y min-h-[80px]',
             'hover:border-border-strong',
-            'focus:border-brand-500 focus:outline-2 focus:outline-brand-500/20 focus:outline-offset-0',
+            'focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none',
             'disabled:bg-surface-100 disabled:text-content-disabled disabled:cursor-not-allowed',
-            'dark:bg-surface-900 dark:border-border-default dark:hover:border-border-strong dark:focus:border-brand-400 dark:focus:outline-brand-400/20',
+            'dark:bg-surface-900 dark:border-border-default dark:hover:border-border-strong dark:focus:border-brand-400 dark:focus:ring-brand-400/15',
             sizes[size],
-            error && 'border-state-error focus:border-state-error focus:outline-state-error/20',
+            error && 'border-state-error focus:border-state-error focus:ring-state-error/10',
             className
           )}
           aria-invalid={error ? 'true' : 'false'}

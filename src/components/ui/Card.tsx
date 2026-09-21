@@ -21,7 +21,7 @@ export function Card({ children, className, hover, padded }: CardProps) {
 }
 
 export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn('px-6 py-4 border-b border-border-default', className)}>{children}</div>;
+  return <div className={cn('px-6 py-5 border-b border-border-default', className)}>{children}</div>;
 }
 
 export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
@@ -29,5 +29,5 @@ export function CardContent({ children, className }: { children: React.ReactNode
 }
 
 export function CardFooter({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn('px-6 py-4 border-t border-border-default bg-surface-50 dark:bg-surface-950/50', className)}>{children}</div>;
+  return <div className={cn('px-6 py-4 border-t border-border-default bg-surface-50/50 dark:bg-surface-950/30', className)}>{children}</div>;
 }

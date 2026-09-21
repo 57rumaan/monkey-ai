@@ -115,12 +115,12 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
   return (
     <div className={cn('group flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300', isUser && 'flex-row-reverse')}>
       {isUser ? (
-        <div className="flex-shrink-0 h-9 w-9 rounded-full bg-brand-600 dark:bg-brand-500 flex items-center justify-center shadow-sm">
+        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-brand-600 flex items-center justify-center">
           <span className="text-xs font-semibold text-white">You</span>
         </div>
       ) : (
-        <div className="flex-shrink-0 h-9 w-9 rounded-full bg-surface-100 dark:bg-surface-700 border border-border-default flex items-center justify-center shadow-sm">
-          <svg className="h-5 w-5 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-surface-100 dark:bg-surface-800 border border-border-default flex items-center justify-center">
+          <svg className="h-4 w-4 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.24c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
           </svg>
         </div>
@@ -132,7 +132,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
         )}
         <div
           className={cn(
-            'relative rounded-2xl px-4 py-2.5 max-w-[80%] shadow-sm',
+            'relative rounded-2xl px-4 py-2.5 max-w-[80%]',
             isUser
               ? 'bg-brand-600 text-white rounded-br-md'
               : 'bg-surface-100 dark:bg-surface-800 text-content-primary border border-border-default rounded-bl-md'
@@ -156,7 +156,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                   'w-full resize-none rounded-lg px-3 py-2 text-sm leading-relaxed',
                   'bg-white dark:bg-surface-900 text-content-primary',
                   'border border-brand-300 dark:border-brand-700',
-                  'focus:outline-none focus:ring-2 focus:ring-brand-500/30'
+                  'focus:outline-none focus:ring-2 focus:ring-brand-500/20'
                 )}
                 rows={2}
               />
@@ -218,7 +218,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
           </div>
         )}
 
-        <div className={cn('flex items-center gap-1.5 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200', isUser && 'flex-row-reverse')}>
+        <div className={cn('flex items-center gap-1 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200', isUser && 'flex-row-reverse')}>
           {!isUser && (
             <>
               <button
@@ -227,7 +227,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                 aria-label={copied ? 'Copied' : 'Copy message'}
                 className={cn(
                   'inline-flex items-center justify-center h-7 w-7 rounded-md transition-colors',
-                  'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-700'
+                  'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
                 )}
               >
                 {copied ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
@@ -239,7 +239,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                   aria-label="Retry"
                   className={cn(
                     'inline-flex items-center justify-center h-7 w-7 rounded-md transition-colors',
-                    'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-700'
+                    'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
                   )}
                 >
                   <RefreshCw className="h-3.5 w-3.5" />
@@ -252,7 +252,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                   aria-label="Branch from here"
                   className={cn(
                     'inline-flex items-center justify-center h-7 w-7 rounded-md transition-colors',
-                    'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-700'
+                    'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
                   )}
                   title="Create a branch from this message"
                 >
@@ -270,7 +270,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                   aria-label="Add reaction"
                   className={cn(
                     'inline-flex items-center justify-center h-7 w-7 rounded-md transition-colors',
-                    'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-700'
+                    'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
                   )}
                 >
                   <SmilePlus className="h-3.5 w-3.5" />
@@ -323,7 +323,7 @@ export function MessageBubble({ message, onRetry, onEdit, onDelete, onBranch, re
                 aria-label="Edit message"
                 className={cn(
                   'inline-flex items-center justify-center h-7 w-7 rounded-md transition-colors',
-                  'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-700'
+                  'text-content-tertiary hover:text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
                 )}
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -364,7 +364,7 @@ function AttachmentPreview({ attachment }: { attachment: Attachment }) {
 
   if (isImage) {
     return (
-      <div className="relative rounded-xl overflow-hidden border border-border-default bg-surface-50 dark:bg-surface-800 shadow-sm">
+      <div className="relative rounded-xl overflow-hidden border border-border-default bg-surface-50 dark:bg-surface-800">
         <img src={attachment.url} alt={attachment.name} className="h-28 w-auto object-cover" />
         <div className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-gradient-to-t from-black/60 to-transparent text-white text-xs truncate">
           {attachment.name}
@@ -382,7 +382,7 @@ function AttachmentPreview({ attachment }: { attachment: Attachment }) {
   };
 
   return (
-    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-border-default bg-surface-50 dark:bg-surface-800/50 shadow-sm">
+    <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-border-default bg-surface-50 dark:bg-surface-800/50">
       <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-surface-100 dark:bg-surface-700 flex items-center justify-center text-content-tertiary">
         {iconMap[attachment.type] || <Paperclip className="h-4 w-4" />}
       </div>
@@ -554,8 +554,8 @@ export function MessageList({ messages, isLoading, isLoadingOlder, hasOlderMessa
       ))}
       {isLoading && (
         <div className="flex gap-3 animate-in fade-in duration-300">
-          <div className="flex-shrink-0 h-9 w-9 rounded-full bg-surface-100 dark:bg-surface-700 border border-border-default flex items-center justify-center">
-            <svg className="h-5 w-5 text-brand-600 dark:text-brand-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-surface-100 dark:bg-surface-800 border border-border-default flex items-center justify-center">
+            <svg className="h-4 w-4 text-brand-600 dark:text-brand-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.24c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
             </svg>
           </div>

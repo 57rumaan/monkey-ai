@@ -100,10 +100,10 @@ export function Composer({ onSend, disabled, placeholder = 'Message MONKEY AI...
       <div
         className={cn(
           'relative rounded-2xl border transition-all duration-200',
-          'bg-white dark:bg-surface-900 shadow-sm',
+          'bg-white dark:bg-surface-900',
           isFocused
-            ? 'border-brand-400 dark:border-brand-500 shadow-brand-500/10'
-            : 'border-border-default hover:border-border-strong'
+            ? 'border-brand-400 dark:border-brand-500 shadow-elevation-2'
+            : 'border-border-default shadow-elevation-1 hover:border-border-strong'
         )}
       >
         {attachments.length > 0 && (
@@ -191,11 +191,11 @@ export function Composer({ onSend, disabled, placeholder = 'Message MONKEY AI...
             className={cn(
               'flex-shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-xl transition-all duration-200',
               canSend && !disabled
-                ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/25'
+                ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-sm shadow-brand-600/20'
                 : 'bg-surface-100 dark:bg-surface-800 text-content-tertiary cursor-not-allowed'
             )}
           >
-            <ArrowUp className="h-4.5 w-4.5" strokeWidth={2.5} />
+            <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
           </button>
         </div>
 

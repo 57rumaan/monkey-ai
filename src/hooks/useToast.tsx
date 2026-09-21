@@ -51,9 +51,9 @@ function ToastContainer({ toasts, onRemove }: { toasts: ToastItem[]; onRemove: R
 function ToastItem({ toast, onRemove }: { toast: ToastItem; onRemove: React.Dispatch<React.SetStateAction<ToastItem[]>> }) {
   const variants = {
     default: 'bg-white dark:bg-surface-900 border-border-default',
-    success: 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800',
-    error: 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800',
-    warning: 'bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-800',
+    success: 'bg-green-50 dark:bg-green-950/50 border-green-200 dark:border-green-800/50',
+    error: 'bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800/50',
+    warning: 'bg-yellow-50 dark:bg-yellow-950/50 border-yellow-200 dark:border-yellow-800/50',
   };
 
   const icons = {
@@ -64,15 +64,15 @@ function ToastItem({ toast, onRemove }: { toast: ToastItem; onRemove: React.Disp
   };
 
   return (
-    <div className={`flex items-start gap-3 p-4 rounded-lg border shadow-elevation-3 animate-in slide-in-from-bottom ${variants[toast.variant]}`} role="alert">
+    <div className={`flex items-start gap-3 p-4 rounded-xl border shadow-elevation-3 animate-in slide-in-from-bottom ${variants[toast.variant]}`} role="alert">
       <div className="flex-shrink-0 mt-0.5">{icons[toast.variant]}</div>
-      <p className="flex-1 text-body text-content-primary">{toast.message}</p>
+      <p className="flex-1 text-body-sm text-content-primary">{toast.message}</p>
       <button
         onClick={() => onRemove(prev => prev.filter(t => t.id !== toast.id))}
         className="flex-shrink-0 text-content-tertiary hover:text-content-primary"
         aria-label="Dismiss"
       >
-        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
     </div>
   );
