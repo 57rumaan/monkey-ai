@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Menu, Sun, Moon, Bell, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -16,6 +17,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
   ({ onMenuClick, className }, ref) => {
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
+    const navigate = useNavigate();
 
     return (
       <header
@@ -91,7 +93,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
               <p className="text-[13px] font-semibold text-content-primary">{user?.username}</p>
               <p className="text-[12px] text-content-tertiary mt-0.5">{user?.email}</p>
             </div>
-            <DropdownItem icon={<Settings className="h-5 w-5" />} onClick={() => window.location.href = '/settings'}>
+            <DropdownItem icon={<Settings className="h-5 w-5" />} onClick={() => navigate('/settings')}>
               Settings
             </DropdownItem>
             <DropdownDivider />

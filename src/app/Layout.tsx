@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { SidebarNavItem, SidebarSection } from '@/components/layout/Sidebar';
@@ -11,6 +11,7 @@ import { useBundles } from '@/features/bundles/hooks/useBundles';
 export function Layout() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data: bundles = [] } = useBundles();
 
@@ -27,7 +28,7 @@ export function Layout() {
               label="New Chat"
               icon={<Plus className="h-5 w-5" />}
               active={isChat}
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
             />
             <SidebarNavItem
               label="Search"
@@ -46,32 +47,32 @@ export function Layout() {
               <SidebarNavItem
                 label="Dashboard"
                 icon={<SidebarIcon className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin'}
+                onClick={() => navigate('/admin')}
               />
               <SidebarNavItem
                 label="Providers"
                 icon={<Cpu className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/providers'}
+                onClick={() => navigate('/admin/providers')}
               />
               <SidebarNavItem
                 label="Bundles"
                 icon={<Box className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/bundles'}
+                onClick={() => navigate('/admin/bundles')}
               />
               <SidebarNavItem
                 label="Capabilities"
                 icon={<Layers className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/capabilities'}
+                onClick={() => navigate('/admin/capabilities')}
               />
               <SidebarNavItem
                 label="Users"
                 icon={<Users className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/users'}
+                onClick={() => navigate('/admin/users')}
               />
               <SidebarNavItem
                 label="Settings"
                 icon={<Settings className="h-5 w-5" />}
-                onClick={() => window.location.href = '/admin/settings'}
+                onClick={() => navigate('/admin/settings')}
               />
             </SidebarSection>
           )}
@@ -81,7 +82,7 @@ export function Layout() {
               label="Settings"
               icon={<Settings className="h-5 w-5" />}
               active={isSettings}
-              onClick={() => window.location.href = '/settings'}
+              onClick={() => navigate('/settings')}
             />
           </SidebarSection>
         </nav>

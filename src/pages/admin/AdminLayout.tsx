@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { SidebarNavItem, SidebarSection } from '@/components/layout/Sidebar';
@@ -9,7 +9,8 @@ import { useState } from 'react';
 export function AdminLayout() {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = window.location.pathname;
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -33,8 +34,8 @@ export function AdminLayout() {
                 key={item.path}
                 label={item.label}
                 icon={<item.icon className="h-5 w-5" />}
-                active={location === item.path}
-                onClick={() => window.location.href = item.path}
+                active={location.pathname === item.path}
+                onClick={() => navigate(item.path)}
               />
             ))}
           </SidebarSection>

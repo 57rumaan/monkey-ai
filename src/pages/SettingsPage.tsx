@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useToast } from '@/components/ui/Toast';
+import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 const profileSchema = z.object({
@@ -66,18 +67,12 @@ function ToggleSwitch({ checked, onChange, disabled }: ToggleSwitchProps) {
 export function SettingsPage() {
   const { user, updateProfile, changePassword } = useAuth();
   const { showToast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'preferences'>('profile');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('darkMode');
-      if (stored !== null) return stored === 'true';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const darkMode = theme === 'dark';
 
   const [emailNotifications, setEmailNotifications] = useState(() => {
     const stored = localStorage.getItem('emailNotifications');
@@ -89,17 +84,8 @@ export function SettingsPage() {
     return stored !== null ? stored === 'true' : false;
   });
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', String(darkMode));
-  }, [darkMode]);
-
   const handleToggleDarkMode = (checked: boolean) => {
-    setDarkMode(checked);
+    setTheme(checked ? 'dark' : 'light');
     showToast(checked ? 'Dark mode enabled' : 'Light mode enabled', { variant: 'success', duration: 2000 });
   };
 
