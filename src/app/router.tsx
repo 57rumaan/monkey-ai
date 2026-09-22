@@ -2,26 +2,17 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { Layout } from './Layout';
-import { ChatPage } from '@/pages/ChatPage';
 
-const LoginPage = lazy(() => import('@/pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const SignupPage = lazy(() => import('@/pages/SignupPage').then(m => ({ default: m.SignupPage })));
-const ForgotPasswordPage = lazy(() => import('@/pages/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
-const SettingsPage = lazy(() => import('@/pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
-const AdminDashboardPage = lazy(() => import('@/pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
-const AdminProvidersPage = lazy(() => import('@/pages/admin/AdminProvidersPage').then(m => ({ default: m.AdminProvidersPage })));
-const AdminBundlesPage = lazy(() => import('@/pages/admin/AdminBundlesPage').then(m => ({ default: m.AdminBundlesPage })));
-const AdminCapabilitiesPage = lazy(() => import('@/pages/admin/AdminCapabilitiesPage').then(m => ({ default: m.AdminCapabilitiesPage })));
-const AdminUsersPage = lazy(() => import('@/pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
-const AdminSettingsPage = lazy(() => import('@/pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
-const AdminChatsPage = lazy(() => import('@/pages/admin/AdminChatsPage').then(m => ({ default: m.AdminChatsPage })));
-const AdminUsagePage = lazy(() => import('@/pages/admin/AdminUsagePage').then(m => ({ default: m.AdminUsagePage })));
+const AuthView = lazy(() => import('@/components/auth-new/AuthView').then(m => ({ default: m.AuthView })));
+const SettingsView = lazy(() => import('@/components/settings-new/SettingsView').then(m => ({ default: m.SettingsView })));
+const AdminView = lazy(() => import('@/components/admin-new/AdminView').then(m => ({ default: m.AdminView })));
+const SearchView = lazy(() => import('@/components/search-new/SearchView').then(m => ({ default: m.SearchView })));
+const ChatView = lazy(() => import('@/components/chat-new/ChatView').then(m => ({ default: m.ChatView })));
 
 function PageSpinner() {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-4 border-brand-500 border-t-transparent" />
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-[var(--primary)] border-t-transparent" />
     </div>
   );
 }
@@ -73,25 +64,21 @@ export function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route element={<AuthRoute><Layout /></AuthRoute>}>
-          <Route path="/login" element={<Suspense fallback={<PageSpinner />}><LoginPage /></Suspense>} />
-          <Route path="/signup" element={<Suspense fallback={<PageSpinner />}><SignupPage /></Suspense>} />
-          <Route path="/forgot-password" element={<Suspense fallback={<PageSpinner />}><ForgotPasswordPage /></Suspense>} />
+          <Route path="/login" element={<Suspense fallback={<PageSpinner />}><AuthView /></Suspense>} />
+          <Route path="/signup" element={<Suspense fallback={<PageSpinner />}><AuthView /></Suspense>} />
+          <Route path="/forgot-password" element={<Suspense fallback={<PageSpinner />}><AuthView /></Suspense>} />
+          <Route path="/reset-password" element={<Suspense fallback={<PageSpinner />}><AuthView /></Suspense>} />
+          <Route path="/verify" element={<Suspense fallback={<PageSpinner />}><AuthView /></Suspense>} />
         </Route>
 
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route path="/" element={<ChatPage />} />
-          <Route path="/settings" element={<Suspense fallback={<PageSpinner />}><SettingsPage /></Suspense>} />
+          <Route path="/" element={<ChatView />} />
+          <Route path="/search" element={<Suspense fallback={<PageSpinner />}><SearchView /></Suspense>} />
+          <Route path="/settings" element={<Suspense fallback={<PageSpinner />}><SettingsView /></Suspense>} />
         </Route>
 
-        <Route element={<AdminRoute><Suspense fallback={<PageSpinner />}><AdminLayout /></Suspense></AdminRoute>}>
-          <Route path="/admin" element={<Suspense fallback={<PageSpinner />}><AdminDashboardPage /></Suspense>} />
-          <Route path="/admin/providers" element={<Suspense fallback={<PageSpinner />}><AdminProvidersPage /></Suspense>} />
-          <Route path="/admin/bundles" element={<Suspense fallback={<PageSpinner />}><AdminBundlesPage /></Suspense>} />
-          <Route path="/admin/capabilities" element={<Suspense fallback={<PageSpinner />}><AdminCapabilitiesPage /></Suspense>} />
-          <Route path="/admin/users" element={<Suspense fallback={<PageSpinner />}><AdminUsersPage /></Suspense>} />
-          <Route path="/admin/chats" element={<Suspense fallback={<PageSpinner />}><AdminChatsPage /></Suspense>} />
-          <Route path="/admin/usage" element={<Suspense fallback={<PageSpinner />}><AdminUsagePage /></Suspense>} />
-          <Route path="/admin/settings" element={<Suspense fallback={<PageSpinner />}><AdminSettingsPage /></Suspense>} />
+        <Route element={<AdminRoute><Suspense fallback={<PageSpinner />}><AdminView onBack={() => {}} /></Suspense></AdminRoute>}>
+          <Route path="/admin" element={<AdminView onBack={() => {}} />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
