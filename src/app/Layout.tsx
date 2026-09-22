@@ -13,6 +13,9 @@ export function Layout() {
   const isSearch = location.pathname === '/search';
   const isSettings = location.pathname === '/settings';
 
+  // user is used for future admin checks
+  void user;
+
   return (
     <div className="min-h-screen bg-[var(--background)] flex">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

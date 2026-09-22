@@ -10,7 +10,7 @@ import {
 type AuthPage = 'login' | 'signup' | 'forgot' | 'reset' | 'verify';
 
 export function AuthView() {
-  const { login, signup, verifySignup, validateOTP, forgotPassword, resetPassword, resendOTP } = useAuth();
+  const { login, signup, verifySignup, forgotPassword, resetPassword, resendOTP } = useAuth();
   const navigate = useNavigate();
   const [page, setPage] = useState<AuthPage>('login');
   const [showPassword, setShowPassword] = useState(false);

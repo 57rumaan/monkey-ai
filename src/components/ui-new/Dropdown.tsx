@@ -5,17 +5,25 @@ type DropdownItem =
   | { divider: true; label?: never; icon?: never; danger?: never; onClick?: never }
   | { divider?: false; label: string; icon?: React.ReactNode; danger?: boolean; onClick?: () => void };
 
-export function Dropdown({ trigger, items, align = 'left' }: { trigger: React.ReactNode; items: DropdownItem[]; align?: 'left' | 'right' }) {
+type DropdownTrigger = React.ReactNode | ((props: { isOpen: boolean; onClick: () => void }) => React.ReactNode);
+
+export function Dropdown({ trigger, items, align = 'left' }: { trigger: DropdownTrigger; items: DropdownItem[]; align?: 'left' | 'right' }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    const handler = (e: MouseEvent) => { 
+      if (ref.current && !ref.current.contains(e.target as Node) &&
+          triggerRef.current && !triggerRef.current.contains(e.target as Node)) setOpen(false); 
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+  const toggleOpen = () => setOpen(o => !o);
+  const triggerElement = typeof trigger === 'function' ? trigger({ isOpen: open, onClick: toggleOpen }) : trigger;
   return (
     <div className="relative" ref={ref}>
-      <div onClick={() => setOpen(o => !o)}>{trigger}</div>
+      <div ref={triggerRef} onClick={toggleOpen}>{triggerElement}</div>
       {open && (
         <div className={cn('absolute', align === 'right' ? 'right-0' : 'left-0', 'top-full mt-1 min-w-44 bg-[var(--card)] border border-[var(--border)] rounded-[var(--radius-lg)] shadow-lg z-50 py-1 overflow-hidden')}>
           {items.map((item, i) => 'divider' in item && item.divider

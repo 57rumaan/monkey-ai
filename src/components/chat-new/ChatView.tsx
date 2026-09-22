@@ -8,7 +8,7 @@ import type { CapabilityType, Attachment } from '@/types';
 import {
   Button, IconButton, Avatar, Badge, Dropdown, Modal,
   PlusIcon, SendIcon, MicIcon, PaperclipIcon, CopyIcon, RefreshIcon,
-  ThumbUpIcon, ThumbDownIcon, MoreHorizontalIcon, SearchIcon, ShareIcon,
+  ThumbUpIcon, ThumbDownIcon, MoreHorizontalIcon, ShareIcon,
   ChevronDownIcon, SparklesIcon, PenIcon, CodeIcon, BookIcon, FlaskIcon,
   ImageIcon, FileIcon, CheckIcon, AlertCircleIcon, ZapIcon,
   SunIcon, MoonIcon, MonitorIcon, XIcon, ClockIcon
@@ -320,7 +320,7 @@ export function ChatView() {
           </div>
         ) : (
           <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-            {chat.allMessages.map(msg => (
+            {chat.allMessages.map((msg: any) => (
               <div key={msg.id} className={cn('flex gap-3', msg.role === 'user' ? 'flex-row-reverse' : '')}>
                 {msg.role === 'assistant' ? (
                   <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white text-sm flex-shrink-0">

@@ -7,8 +7,8 @@ import { useBundles } from '@/features/bundles/hooks/useBundles';
 import {
   Button, IconButton, Dropdown, Avatar,
   MenuIcon, SunIcon, MoonIcon, MonitorIcon, ShareIcon, MoreHorizontalIcon,
-  ChevronDownIcon, SettingsIcon, LogOutIcon, CheckIcon, XIcon,
-  FolderIcon, StarIcon, MessageIcon
+  ChevronDownIcon, SettingsIcon, LogOutIcon, CheckIcon, StarIcon,
+  PenIcon, AlertCircleIcon
 } from '@/components/ui-new';
 
 interface HeaderProps {
@@ -21,9 +21,6 @@ export function Header({ onMenuClick }: HeaderProps) {
   const { data: bundles = [] } = useBundles();
   const navigate = useNavigate();
   const [modelOpen, setModelOpen] = useState(false);
-  const [attachOpen, setAttachOpen] = useState(false);
-  const modelOpenRef = useRef(false);
-  const attachOpenRef = useRef(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -35,7 +32,6 @@ export function Header({ onMenuClick }: HeaderProps) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
           triggerRef.current && !triggerRef.current.contains(e.target as Node)) {
         setModelOpen(false);
-        setAttachOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -68,7 +64,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           <button
             ref={triggerRef}
             type="button"
-            onClick={() => { setModelOpen(!modelOpen); setAttachOpen(false); }}
+            onClick={() => { setModelOpen(!modelOpen); }}
             className={cn(
               'flex items-center gap-2.5 px-3 py-1.5 rounded-[var(--radius)] border border-[var(--border)] hover:bg-[var(--muted)] text-sm text-[var(--foreground)] transition-colors',
               modelOpen ? 'bg-[var(--muted)]' : ''
@@ -210,6 +206,3 @@ export function Header({ onMenuClick }: HeaderProps) {
     </header>
   );
 }
-
-// Need to import these icons
-import { PenIcon, AlertCircleIcon } from '@/components/ui-new/Icons';

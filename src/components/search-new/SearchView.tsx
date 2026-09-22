@@ -9,10 +9,10 @@ export function SearchView() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'chats' | 'projects'>('all');
   const { data: chats = [] } = useChats();
 
-  const filtered = chats.filter(r => {
+  const filtered = chats.filter((r: { title?: string; snippet?: string; folderId?: string }) => {
     if (!query) return true;
-    return r.title.toLowerCase().includes(query.toLowerCase());
-  }).filter(r => {
+    return r.title?.toLowerCase().includes(query.toLowerCase()) ?? false;
+  }).filter((r: { folderId?: string }) => {
     if (activeFilter === 'projects') return !!r.folderId;
     return true;
   });
@@ -50,7 +50,7 @@ export function SearchView() {
         <div className="mb-6">
           <p className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider mb-2">Recent searches</p>
           <div className="flex flex-col gap-1">
-            {['React reconciliation', 'Python async patterns', 'Cover letter tips', 'SQL window functions'].map(s => (
+            {['React reconciliation', 'Python async patterns', 'Cover letter tips', 'SQL window functions'].map((s: string) => (
               <button key={s} onClick={() => setQuery(s)} className="flex items-center gap-2.5 px-3 py-2 rounded-[var(--radius)] text-sm text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors text-left">
                 <ClockIcon />
                 {s}
@@ -65,7 +65,7 @@ export function SearchView() {
       )}
 
       <div className="flex flex-col gap-2">
-        {filtered.map(r => (
+        {filtered.map((r: { id: string; title?: string; snippet?: string; date?: string; project?: string; model?: string; folderId?: string; preview?: string; updatedAt?: string; bundleId?: string }) => (
           <button key={r.id} className={cn(
             'flex items-start gap-3 p-4 rounded-[var(--radius-lg)] border bg-[var(--card)] hover:border-[var(--primary)]/40 hover:shadow-sm transition-all text-left',
             'border-[var(--border)]'
@@ -80,7 +80,7 @@ export function SearchView() {
               </div>
               <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">{r.preview || 'No preview available'}</p>
               <div className="flex items-center gap-3 mt-2 text-xs text-[var(--muted-foreground)]">
-                <span>{new Date(r.updatedAt).toLocaleDateString()}</span>
+                <span>{r.updatedAt ? new Date(r.updatedAt).toLocaleDateString() : 'Unknown date'}</span>
                 <span>·</span>
                 <span>{r.bundleId || 'Unknown model'}</span>
               </div>

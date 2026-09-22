@@ -8,7 +8,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useToast } from '@/components/ui/Toast';
 import {
   Button, Input, Textarea, Switch, Tabs, Badge, Avatar, Card,
-  UserIcon, ShieldIcon, BellIcon, SunIcon, MoonIcon, MonitorIcon, KeyIcon, LinkIcon, TrashIcon, LogOutIcon, CheckIcon, AlertCircleIcon
+  UserIcon, ShieldIcon, BellIcon, SunIcon, MoonIcon, MonitorIcon, LinkIcon, TrashIcon, LogOutIcon, CheckIcon
 } from '@/components/ui-new';
 
 const profileSchema = z.object({
@@ -50,27 +50,6 @@ const SESSIONS = [
   { device: 'Chrome on Windows', os: 'Windows 11', location: 'New York, US', current: false, lastActive: '3 days ago' },
 ];
 
-function ToggleSwitch({ checked, onChange, disabled, label }: { checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean; label?: string }) {
-  return (
-    <label className="flex items-center gap-2.5 cursor-pointer select-none">
-      <div
-        onClick={() => !disabled && onChange(!checked)}
-        className={cn(
-          'relative w-10 h-5 rounded-full transition-colors duration-200',
-          checked ? 'bg-[var(--primary)]' : 'bg-[var(--border)]',
-          disabled && 'opacity-50 cursor-not-allowed'
-        )}
-      >
-        <span className={cn(
-          'absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200',
-          checked ? 'translate-x-5' : 'translate-x-0'
-        )} />
-      </div>
-      {label && <span className="text-sm text-[var(--foreground)]">{label}</span>}
-    </label>
-  );
-}
-
 export function SettingsView() {
   const { user, updateProfile, changePassword } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -80,8 +59,6 @@ export function SettingsView() {
   const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  const darkMode = theme === 'dark';
 
   const [emailNotifications, setEmailNotifications] = useState(() => {
     const stored = localStorage.getItem('emailNotifications');
@@ -111,11 +88,6 @@ export function SettingsView() {
   const passwordForm = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
   });
-
-  const handleToggleDarkMode = (checked: boolean) => {
-    setTheme(checked ? 'dark' : 'light');
-    showToast(checked ? 'Dark mode enabled' : 'Light mode enabled', { variant: 'success', duration: 2000 });
-  };
 
   const handleToggleEmailNotifications = (checked: boolean) => {
     setEmailNotifications(checked);
@@ -172,7 +144,7 @@ export function SettingsView() {
     <div className="flex flex-col h-full overflow-y-auto">
       <div className="max-w-2xl mx-auto w-full px-6 py-6 pb-12">
         <h2 className="text-xl font-semibold text-[var(--foreground)] mb-6">Settings</h2>
-        <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
+        <Tabs tabs={tabs} active={activeTab} onChange={(id: string) => setActiveTab(id as any)} />
         <div className="mt-6">
           {/* Profile */}
           {activeTab === 'profile' && (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -6,23 +6,12 @@ import { useChats } from '@/features/chat/hooks/useChats';
 import {
   Button, IconButton, Avatar, Badge, Dropdown,
   PlusIcon, SearchIcon, MessageIcon, StarIcon, FolderIcon, SettingsIcon,
-  MenuIcon, ChevronRightIcon, LogOutIcon, UserIcon, TrashIcon, ChevronLeftIcon,
-  FolderPlusIcon, FolderOpenIcon, ClockIcon
+  ChevronRightIcon, LogOutIcon, UserIcon, ChevronLeftIcon
 } from '@/components/ui-new';
-
-type View = 'chat' | 'search' | 'settings' | 'admin' | 'auth';
 
 interface SidebarProps {
   onClose?: () => void;
   isOpen?: boolean;
-}
-
-interface ChatItem {
-  id: string;
-  title: string;
-  updatedAt: string;
-  folderId?: string | null;
-  pinned?: boolean;
 }
 
 interface Folder {
@@ -58,7 +47,7 @@ export function Sidebar({ onClose, isOpen = true }: SidebarProps) {
   // Get recent chats (last 10)
   const recentChats = chats.slice(0, 10);
   // Get pinned chats as favorites
-  const favorites = chats.filter(c => c.pinned).slice(0, 5);
+  const favorites = chats.filter((c: { pinned?: boolean }) => c.pinned).slice(0, 5);
   // Get folders (mock for now - could be from API)
   const folders: Folder[] = [
     { id: 'p1', name: 'Product Redesign', chatCount: 12 },
@@ -197,7 +186,7 @@ export function Sidebar({ onClose, isOpen = true }: SidebarProps) {
                   <span>Recent</span>
                   <ChevronRightIcon className={cn('transition-transform', openSection === 'recent' && 'rotate-90')} />
                 </button>
-                {openSection === 'recent' && recentChats.length > 0 && recentChats.map(chat => (
+                {openSection === 'recent' && recentChats.length > 0 && recentChats.map((chat: { id: string; title?: string; updatedAt: string; pinned?: boolean; folderId?: string }) => (
                   <button
                     key={chat.id}
                     onClick={() => { navigate('/'); if (onClose) onClose(); }}
@@ -227,7 +216,7 @@ export function Sidebar({ onClose, isOpen = true }: SidebarProps) {
                   <span>Favorites</span>
                   <ChevronRightIcon className={cn('transition-transform', openSection === 'favs' && 'rotate-90')} />
                 </button>
-                {openSection === 'favs' && favorites.length > 0 && favorites.map(fav => (
+                {openSection === 'favs' && favorites.length > 0 && favorites.map((fav: { id: string; title: string }) => (
                   <button
                     key={fav.id}
                     onClick={() => { navigate('/'); if (onClose) onClose(); }}
@@ -256,7 +245,7 @@ export function Sidebar({ onClose, isOpen = true }: SidebarProps) {
                 </button>
                 {openSection === 'projects' && (
                   <>
-                    {folders.map(proj => (
+                    {folders.map((proj: { id: string; name: string; chatCount: number }) => (
                       <button
                         key={proj.id}
                         className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-[var(--radius)] text-sm text-[var(--sidebar-muted)] hover:bg-[var(--muted)] hover:text-[var(--foreground)] transition-colors text-left"
