@@ -223,7 +223,7 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
 
   const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
   const strengthColors = [
-    'bg-surface-200 dark:bg-surface-700',
+    'bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]',
     'bg-state-error',
     'bg-orange-500',
     'bg-yellow-500',
@@ -231,8 +231,8 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
     'bg-green-600',
   ];
   const strengthTextColors = [
-    'text-content-tertiary',
-    'text-state-error',
+    'text-[var(--color-content-tertiary)]',
+    'text-[var(--color-state-error)]',
     'text-orange-600 dark:text-orange-400',
     'text-yellow-600 dark:text-yellow-400',
     'text-green-600 dark:text-green-400',
@@ -251,12 +251,12 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
       <div className="flex items-center gap-3" role="group" aria-label="Password reset progress">
         {[1, 2, 3].map(num => (
           <div key={num} className="flex items-center gap-2">
-            {num > 1 && <div className={cn('flex-1 h-px min-w-[2rem]', num <= stepNumber ? 'bg-brand-500' : 'bg-surface-200 dark:bg-surface-700')} />}
+            {num > 1 && <div className={cn('flex-1 h-px min-w-[2rem]', num <= stepNumber ? 'bg-brand-500' : 'bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]')} />}
             <div className={cn(
-              'flex items-center justify-center w-7 h-7 rounded-full text-body-xs font-semibold transition-colors',
+              'flex items-center justify-center w-7 h-7 rounded-full text-xs font-semibold transition-colors',
               num < stepNumber && 'bg-state-success text-white',
-              num === stepNumber && 'bg-brand-600 text-white step-pulse',
-              num > stepNumber && 'bg-surface-200 dark:bg-surface-700 text-content-tertiary'
+              num === stepNumber && 'bg-[var(--color-brand-500)] text-white step-pulse',
+              num > stepNumber && 'bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] text-[var(--color-content-tertiary)]'
             )}>
               {num < stepNumber ? (
                 <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -265,8 +265,8 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
               ) : num}
             </div>
             <span className={cn(
-              'text-body-sm',
-              num === stepNumber ? 'font-medium text-content-primary' : 'text-content-tertiary'
+              'text-sm',
+              num === stepNumber ? 'font-medium text-[var(--color-content-primary)]' : 'text-[var(--color-content-tertiary)]'
             )}>
               {stepLabels[num - 1]}
             </span>
@@ -277,14 +277,14 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
       {step === 'email' && (
         <form onSubmit={handleSubmitEmail(handleSendReset)} className="space-y-5" noValidate>
           <div className="text-center">
-            <h3 className="text-heading-md font-semibold text-content-primary">Reset your password</h3>
-            <p className="text-body-sm text-content-tertiary mt-1.5">Enter your email and we&apos;ll send you a reset code</p>
+            <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">Reset your password</h3>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1.5">Enter your email and we&apos;ll send you a reset code</p>
           </div>
 
           <div className="space-y-1.5">
             <label htmlFor="fp-email" className="label">Email</label>
             <div className="relative group">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
               <Input
                 id="fp-email"
                 type="email"
@@ -312,10 +312,10 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
       {step === 'otp' && (
         <div className="space-y-5">
           <div className="text-center">
-            <h3 className="text-heading-md font-semibold text-content-primary">Enter reset code</h3>
-            <p className="text-body-sm text-content-tertiary mt-1.5">
+            <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">Enter reset code</h3>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1.5">
               We sent a 6-digit code to{' '}
-              <strong className="text-content-primary">{email}</strong>
+              <strong className="text-[var(--color-content-primary)]">{email}</strong>
             </p>
           </div>
 
@@ -344,7 +344,7 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
           </div>
 
           {otpError && (
-            <p className="text-center text-body-sm text-state-error shake" role="alert">
+            <p className="text-center text-sm text-[var(--color-state-error)] shake" role="alert">
               {otpError}
             </p>
           )}
@@ -364,7 +364,7 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
               type="button"
               onClick={handleResend}
               disabled={resendCooldown > 0 || isLoading}
-              className="text-body-sm text-brand-600 dark:text-brand-400 hover:underline disabled:text-content-tertiary disabled:hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded transition-colors"
+              className="text-sm text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)] hover:underline disabled:text-[var(--color-content-tertiary)] disabled:hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 rounded transition-colors"
             >
               {resendCooldown > 0 ? (
                 <>Resend code in <span className="font-mono font-semibold">{resendCooldown}s</span></>
@@ -384,14 +384,14 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
       {step === 'password' && (
         <form onSubmit={handleSubmitPassword(handleResetPassword)} className="space-y-5" noValidate>
           <div className="text-center">
-            <h3 className="text-heading-md font-semibold text-content-primary">New password</h3>
-            <p className="text-body-sm text-content-tertiary mt-1.5">Choose a strong password for your account</p>
+            <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">New password</h3>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1.5">Choose a strong password for your account</p>
           </div>
 
           <div className="space-y-1.5">
             <label htmlFor="fp-new-password" className="label">New Password</label>
             <div className="relative group">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
               <Input
                 id="fp-new-password"
                 type={showPassword ? 'text' : 'password'}
@@ -420,12 +420,12 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
                       key={level}
                       className={cn(
                         'h-1 flex-1 rounded-full transition-all duration-300',
-                        level <= strength ? strengthColors[strength] : 'bg-surface-200 dark:bg-surface-700'
+                        level <= strength ? strengthColors[strength] : 'bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]'
                       )}
                     />
                   ))}
                 </div>
-                <p className={cn('text-caption font-medium', strengthTextColors[strength])}>
+                <p className={cn('text-xs font-medium', strengthTextColors[strength])}>
                   {strengthLabels[strength]}
                 </p>
               </div>
@@ -435,7 +435,7 @@ export function ForgotPasswordForm({ onBackToLogin }: ForgotPasswordFormProps) {
           <div className="space-y-1.5">
             <label htmlFor="fp-confirm-password" className="label">Confirm Password</label>
             <div className="relative group">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
               <Input
                 id="fp-confirm-password"
                 type={showConfirmPassword ? 'text' : 'password'}

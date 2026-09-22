@@ -63,24 +63,24 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center gap-3 w-full px-3.5 py-2 rounded-xl bg-white dark:bg-surface-900 border border-border-default',
-          'hover:border-border-strong focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none',
+          'flex items-center gap-3 w-full px-3.5 py-2 rounded-xl bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-default)]',
+          'hover:border-[var(--color-border-strong)] focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/10 focus:outline-none',
           'text-left transition-all duration-200 shadow-sm'
         )}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-content-primary truncate">
+          <p className="text-sm font-medium text-[var(--color-content-primary)] truncate">
             {selectedBundle?.name || 'Select a model'}
           </p>
           {selectedBundle && (
-            <p className="text-xs text-content-tertiary truncate mt-0.5">
+            <p className="text-xs text-[var(--color-content-tertiary)] truncate mt-0.5">
               {selectedBundle.description || `${selectedBundle.capabilities.length} capabilities`}
             </p>
           )}
         </div>
-        <ChevronDown className={cn('h-4 w-4 text-content-tertiary flex-shrink-0 transition-transform duration-200', isOpen && 'rotate-180')} />
+        <ChevronDown className={cn('h-4 w-4 text-[var(--color-content-tertiary)] flex-shrink-0 transition-transform duration-200', isOpen && 'rotate-180')} />
       </button>
 
       {isOpen && (
@@ -88,7 +88,7 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
           ref={dropdownRef}
           className={cn(
             'absolute top-full left-0 right-0 mt-1.5 z-50',
-            'bg-white dark:bg-surface-900 rounded-xl border border-border-default shadow-elevation-3',
+            'bg-white dark:bg-[var(--color-surface-900)] rounded-xl border border-[var(--color-border-default)] shadow-[var(--shadow-elevation-3)]',
             'max-h-80 overflow-y-auto overflow-x-hidden'
           )}
           role="listbox"
@@ -104,16 +104,16 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
                 className={cn(
                   'w-full text-left p-3 rounded-lg transition-colors duration-150',
                   selectedBundleId === bundle.id
-                    ? 'bg-brand-50 dark:bg-brand-950/50'
-                    : 'hover:bg-surface-50 dark:hover:bg-surface-800'
+                    ? 'bg-[var(--color-brand-50)] dark:bg-[var(--color-brand-950)]/50'
+                    : 'hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]'
                 )}
               >
                 <div className="flex items-start gap-3">
                   <div className={cn(
                     'h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 text-[10px] font-bold',
-                    bundle.tier === 'pro' && 'bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300',
+                    bundle.tier === 'pro' && 'bg-[var(--color-brand-100)] text-[var(--color-brand-700)] dark:bg-[var(--color-brand-900)] dark:text-[var(--color-brand-300)]',
                     bundle.tier === 'enterprise' && 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300',
-                    bundle.tier === 'free' && 'bg-surface-100 text-content-secondary dark:bg-surface-800 dark:text-content-secondary'
+                    bundle.tier === 'free' && 'bg-[var(--color-surface-100)] text-[var(--color-content-secondary)] dark:bg-[var(--color-surface-800)] dark:text-[var(--color-content-secondary)]'
                   )}>
                     {bundle.tier === 'pro' && 'PRO'}
                     {bundle.tier === 'enterprise' && 'ENT'}
@@ -121,26 +121,26 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-content-primary truncate">{bundle.name}</p>
+                      <p className="text-sm font-medium text-[var(--color-content-primary)] truncate">{bundle.name}</p>
                       <Badge variant={bundle.tier === 'pro' ? 'primary' : bundle.tier === 'enterprise' ? 'warning' : 'neutral'} size="xs">
                         {bundle.tier}
                       </Badge>
                     </div>
                     {bundle.description && (
-                      <p className="text-xs text-content-tertiary mt-0.5 line-clamp-1">{bundle.description}</p>
+                      <p className="text-xs text-[var(--color-content-tertiary)] mt-0.5 line-clamp-1">{bundle.description}</p>
                     )}
                     <div className="flex items-center gap-1 mt-2">
                       {bundle.capabilities.slice(0, 6).map(cap => (
                         <span
                           key={cap.capabilityId}
-                          className="inline-flex items-center gap-1 h-5 px-1.5 rounded bg-surface-50 dark:bg-surface-800 text-content-tertiary border border-border-default text-[10px]"
+                          className="inline-flex items-center gap-1 h-5 px-1.5 rounded bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)] text-[var(--color-content-tertiary)] border border-[var(--color-border-default)] text-[10px]"
                           title={getCapabilityLabel(cap.capabilityId)}
                         >
                           {capabilityIcons[cap.capabilityId]}
                         </span>
                       ))}
                       {bundle.capabilities.length > 6 && (
-                        <span className="text-[10px] text-content-tertiary px-1.5 py-0.5 rounded bg-surface-50 dark:bg-surface-800 border border-border-default">
+                        <span className="text-[10px] text-[var(--color-content-tertiary)] px-1.5 py-0.5 rounded bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)] border border-[var(--color-border-default)]">
                           +{bundle.capabilities.length - 6}
                         </span>
                       )}
@@ -148,7 +148,7 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
                   </div>
                   {selectedBundleId === bundle.id && (
                     <div className="flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400" />
+                      <Check className="h-4 w-4 text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)]" />
                     </div>
                   )}
                 </div>
@@ -156,11 +156,11 @@ export function ModelSelector({ bundles, selectedBundleId, onSelect, className }
             ))}
             {enabledBundles.length === 0 && (
               <div className="px-4 py-10 text-center">
-                <div className="h-12 w-12 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-3">
-                  <Sparkles className="h-6 w-6 text-content-tertiary" />
+                <div className="h-12 w-12 rounded-full bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] flex items-center justify-center mx-auto mb-3">
+                  <Sparkles className="h-6 w-6 text-[var(--color-content-tertiary)]" />
                 </div>
-                <p className="text-sm font-medium text-content-primary mb-1">No models available</p>
-                <p className="text-xs text-content-tertiary">No bundles have been configured yet</p>
+                <p className="text-sm font-medium text-[var(--color-content-primary)] mb-1">No models available</p>
+                <p className="text-xs text-[var(--color-content-tertiary)]">No bundles have been configured yet</p>
               </div>
             )}
           </div>

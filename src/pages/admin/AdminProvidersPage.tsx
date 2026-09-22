@@ -196,8 +196,8 @@ export function AdminProvidersPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-heading-xl font-bold text-content-primary">Providers & Raw Models</h1>
-            <p className="text-body text-content-tertiary mt-1">Manage AI providers and their raw models</p>
+            <h1 className="text-xl font-bold text-[var(--color-content-primary)]">Providers & Raw Models</h1>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Manage AI providers and their raw models</p>
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="neutral">{providers.length} providers</Badge>
@@ -210,26 +210,26 @@ export function AdminProvidersPage() {
         {isLoading ? (
           <Card>
             <CardContent className="h-64 flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+              <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brand-500)]" />
             </CardContent>
           </Card>
         ) : error ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <AlertCircle className="h-10 w-10 text-state-error mx-auto mb-3" />
-              <h3 className="text-heading-md font-medium text-content-primary mb-1">Failed to load providers</h3>
-              <p className="text-body-sm text-content-tertiary mb-4">{error instanceof Error ? error.message : 'An error occurred'}</p>
+              <AlertCircle className="h-10 w-10 text-[var(--color-state-error)] mx-auto mb-3" />
+              <h3 className="text-lg font-medium text-[var(--color-content-primary)] mb-1">Failed to load providers</h3>
+              <p className="text-sm text-[var(--color-content-tertiary)] mb-4">{error instanceof Error ? error.message : 'An error occurred'}</p>
               <Button variant="secondary" onClick={() => queryClient.invalidateQueries({ queryKey: ['providers'] })}>Retry</Button>
             </CardContent>
           </Card>
         ) : providers.length === 0 ? (
           <Card>
             <CardContent className="py-16 text-center">
-              <div className="h-16 w-16 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-4">
-                <Server className="h-8 w-8 text-content-tertiary" />
+              <div className="h-16 w-16 rounded-full bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] flex items-center justify-center mx-auto mb-4">
+                <Server className="h-8 w-8 text-[var(--color-content-tertiary)]" />
               </div>
-              <h3 className="text-heading-md font-medium text-content-primary mb-2">No providers yet</h3>
-              <p className="text-body text-content-tertiary mb-6 max-w-sm mx-auto">Add your first AI provider to start configuring models and capabilities</p>
+              <h3 className="text-lg font-medium text-[var(--color-content-primary)] mb-2">No providers yet</h3>
+              <p className="text-sm text-[var(--color-content-tertiary)] mb-6 max-w-sm mx-auto">Add your first AI provider to start configuring models and capabilities</p>
               <Button onClick={() => setIsCreatingProvider(true)}>
                 <Plus className="h-4 w-4 mr-2" /> Add Provider
               </Button>
@@ -245,11 +245,11 @@ export function AdminProvidersPage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 cursor-pointer flex-1 min-w-0" onClick={() => toggleProvider(provider.id)}>
-                        <div className="h-10 w-10 rounded-xl bg-brand-100 dark:bg-brand-900 flex items-center justify-center flex-shrink-0">
-                          <Server className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+                        <div className="h-10 w-10 rounded-xl bg-[var(--color-brand-100)] dark:bg-[var(--color-brand-900)] flex items-center justify-center flex-shrink-0">
+                          <Server className="h-5 w-5 text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)]" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-heading-md font-semibold text-content-primary">{provider.label}</h3>
+                          <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">{provider.label}</h3>
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
                             <Badge variant={provider.status === 'active' ? 'success' : 'neutral'}>
                               {provider.status === 'active' ? 'Active' : 'Inactive'}
@@ -258,12 +258,12 @@ export function AdminProvidersPage() {
                               {provider.models.length} model{provider.models.length !== 1 ? 's' : ''}
                               {provider.models.length > 0 && ` (${enabledCount} enabled)`}
                             </Badge>
-                            <span className="text-body-xs text-content-tertiary font-mono bg-surface-100 dark:bg-surface-800 px-1.5 py-0.5 rounded">
+                            <span className="text-xs text-[var(--color-content-tertiary)] font-mono bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] px-1.5 py-0.5 rounded">
                               {provider.apiKeyEnv}
                             </span>
                           </div>
                         </div>
-                        <ChevronRight className={cn('h-5 w-5 text-content-tertiary transition-transform flex-shrink-0', isExpanded && 'rotate-90')} />
+                        <ChevronRight className={cn('h-5 w-5 text-[var(--color-content-tertiary)] transition-transform flex-shrink-0', isExpanded && 'rotate-90')} />
                       </div>
                       <Dropdown
                         trigger={<Button variant="ghost" size="icon" aria-label="Provider actions"><svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="3" r="1.5" /><circle cx="8" cy="8" r="1.5" /><circle cx="8" cy="13" r="1.5" /></svg></Button>}
@@ -274,7 +274,7 @@ export function AdminProvidersPage() {
                         <DropdownItem
                           icon={<Trash2 className="h-4 w-4" />}
                           onClick={() => setConfirmDelete({ type: 'provider', id: provider.id, providerId: provider.id, name: provider.label })}
-                          className="text-state-error"
+                          className="text-[var(--color-state-error)]"
                         >
                           Delete Provider
                         </DropdownItem>
@@ -283,11 +283,11 @@ export function AdminProvidersPage() {
                   </CardHeader>
                   {isExpanded && (
                     <CardContent className="pt-0">
-                      <div className="border-t border-border-default pt-4">
+                      <div className="border-t border-[var(--color-border-default)] pt-4">
                         {provider.models.length === 0 ? (
                           <div className="text-center py-8">
-                            <Cpu className="h-8 w-8 text-content-tertiary mx-auto mb-2" />
-                            <p className="text-body text-content-tertiary">No models added yet</p>
+                            <Cpu className="h-8 w-8 text-[var(--color-content-tertiary)] mx-auto mb-2" />
+                            <p className="text-sm text-[var(--color-content-tertiary)]">No models added yet</p>
                             <Button variant="ghost" size="sm" className="mt-2" onClick={() => setAddingModelTo(provider.id)}>
                               <Plus className="h-3 w-3 mr-1" /> Add Model
                             </Button>
@@ -295,14 +295,14 @@ export function AdminProvidersPage() {
                         ) : (
                           <div className="space-y-2">
                             {provider.models.map(model => (
-                              <div key={model.id} className="flex items-center justify-between p-3 rounded-lg border border-border-default bg-surface-50 dark:bg-surface-800/50 hover:border-brand-300 dark:hover:border-brand-700 transition-colors">
+                              <div key={model.id} className="flex items-center justify-between p-3 rounded-lg border border-[var(--color-border-default)] bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50 hover:border-[var(--color-brand-300)] dark:hover:border-brand-700 transition-colors">
                                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                                  <div className="h-8 w-8 rounded-lg bg-surface-200 dark:bg-surface-700 flex items-center justify-center flex-shrink-0">
-                                    <Cpu className="h-4 w-4 text-content-tertiary" />
+                                  <div className="h-8 w-8 rounded-lg bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] flex items-center justify-center flex-shrink-0">
+                                    <Cpu className="h-4 w-4 text-[var(--color-content-tertiary)]" />
                                   </div>
                                   <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-2">
-                                      <p className="text-body font-medium text-content-primary truncate">{model.customName}</p>
+                                      <p className="text-sm font-medium text-[var(--color-content-primary)] truncate">{model.customName}</p>
                                       <Badge variant={model.enabled ? 'success' : 'neutral'} size="xs">
                                         {model.enabled ? 'Enabled' : 'Disabled'}
                                       </Badge>
@@ -326,7 +326,7 @@ export function AdminProvidersPage() {
                                   <DropdownItem
                                     icon={<Trash2 className="h-4 w-4" />}
                                     onClick={() => setConfirmDelete({ type: 'model', id: model.id, providerId: provider.id, name: model.customName })}
-                                    className="text-state-error"
+                                    className="text-[var(--color-state-error)]"
                                   >
                                     Remove
                                   </DropdownItem>
@@ -430,7 +430,7 @@ function ProviderFormModal({ provider, onClose, onSubmit, isLoading }: { provide
               error={errors.apiKeyEnv?.message}
               {...register('apiKeyEnv')}
             />
-            <p className="text-caption text-content-tertiary mt-1.5">
+            <p className="text-xs text-[var(--color-content-tertiary)] mt-1.5">
               The environment variable name that holds the API key. The actual secret value is never displayed.
             </p>
           </div>
@@ -443,13 +443,13 @@ function ProviderFormModal({ provider, onClose, onSubmit, isLoading }: { provide
                     type="radio"
                     value={status}
                     {...register('status')}
-                    className="h-4 w-4 border-border-default text-brand-600 focus:ring-brand-500"
+                    className="h-4 w-4 border-[var(--color-border-default)] text-[var(--color-brand-500)] focus:ring-[var(--color-brand-500)]"
                   />
-                  <span className="text-body-sm text-content-secondary capitalize">{status}</span>
+                  <span className="text-sm text-[var(--color-content-secondary)] capitalize">{status}</span>
                 </label>
               ))}
             </div>
-            {errors.status && <p className="text-body-sm text-state-error">{errors.status.message}</p>}
+            {errors.status && <p className="text-sm text-[var(--color-state-error)]">{errors.status.message}</p>}
           </div>
         </form>
       </ModalBody>
@@ -496,34 +496,34 @@ function ModelFormModal({ model, onClose, onSubmit, isLoading }: { providerId: s
 
           <div>
             <label className="label">Capabilities</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-3 border border-border-default rounded-lg bg-surface-50 dark:bg-surface-800/50">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-3 border border-[var(--color-border-default)] rounded-lg bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50">
               {CAPABILITY_OPTIONS.map(opt => (
-                <label key={opt.value} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors">
+                <label key={opt.value} className="flex items-center gap-2 cursor-pointer p-1.5 rounded hover:bg-[var(--color-surface-100)] dark:hover:bg-[var(--color-surface-700)] transition-colors">
                   <input
                     type="checkbox"
                     checked={selectedCapabilities.includes(opt.value)}
                     onChange={e => setValue('capabilities', e.target.checked ? [...selectedCapabilities, opt.value] : selectedCapabilities.filter(c => c !== opt.value), { shouldValidate: true })}
-                    className="h-4 w-4 rounded border-border-default text-brand-600 focus:ring-brand-500"
+                    className="h-4 w-4 rounded border-[var(--color-border-default)] text-[var(--color-brand-500)] focus:ring-[var(--color-brand-500)]"
                   />
-                  <span className="text-body-sm text-content-secondary">{opt.label}</span>
+                  <span className="text-sm text-[var(--color-content-secondary)]">{opt.label}</span>
                 </label>
               ))}
             </div>
-            {errors.capabilities && <p className="text-body-sm text-state-error mt-1">{errors.capabilities.message}</p>}
+            {errors.capabilities && <p className="text-sm text-[var(--color-state-error)] mt-1">{errors.capabilities.message}</p>}
           </div>
 
-          <label className="flex items-center gap-3 p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50 cursor-pointer">
+          <label className="flex items-center gap-3 p-3 rounded-lg bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50 cursor-pointer">
             <input
               type="checkbox"
               checked={watch('enabled')}
               onChange={e => setValue('enabled', e.target.checked)}
-              className="h-4 w-4 rounded border-border-default text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-[var(--color-border-default)] text-[var(--color-brand-500)] focus:ring-[var(--color-brand-500)]"
             />
-            <span className="text-body font-medium text-content-secondary">Enabled</span>
+            <span className="text-sm font-medium text-[var(--color-content-secondary)]">Enabled</span>
           </label>
 
-          <details className="border border-border-default rounded-lg">
-            <summary className="text-body font-medium text-content-secondary cursor-pointer p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 rounded-lg transition-colors">
+          <details className="border border-[var(--color-border-default)] rounded-lg">
+            <summary className="text-sm font-medium text-[var(--color-content-secondary)] cursor-pointer p-4 hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]/50 rounded-lg transition-colors">
               Advanced Rules
             </summary>
             <div className="px-4 pb-4 space-y-3">
@@ -533,18 +533,18 @@ function ModelFormModal({ model, onClose, onSubmit, isLoading }: { providerId: s
               <Input label="Frequency Penalty" type="number" step="0.1" min="-2" max="2" placeholder="0" {...register('rules.frequencyPenalty', { valueAsNumber: true })} />
               <Input label="Presence Penalty" type="number" step="0.1" min="-2" max="2" placeholder="0" {...register('rules.presencePenalty', { valueAsNumber: true })} />
               <div>
-                <label className="block text-body-sm font-medium text-content-primary mb-1.5">Stop Sequences</label>
+                <label className="block text-sm font-medium text-[var(--color-content-primary)] mb-1.5">Stop Sequences</label>
                 <textarea
                   rows={3}
                   placeholder="Enter one stop sequence per line"
-                  className="w-full rounded-lg border bg-white text-content-primary placeholder:text-content-tertiary transition-all duration-fast hover:border-border-strong focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 focus:outline-none disabled:bg-surface-100 disabled:text-content-disabled disabled:cursor-not-allowed dark:bg-surface-900 dark:border-border-default dark:hover:border-border-strong dark:focus:border-brand-400 dark:focus:ring-brand-400/15 px-4 py-2.5 text-body"
+                  className="w-full rounded-lg border bg-white text-[var(--color-content-primary)] placeholder:text-[var(--color-content-tertiary)] transition-all duration-fast hover:border-[var(--color-border-strong)] focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/10 focus:outline-none disabled:bg-[var(--color-surface-100)] disabled:text-[var(--color-content-disabled)] disabled:cursor-not-allowed dark:bg-[var(--color-surface-900)] dark:border-[var(--color-border-default)] dark:hover:border-[var(--color-border-strong)] dark:focus:border-[var(--color-brand-500)] dark:focus:ring-[var(--color-brand-500)]/15 px-4 py-2.5 text-sm"
                   value={((watch('rules.stopSequences') as string[] | undefined) || []).join('\n')}
                   onChange={(e) => {
                     const lines = e.target.value.split('\n').filter(l => l.trim());
                     setValue('rules.stopSequences', lines.length > 0 ? lines : undefined, { shouldValidate: true });
                   }}
                 />
-                <p className="mt-1.5 text-body-sm text-content-tertiary">Separate multiple stop sequences with newlines</p>
+                <p className="mt-1.5 text-sm text-[var(--color-content-tertiary)]">Separate multiple stop sequences with newlines</p>
               </div>
               <Input label="System Prompt" placeholder="Optional system prompt" {...register('rules.systemPrompt')} />
             </div>

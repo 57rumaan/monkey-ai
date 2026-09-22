@@ -53,7 +53,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
 
   const strengthLabels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
   const strengthColors = [
-    'bg-surface-200 dark:bg-surface-700',
+    'bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]',
     'bg-state-error',
     'bg-orange-500',
     'bg-yellow-500',
@@ -61,8 +61,8 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
     'bg-green-600',
   ];
   const strengthTextColors = [
-    'text-content-tertiary',
-    'text-state-error',
+    'text-[var(--color-content-tertiary)]',
+    'text-[var(--color-state-error)]',
     'text-orange-600 dark:text-orange-400',
     'text-yellow-600 dark:text-yellow-400',
     'text-green-600 dark:text-green-400',
@@ -99,24 +99,24 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-3" role="group" aria-label="Signup progress">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-brand-600 text-white text-body-xs font-semibold">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-brand-500)] text-white text-xs font-semibold">
             1
           </div>
-          <span className="text-body-sm font-medium text-content-primary">Account</span>
+          <span className="text-sm font-medium text-[var(--color-content-primary)]">Account</span>
         </div>
-        <div className="flex-1 h-px bg-surface-200 dark:bg-surface-700" />
+        <div className="flex-1 h-px bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]" />
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-surface-200 dark:bg-surface-700 text-content-tertiary text-body-xs font-semibold">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] text-[var(--color-content-tertiary)] text-xs font-semibold">
             2
           </div>
-          <span className="text-body-sm text-content-tertiary">Verify</span>
+          <span className="text-sm text-[var(--color-content-tertiary)]">Verify</span>
         </div>
-        <div className="flex-1 h-px bg-surface-200 dark:bg-surface-700" />
+        <div className="flex-1 h-px bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]" />
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-surface-200 dark:bg-surface-700 text-content-tertiary text-body-xs font-semibold">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] text-[var(--color-content-tertiary)] text-xs font-semibold">
             3
           </div>
-          <span className="text-body-sm text-content-tertiary">Username</span>
+          <span className="text-sm text-[var(--color-content-tertiary)]">Username</span>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         <div className="space-y-1.5">
           <label htmlFor="signup-email" className="label">Email</label>
           <div className="relative group">
-            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
             <Input
               id="signup-email"
               type="email"
@@ -141,7 +141,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         <div className="space-y-1.5">
           <label htmlFor="signup-password" className="label">Password</label>
           <div className="relative group">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
             <Input
               id="signup-password"
               type={showPassword ? 'text' : 'password'}
@@ -170,12 +170,12 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
                     key={level}
                     className={cn(
                       'h-1 flex-1 rounded-full transition-all duration-300',
-                      level <= strength ? strengthColors[strength] : 'bg-surface-200 dark:bg-surface-700'
+                      level <= strength ? strengthColors[strength] : 'bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]'
                     )}
                   />
                 ))}
               </div>
-              <p className={cn('text-caption font-medium', strengthTextColors[strength])}>
+              <p className={cn('text-xs font-medium', strengthTextColors[strength])}>
                 {strengthLabels[strength]}
               </p>
             </div>
@@ -185,7 +185,7 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
         <div className="space-y-1.5">
           <label htmlFor="signup-confirm-password" className="label">Confirm Password</label>
           <div className="relative group">
-            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
             <Input
               id="signup-confirm-password"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -220,12 +220,12 @@ export function SignupForm({ onSuccess, onSwitchToLogin }: SignupFormProps) {
           Create Account
         </Button>
 
-        <p className="text-center text-body-sm text-content-tertiary pt-2">
+        <p className="text-center text-sm text-[var(--color-content-tertiary)] pt-2">
           Already have an account?{' '}
           <button
             type="button"
             onClick={onSwitchToLogin}
-            className="text-brand-600 dark:text-brand-400 hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded transition-colors"
+            className="text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)] hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 rounded transition-colors"
           >
             Sign in
           </button>

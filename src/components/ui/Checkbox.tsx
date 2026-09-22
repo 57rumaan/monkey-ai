@@ -27,19 +27,19 @@ export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>(
           onChange={e => onChange?.(e.target.checked)}
           disabled={disabled}
           className={cn(
-            'mt-0.5 h-4 w-4 shrink-0 rounded border-border-default text-brand-600',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+            'mt-0.5 h-4 w-4 shrink-0 rounded border-[var(--color-border-default)] text-[var(--color-brand-500)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            'dark:bg-surface-800 dark:border-border-default dark:focus:ring-brand-400'
+            'dark:bg-[var(--color-surface-800)] dark:border-[var(--color-border-default)] dark:focus:ring-[var(--color-brand-500)]'
           )}
           aria-invalid={error ? 'true' : 'false'}
         />
         <div className="flex flex-col">
-          <span className={cn('text-body font-medium', disabled ? 'text-content-disabled' : 'text-content-primary')}>
+          <span className={cn('text-sm font-medium', disabled ? 'text-[var(--color-content-disabled)]' : 'text-[var(--color-content-primary)]')}>
             {label}
           </span>
           {description && (
-            <span className="text-body-sm text-content-tertiary">{description}</span>
+            <span className="text-sm text-[var(--color-content-tertiary)]">{description}</span>
           )}
           {error && (
             <span className="text-body-sm text-state-error" role="alert">{error}</span>

@@ -9,19 +9,19 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'default', loading, disabled, children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-fast ease-default rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-surface-900 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none select-none';
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-fast ease-default rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[var(--color-surface-900)] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none select-none';
 
     const variants = {
-      primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-elevation-1 hover:shadow-elevation-2 active:shadow-elevation-1',
-      secondary: 'bg-white text-content-primary border border-border-default hover:border-border-strong hover:bg-surface-50 active:bg-surface-100 dark:bg-surface-800 dark:border-border-default dark:hover:border-border-strong dark:hover:bg-surface-700 dark:active:bg-surface-600 shadow-elevation-1',
-      ghost: 'bg-transparent text-content-secondary hover:bg-surface-100 hover:text-content-primary active:bg-surface-200 dark:hover:bg-surface-800 dark:hover:text-content-primary dark:active:bg-surface-700',
-      danger: 'bg-state-error text-white hover:bg-red-600 active:bg-red-700 shadow-elevation-1 hover:shadow-elevation-2 active:shadow-elevation-1',
+      primary: 'bg-[var(--color-brand-500)] text-white hover:bg-[var(--color-brand-700)] active:bg-[var(--color-brand-700)] shadow-[var(--shadow-elevation-1)] hover:shadow-[var(--shadow-elevation-2)] active:shadow-[var(--shadow-elevation-1)]',
+      secondary: 'bg-white text-[var(--color-content-primary)] border border-[var(--color-border-default)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface-50)] active:bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] dark:border-[var(--color-border-default)] dark:hover:border-[var(--color-border-strong)] dark:hover:bg-[var(--color-surface-700)] dark:active:bg-[var(--color-surface-600)] shadow-[var(--shadow-elevation-1)]',
+      ghost: 'bg-transparent text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-100)] hover:text-[var(--color-content-primary)] active:bg-[var(--color-surface-200)] dark:hover:bg-[var(--color-surface-800)] dark:hover:text-[var(--color-content-primary)] dark:active:bg-[var(--color-surface-700)]',
+      danger: 'bg-[var(--color-state-error)] text-white hover:bg-red-600 active:bg-red-700 shadow-[var(--shadow-elevation-1)] hover:shadow-[var(--shadow-elevation-2)] active:shadow-[var(--shadow-elevation-1)]',
     };
 
     const sizes = {
-      sm: 'px-3 py-1.5 text-body-sm gap-1.5',
-      default: 'px-4 py-2.5 text-body gap-2',
-      lg: 'px-6 py-3 text-body-lg gap-2.5',
+      sm: 'px-3 py-1.5 text-sm gap-1.5',
+      default: 'px-4 py-2.5 text-sm gap-2',
+      lg: 'px-6 py-3 text-base gap-2.5',
       icon: 'p-2.5',
       'icon-sm': 'p-2',
     };

@@ -87,8 +87,8 @@ export function AdminUsersPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-heading-xl font-bold text-content-primary">Users</h1>
-            <p className="text-body text-content-tertiary mt-1">Manage user accounts and roles</p>
+            <h1 className="text-xl font-bold text-[var(--color-content-primary)]">Users</h1>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Manage user accounts and roles</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="neutral">{users.length} users</Badge>
@@ -98,7 +98,7 @@ export function AdminUsersPage() {
         <Card>
           <CardContent className="p-4">
             <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--color-content-tertiary)]" />
               <Input
                 placeholder="Search by username or email..."
                 value={search}
@@ -112,28 +112,28 @@ export function AdminUsersPage() {
         {isLoading ? (
           <Card>
             <CardContent className="h-64 flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+              <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brand-500)]" />
             </CardContent>
           </Card>
         ) : error ? (
           <Card>
             <CardContent className="py-12 text-center">
               <AlertCircle className="h-10 w-10 text-state-error mx-auto mb-3" />
-              <h3 className="text-heading-md font-medium text-content-primary mb-1">Failed to load users</h3>
-              <p className="text-body-sm text-content-tertiary mb-4">{error instanceof Error ? error.message : 'An error occurred'}</p>
+              <h3 className="text-lg font-medium text-[var(--color-content-primary)] mb-1">Failed to load users</h3>
+              <p className="text-sm text-[var(--color-content-tertiary)] mb-4">{error instanceof Error ? error.message : 'An error occurred'}</p>
               <Button variant="secondary" onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-users'] })}>Retry</Button>
             </CardContent>
           </Card>
         ) : filteredUsers.length === 0 ? (
           <Card>
             <CardContent className="py-16 text-center">
-              <div className="h-16 w-16 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-content-tertiary" />
+              <div className="h-16 w-16 rounded-full bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-[var(--color-content-tertiary)]" />
               </div>
-              <h3 className="text-heading-md font-medium text-content-primary mb-2">
+              <h3 className="text-lg font-medium text-[var(--color-content-primary)] mb-2">
                 {search ? 'No users found' : 'No users yet'}
               </h3>
-              <p className="text-body text-content-tertiary">
+              <p className="text-sm text-[var(--color-content-tertiary)]">
                 {search ? 'Try adjusting your search terms' : 'Users will appear here once they sign up'}
               </p>
             </CardContent>
@@ -143,37 +143,37 @@ export function AdminUsersPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border-default">
-                    <th className="px-4 py-3 text-left text-body-sm font-medium text-content-tertiary">User</th>
-                    <th className="px-4 py-3 text-left text-body-sm font-medium text-content-tertiary hidden sm:table-cell">Email</th>
-                    <th className="px-4 py-3 text-left text-body-sm font-medium text-content-tertiary">Role</th>
-                    <th className="px-4 py-3 text-left text-body-sm font-medium text-content-tertiary hidden md:table-cell">Status</th>
-                    <th className="px-4 py-3 text-left text-body-sm font-medium text-content-tertiary hidden lg:table-cell">Joined</th>
-                    <th className="px-4 py-3 text-right text-body-sm font-medium text-content-tertiary">Actions</th>
+                  <tr className="border-b border-[var(--color-border-default)]">
+                    <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-content-tertiary)]">User</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-content-tertiary)] hidden sm:table-cell">Email</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-content-tertiary)]">Role</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-content-tertiary)] hidden md:table-cell">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-content-tertiary)] hidden lg:table-cell">Joined</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-[var(--color-content-tertiary)]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map(user => (
-                    <tr key={user.id} className="border-b border-border-default last:border-b-0 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+                    <tr key={user.id} className="border-b border-[var(--color-border-default)] last:border-b-0 hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]/50 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-body-sm font-semibold flex-shrink-0">
+                          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
                             {user.username[0].toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-body font-medium text-content-primary truncate">{user.username}</p>
-                            <p className="text-body-xs text-content-tertiary sm:hidden truncate">{user.email}</p>
+                            <p className="text-sm font-medium text-[var(--color-content-primary)] truncate">{user.username}</p>
+                            <p className="text-xs text-[var(--color-content-tertiary)] sm:hidden truncate">{user.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-body text-content-secondary hidden sm:table-cell">{user.email}</td>
+                      <td className="px-4 py-3 text-sm text-[var(--color-content-secondary)] hidden sm:table-cell">{user.email}</td>
                       <td className="px-4 py-3">
                         <Badge variant={user.role === 'admin' ? 'warning' : 'neutral'}>{user.role}</Badge>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <Badge variant={user.emailVerified ? 'success' : 'warning'}>{user.emailVerified ? 'Verified' : 'Pending'}</Badge>
                       </td>
-                      <td className="px-4 py-3 text-body-sm text-content-tertiary hidden lg:table-cell">{formatRelativeTime(user.createdAt)}</td>
+                      <td className="px-4 py-3 text-sm text-[var(--color-content-tertiary)] hidden lg:table-cell">{formatRelativeTime(user.createdAt)}</td>
                       <td className="px-4 py-3 text-right">
                         <Dropdown
                           trigger={<Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>}

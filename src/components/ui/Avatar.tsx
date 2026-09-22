@@ -11,14 +11,14 @@ interface AvatarProps {
 
 const sizes = {
   xs: 'h-6 w-6 text-xs',
-  sm: 'h-8 w-8 text-body-sm',
-  default: 'h-10 w-10 text-body',
-  lg: 'h-12 w-12 text-body-lg',
-  xl: 'h-16 w-16 text-heading-lg',
+  sm: 'h-8 w-8 text-sm',
+  default: 'h-10 w-10 text-sm',
+  lg: 'h-12 w-12 text-base',
+  xl: 'h-16 w-16 text-lg',
 };
 
 const colors = [
-  'bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300',
+  'bg-[var(--color-brand-100)] text-[var(--color-brand-700)] dark:bg-[var(--color-brand-900)] dark:text-[var(--color-brand-300)]',
   'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
   'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
   'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',

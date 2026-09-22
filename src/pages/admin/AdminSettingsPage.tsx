@@ -62,8 +62,8 @@ function ToggleSwitch({ checked, onChange }: ToggleSwitchProps) {
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900',
-        checked ? 'bg-brand-600' : 'bg-surface-300 dark:bg-surface-600'
+        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)] focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900',
+        checked ? 'bg-[var(--color-brand-500)]' : 'bg-[var(--color-surface-300)] dark:bg-[var(--color-surface-600)]'
       )}
     >
       <span
@@ -96,7 +96,7 @@ export function AdminSettingsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(settingsSchema) as any,
     defaultValues: {
-      appName: 'MONKEY AI',
+      appName: 'Octix',
       appDescription: 'Professional AI Assistant',
       maintenanceMode: false,
       allowSignup: true,
@@ -112,7 +112,7 @@ export function AdminSettingsPage() {
   useEffect(() => {
     if (savedSettings) {
       reset({
-        appName: savedSettings.appName || 'MONKEY AI',
+        appName: savedSettings.appName || 'Octix',
         appDescription: savedSettings.appDescription || '',
         maintenanceMode: savedSettings.maintenanceMode ?? false,
         allowSignup: savedSettings.allowSignup ?? true,
@@ -149,14 +149,14 @@ export function AdminSettingsPage() {
     return (
       <div className="max-w-3xl mx-auto space-y-6">
         <div>
-          <h1 className="text-heading-xl font-bold text-content-primary">Settings</h1>
-          <p className="text-body text-content-tertiary mt-1">Configure application settings and behavior</p>
+          <h1 className="text-xl font-bold text-[var(--color-content-primary)]">Settings</h1>
+          <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Configure application settings and behavior</p>
         </div>
         <div className="space-y-6">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
               <CardContent className="h-48">
-                <div className="h-full rounded-lg bg-surface-100 dark:bg-surface-800 animate-pulse" />
+                <div className="h-full rounded-lg bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] animate-pulse" />
               </CardContent>
             </Card>
           ))}
@@ -168,38 +168,38 @@ export function AdminSettingsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-heading-xl font-bold text-content-primary">Settings</h1>
-        <p className="text-body text-content-tertiary mt-1">Configure application settings and behavior</p>
+        <h1 className="text-xl font-bold text-[var(--color-content-primary)]">Settings</h1>
+        <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Configure application settings and behavior</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                 <Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               </div>
               General
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Basic application configuration</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Basic application configuration</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input label="Application Name" error={errors.appName?.message} {...register('appName')} />
             <Textarea label="Description" rows={3} {...register('appDescription')} />
-            <div className="flex items-center justify-between p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50">
+            <div className="flex items-center justify-between p-4 rounded-lg bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50">
               <div>
-                <p className="text-body font-medium text-content-primary">Maintenance Mode</p>
-                <p className="text-body-sm text-content-tertiary">Disable access for non-admin users</p>
+                <p className="text-sm font-medium text-[var(--color-content-primary)]">Maintenance Mode</p>
+                <p className="text-sm text-[var(--color-content-tertiary)]">Disable access for non-admin users</p>
               </div>
               <ToggleSwitch
                 checked={maintenanceMode}
                 onChange={(checked) => setValue('maintenanceMode', checked)}
               />
             </div>
-            <div className="flex items-center justify-between p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50">
+            <div className="flex items-center justify-between p-4 rounded-lg bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50">
               <div>
-                <p className="text-body font-medium text-content-primary">Allow Sign Up</p>
-                <p className="text-body-sm text-content-tertiary">Enable new user registration</p>
+                <p className="text-sm font-medium text-[var(--color-content-primary)]">Allow Sign Up</p>
+                <p className="text-sm text-[var(--color-content-tertiary)]">Enable new user registration</p>
               </div>
               <ToggleSwitch
                 checked={allowSignup}
@@ -211,13 +211,13 @@ export function AdminSettingsPage() {
 
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
                 <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
               </div>
               Email (SMTP)
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Configure outbound email delivery</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Configure outbound email delivery</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input label="SMTP Host" placeholder="smtp.example.com" {...register('smtpHost')} />
@@ -232,13 +232,13 @@ export function AdminSettingsPage() {
 
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
                 <Shield className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               </div>
               Security & Rate Limits
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Authentication and request throttling</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Authentication and request throttling</p>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -252,32 +252,32 @@ export function AdminSettingsPage() {
 
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
                 <Database className="h-4 w-4 text-purple-600 dark:text-purple-400" />
               </div>
               Storage
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Data persistence configuration</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Data persistence configuration</p>
           </CardHeader>
           <CardContent>
-            <div className="p-4 rounded-lg bg-surface-50 dark:bg-surface-800/50 space-y-3">
-              <p className="text-body-sm text-content-tertiary">Currently using: <strong className="text-content-primary">Local Storage (Development)</strong></p>
-              <p className="text-body-sm text-content-tertiary">For production, configure JSONBin.io credentials in environment variables:</p>
+            <div className="p-4 rounded-lg bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50 space-y-3">
+              <p className="text-sm text-[var(--color-content-tertiary)]">Currently using: <strong className="text-[var(--color-content-primary)]">Local Storage (Development)</strong></p>
+              <p className="text-sm text-[var(--color-content-tertiary)]">For production, configure JSONBin.io credentials in environment variables:</p>
               <div className="flex flex-wrap gap-2 mt-2">
-                <code className="font-mono text-body-xs bg-surface-200 dark:bg-surface-700 px-2 py-1 rounded-md text-content-secondary">JSONBIN_API_KEY</code>
-                <code className="font-mono text-body-xs bg-surface-200 dark:bg-surface-700 px-2 py-1 rounded-md text-content-secondary">JSONBIN_BIN_ID</code>
-                <code className="font-mono text-body-xs bg-surface-200 dark:bg-surface-700 px-2 py-1 rounded-md text-content-secondary">JSONBIN_MASTER_KEY</code>
+                <code className="font-mono text-xs bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] px-2 py-1 rounded-md text-[var(--color-content-secondary)]">JSONBIN_API_KEY</code>
+                <code className="font-mono text-xs bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] px-2 py-1 rounded-md text-[var(--color-content-secondary)]">JSONBIN_BIN_ID</code>
+                <code className="font-mono text-xs bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] px-2 py-1 rounded-md text-[var(--color-content-secondary)]">JSONBIN_MASTER_KEY</code>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-border-default">
+        <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border-default)]">
           <Button type="button" variant="secondary" onClick={() => {
             if (savedSettings) {
               reset({
-                appName: savedSettings.appName || 'MONKEY AI',
+                appName: savedSettings.appName || 'Octix',
                 appDescription: savedSettings.appDescription || '',
                 maintenanceMode: savedSettings.maintenanceMode ?? false,
                 allowSignup: savedSettings.allowSignup ?? true,

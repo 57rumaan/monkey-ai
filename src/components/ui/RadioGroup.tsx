@@ -17,7 +17,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     return (
       <div ref={ref} className={cn('space-y-2', className)} {...props} role="radiogroup" aria-label={label} aria-invalid={error ? 'true' : 'false'}>
         {label && (
-          <span className="block text-body-sm font-medium text-content-secondary mb-1.5">{label}</span>
+          <span className="block text-sm font-medium text-[var(--color-content-secondary)] mb-1.5">{label}</span>
         )}
         {options.map(option => (
           <label
@@ -35,18 +35,18 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
               onChange={() => !disabled && !option.disabled && onChange?.(option.value)}
               disabled={disabled || option.disabled}
               className={cn(
-                'mt-0.5 h-4 w-4 shrink-0 border-border-default text-brand-600',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+                'mt-0.5 h-4 w-4 shrink-0 border-[var(--color-border-default)] text-[var(--color-brand-500)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
-                'dark:bg-surface-800 dark:border-border-default dark:focus:ring-brand-400'
+                'dark:bg-[var(--color-surface-800)] dark:border-[var(--color-border-default)] dark:focus:ring-[var(--color-brand-500)]'
               )}
             />
             <div className="flex flex-col">
-              <span className={cn('text-body font-medium', disabled || option.disabled ? 'text-content-disabled' : 'text-content-primary')}>
+              <span className={cn('text-sm font-medium', disabled || option.disabled ? 'text-[var(--color-content-disabled)]' : 'text-[var(--color-content-primary)]')}>
                 {option.label}
               </span>
               {option.description && (
-                <span className="text-body-sm text-content-tertiary">{option.description}</span>
+                <span className="text-sm text-[var(--color-content-tertiary)]">{option.description}</span>
               )}
             </div>
           </label>

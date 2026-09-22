@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Sparkles, Code, Image, FileText, Calculator, Calendar, Zap, Video, Mic2, Plus, MessageSquare, ChevronDown, Search, X as XIcon, Pencil, Check, AlertCircle, Download, Pin, FolderPlus, Folder, FolderOpen, GitBranch, PenTool, BarChart3, BookOpen, RefreshCw, Send } from 'lucide-react';
+import { Loader2, Sparkles, Code, Image, FileText, Calculator, Calendar, Zap, Video, Mic2, Plus, MessageSquare, ChevronDown, Search, X as XIcon, Pencil, Check, AlertCircle, Download, Pin, FolderPlus, Folder, FolderOpen, GitBranch, PenTool, BarChart3, BookOpen, RefreshCw } from 'lucide-react';
 import { MessageList } from '@/components/chat/MessageList';
 import { Composer } from '@/components/chat/Composer';
 import { ModelSelector } from '@/components/chat/ModelSelector';
@@ -85,19 +85,19 @@ function CapabilitySelector({ capabilities, selected, onSelect }: CapabilitySele
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-          'bg-surface-50 dark:bg-surface-800 border border-border-default',
-          'hover:border-border-strong focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none'
+          'bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)] border border-[var(--color-border-default)]',
+          'hover:border-[var(--color-border-strong)] focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20 focus:outline-none'
         )}
       >
         {capabilityIcons[selected]}
-        <span className="text-content-primary">{selectedDef?.label || selected}</span>
-        <ChevronDown className={cn('h-3.5 w-3.5 text-content-tertiary transition-transform', isOpen && 'rotate-180')} />
+        <span className="text-[var(--color-content-primary)]">{selectedDef?.label || selected}</span>
+        <ChevronDown className={cn('h-3.5 w-3.5 text-[var(--color-content-tertiary)] transition-transform', isOpen && 'rotate-180')} />
       </button>
 
       {isOpen && (
         <div className={cn(
           'absolute top-full left-0 mt-1.5 z-50',
-          'bg-white dark:bg-surface-900 rounded-xl border border-border-default shadow-lg',
+          'bg-white dark:bg-[var(--color-surface-900)] rounded-xl border border-[var(--color-border-default)] shadow-lg',
           'max-h-72 overflow-y-auto min-w-[200px]'
         )}>
           <div className="p-1.5">
@@ -114,24 +114,24 @@ function CapabilitySelector({ capabilities, selected, onSelect }: CapabilitySele
                   className={cn(
                     'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-sm transition-colors',
                     selected === cap
-                      ? 'bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300'
-                      : 'text-content-primary hover:bg-surface-50 dark:hover:bg-surface-800',
+                      ? 'bg-[var(--color-brand-50)] dark:bg-[var(--color-brand-950)]/50 text-[var(--color-brand-700)] dark:text-[var(--color-brand-300)]'
+                      : 'text-[var(--color-content-primary)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]',
                     isUnsupported && 'opacity-40 cursor-not-allowed'
                   )}
                 >
                   {capabilityIcons[cap]}
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{def.label}</p>
-                    <p className="text-xs text-content-tertiary truncate">{def.description}</p>
+                    <p className="text-xs text-[var(--color-content-tertiary)] truncate">{def.description}</p>
                   </div>
                   {isUnsupported && (
-                    <span className="text-[10px] text-content-tertiary bg-surface-100 dark:bg-surface-700 px-1.5 py-0.5 rounded">Soon</span>
+                    <span className="text-[10px] text-[var(--color-content-tertiary)] bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-700)] px-1.5 py-0.5 rounded">Soon</span>
                   )}
                 </button>
               );
             })}
             {capabilities.length === 0 && (
-              <div className="px-4 py-6 text-center text-sm text-content-tertiary">
+              <div className="px-4 py-6 text-center text-sm text-[var(--color-content-tertiary)]">
                 No capabilities available
               </div>
             )}
@@ -149,10 +149,10 @@ export function ChatPage() {
     <div
       key={chatItem.id}
       className={cn(
-        'group flex items-center gap-1 rounded-lg transition-colors',
+        'group flex items-center gap-1 rounded-[var(--radius)] transition-colors',
         chat.selectedChatId === chatItem.id
-          ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300'
-          : 'text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
+          ? 'bg-[var(--color-brand-500)]/10 text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]'
+          : 'text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-100)] dark:hover:bg-[var(--color-surface-800)]'
       )}
     >
       {chat.renamingChatId === chatItem.id ? (
@@ -165,12 +165,12 @@ export function ChatPage() {
             onBlur={chat.handleSaveRename}
             autoFocus
             maxLength={100}
-            className="flex-1 min-w-0 px-2 py-1 text-sm rounded bg-white dark:bg-surface-800 border border-brand-300 dark:border-brand-700 text-content-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className="flex-1 min-w-0 px-2 py-1 text-sm rounded bg-white dark:bg-[var(--color-surface-800)] border border-[var(--color-brand-500)]/30 dark:border-[var(--color-brand-500)]/40 text-[var(--color-content-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-500)]"
           />
-          <button type="button" onClick={chat.handleSaveRename} className="p-1 text-brand-600 hover:text-brand-700">
+          <button type="button" onClick={chat.handleSaveRename}                         className="p-1 text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)]">
             <Check className="h-3.5 w-3.5" />
           </button>
-          <button type="button" onClick={() => chat.setRenamingChatId(null)} className="p-1 text-content-tertiary hover:text-content-secondary">
+          <button type="button" onClick={() => chat.setRenamingChatId(null)}                         className="p-1 text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)]">
             <XIcon className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -178,31 +178,31 @@ export function ChatPage() {
         <>
           <button
             onClick={() => { chat.setSelectedChatId(chatItem.id); chat.setPage(1); }}
-            className="flex-1 min-w-0 px-3 py-2.5 text-left text-body"
+            className="flex-1 min-w-0 px-3 py-2.5 text-left text-sm"
           >
             <div className="flex items-center gap-2">
-              {chatItem.pinned && <Pin className="h-3 w-3 text-brand-400 flex-shrink-0 fill-current" />}
+              {chatItem.pinned && <Pin className="h-3 w-3 text-[var(--color-brand-400)] flex-shrink-0 fill-current" />}
               <MessageSquare className="h-4 w-4 flex-shrink-0 opacity-50" />
               <p className="font-medium truncate">{chatItem.title || 'Untitled'}</p>
             </div>
-            <p className="text-body-xs text-content-tertiary truncate mt-0.5 ml-6">{chatItem.updatedAt}</p>
+            <p className="text-xs text-[var(--color-content-tertiary)] truncate mt-0.5 ml-6">{chatItem.updatedAt}</p>
           </button>
           <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity mr-1">
             <div className="relative">
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); chat.setMovingChatId(chat.movingChatId === chatItem.id ? null : chatItem.id); }}
-                className="p-1.5 rounded-md text-content-tertiary hover:text-content-secondary hover:bg-surface-200 dark:hover:bg-surface-700"
+                className="p-1.5 rounded-md text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-200)] dark:hover:bg-[var(--color-surface-700)]"
                 aria-label="Move to folder"
               >
                 <Folder className="h-3.5 w-3.5" />
               </button>
               {chat.movingChatId === chatItem.id && (
-                <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-surface-900 rounded-lg border border-border-default shadow-lg py-1 min-w-[160px] max-h-60 overflow-y-auto">
+                <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-[var(--color-surface-900)] rounded-lg border border-[var(--color-border-default)] shadow-lg py-1 min-w-[160px] max-h-60 overflow-y-auto">
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); chat.moveToFolderMutation.mutate({ chatId: chatItem.id, folderId: null }); }}
-                    className="w-full text-left px-3 py-1.5 text-sm text-content-primary hover:bg-surface-50 dark:hover:bg-surface-800"
+                    className="w-full text-left px-3 py-1.5 text-sm text-[var(--color-content-primary)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]"
                   >
                     Uncategorized
                   </button>
@@ -212,8 +212,8 @@ export function ChatPage() {
                       type="button"
                       onClick={(e) => { e.stopPropagation(); chat.moveToFolderMutation.mutate({ chatId: chatItem.id, folderId: f.id }); }}
                       className={cn(
-                        'w-full text-left px-3 py-1.5 text-sm hover:bg-surface-50 dark:hover:bg-surface-800',
-                        (chatItem as { folderId?: string }).folderId === f.id ? 'text-brand-600 font-medium' : 'text-content-primary'
+                        'w-full text-left px-3 py-1.5 text-sm hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]',
+                        (chatItem as { folderId?: string }).folderId === f.id ? 'text-[var(--color-brand-500)] font-medium' : 'text-[var(--color-content-primary)]'
                       )}
                     >
                       {f.name}
@@ -226,24 +226,24 @@ export function ChatPage() {
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); chat.setExportingChatId(chat.exportingChatId === chatItem.id ? null : chatItem.id); }}
-                className="p-1.5 rounded-md text-content-tertiary hover:text-content-secondary hover:bg-surface-200 dark:hover:bg-surface-700"
+                className="p-1.5 rounded-md text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-200)] dark:hover:bg-[var(--color-surface-700)]"
                 aria-label="Export chat"
               >
                 <Download className="h-3.5 w-3.5" />
               </button>
               {chat.exportingChatId === chatItem.id && (
-                <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-surface-900 rounded-lg border border-border-default shadow-lg py-1 min-w-[120px]">
+                <div className="absolute right-0 top-full mt-1 z-50 bg-white dark:bg-[var(--color-surface-900)] rounded-lg border border-[var(--color-border-default)] shadow-lg py-1 min-w-[120px]">
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); chat.handleExport(chatItem.id, 'md'); }}
-                    className="w-full text-left px-3 py-1.5 text-sm text-content-primary hover:bg-surface-50 dark:hover:bg-surface-800"
+                    className="w-full text-left px-3 py-1.5 text-sm text-[var(--color-content-primary)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]"
                   >
                     Markdown (.md)
                   </button>
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); chat.handleExport(chatItem.id, 'txt'); }}
-                    className="w-full text-left px-3 py-1.5 text-sm text-content-primary hover:bg-surface-50 dark:hover:bg-surface-800"
+                    className="w-full text-left px-3 py-1.5 text-sm text-[var(--color-content-primary)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]"
                   >
                     Plain Text (.txt)
                   </button>
@@ -255,7 +255,7 @@ export function ChatPage() {
               onClick={(e) => { e.stopPropagation(); chat.pinMutation.mutate(chatItem.id); }}
               className={cn(
                 'p-1.5 rounded-md transition-colors',
-                chatItem.pinned ? 'text-brand-500 hover:text-brand-600' : 'text-content-tertiary hover:text-content-secondary hover:bg-surface-200 dark:hover:bg-surface-700'
+                chatItem.pinned ? 'text-[var(--color-brand-500)] hover:text-[var(--color-brand-500)]' : 'text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-200)] dark:hover:bg-[var(--color-surface-700)]'
               )}
               aria-label={chatItem.pinned ? 'Unpin chat' : 'Pin chat'}
             >
@@ -264,7 +264,7 @@ export function ChatPage() {
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); chat.handleStartRename(chatItem.id, chatItem.title || ''); }}
-              className="p-1.5 rounded-md text-content-tertiary hover:text-content-secondary hover:bg-surface-200 dark:hover:bg-surface-700"
+              className="p-1.5 rounded-md text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-200)] dark:hover:bg-[var(--color-surface-700)]"
               aria-label="Rename chat"
             >
               <Pencil className="h-3.5 w-3.5" />
@@ -278,7 +278,7 @@ export function ChatPage() {
   if (chat.bundlesLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brand-500)]" />
       </div>
     );
   }
@@ -287,10 +287,10 @@ export function ChatPage() {
     <div className="h-full flex flex-col">
       <div className="flex-1 flex overflow-hidden">
         <aside className={cn(
-          'w-72 border-r border-border-default bg-white dark:bg-surface-900 flex flex-col flex-shrink-0 transition-all duration-200',
+          'w-72 border-r border-[var(--color-border-default)] bg-white dark:bg-[var(--color-surface-900)] flex flex-col flex-shrink-0 transition-all duration-200',
           'hidden lg:flex'
         )}>
-          <div className="p-3 border-b border-border-default space-y-2">
+          <div className="p-3 border-b border-[var(--color-border-default)] space-y-2">
             <button
               onClick={chat.handleNewChat}
               className="btn-primary w-full justify-center"
@@ -299,7 +299,7 @@ export function ChatPage() {
               New Chat
             </button>
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-content-tertiary" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--color-content-tertiary)]" />
               <input
                 ref={chat.searchInputRef}
                 type="text"
@@ -307,17 +307,17 @@ export function ChatPage() {
                 value={chat.searchQuery}
                 onChange={(e) => chat.setSearchQuery(e.target.value)}
                 className={cn(
-                  'w-full pl-8 pr-8 py-1.5 rounded-lg text-sm',
-                  'bg-surface-50 dark:bg-surface-800 border border-border-default',
-                  'text-content-primary placeholder:text-content-tertiary',
-                  'focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20'
+                  'w-full pl-8 pr-8 py-1.5 rounded-[var(--radius)] text-sm',
+                  'bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] border border-[var(--color-border-default)]',
+                  'text-[var(--color-content-primary)] placeholder:text-[var(--color-content-tertiary)]',
+                  'focus:outline-none focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20'
                 )}
               />
               {chat.searchQuery && (
                 <button
                   type="button"
                   onClick={() => chat.setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-content-tertiary hover:text-content-secondary"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)]"
                 >
                   <XIcon className="h-3.5 w-3.5" />
                 </button>
@@ -328,11 +328,11 @@ export function ChatPage() {
             {chat.chatsLoading ? (
               <div className="space-y-1 p-1">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-lg animate-pulse">
-                    <div className="h-4 w-4 rounded bg-surface-200 dark:bg-surface-700" />
+                  <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-[var(--radius)] animate-pulse">
+                    <div className="h-4 w-4 rounded bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]" />
                     <div className="flex-1 space-y-1.5">
-                      <div className="h-3.5 rounded bg-surface-200 dark:bg-surface-700 w-3/4" />
-                      <div className="h-2.5 rounded bg-surface-100 dark:bg-surface-800 w-1/2" />
+                      <div className="h-3.5 rounded bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] w-3/4" />
+                      <div className="h-2.5 rounded bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] w-1/2" />
                     </div>
                   </div>
                 ))}
@@ -341,19 +341,19 @@ export function ChatPage() {
               <>
                 {chat.pinnedChats.length > 0 && (
                   <div className="mb-1">
-                    <p className="px-3 py-1.5 text-[11px] font-semibold text-content-tertiary uppercase tracking-wider">Pinned</p>
+                    <p className="px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-content-tertiary)] uppercase tracking-wider">Pinned</p>
                     {chat.pinnedChats.map(renderChatItem)}
                   </div>
                 )}
 
                 {chat.folders.length > 0 && !chat.searchQuery.trim() && (
                   <div className="space-y-0.5">
-                    <div className="flex items-center justify-between px-3 py-1.5">
-                      <p className="text-[11px] font-semibold text-content-tertiary uppercase tracking-wider">Folders</p>
+                    <div className="flex items-center justify-between px-2.5 py-1.5">
+                      <p className="text-[11px] font-semibold text-[var(--color-content-tertiary)] uppercase tracking-wider">Folders</p>
                       <button
                         type="button"
                         onClick={() => chat.setCreatingFolder(true)}
-                        className="p-0.5 rounded text-content-tertiary hover:text-content-secondary"
+                        className="p-0.5 rounded text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)]"
                         aria-label="New folder"
                       >
                         <FolderPlus className="h-3.5 w-3.5" />
@@ -372,12 +372,12 @@ export function ChatPage() {
                           autoFocus
                           placeholder="Folder name"
                           maxLength={50}
-                          className="flex-1 min-w-0 px-2 py-1 text-sm rounded bg-white dark:bg-surface-800 border border-brand-300 dark:border-brand-700 text-content-primary focus:outline-none focus:ring-1 focus:ring-brand-500"
+                          className="flex-1 min-w-0 px-2 py-1 text-sm rounded bg-white dark:bg-[var(--color-surface-800)] border border-[var(--color-brand-500)]/30 dark:border-[var(--color-brand-500)]/40 text-[var(--color-content-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-brand-500)]"
                         />
-                        <button type="button" onClick={() => chat.newFolderName.trim() && chat.createFolderMutation.mutate(chat.newFolderName.trim())} className="p-1 text-brand-600 hover:text-brand-700">
+                        <button type="button" onClick={() => chat.newFolderName.trim() && chat.createFolderMutation.mutate(chat.newFolderName.trim())} className="p-1 text-[var(--color-brand-600)] hover:text-[var(--color-brand-700)]">
                           <Check className="h-3.5 w-3.5" />
                         </button>
-                        <button type="button" onClick={() => { chat.setCreatingFolder(false); chat.setNewFolderName(''); }} className="p-1 text-content-tertiary hover:text-content-secondary">
+                        <button type="button" onClick={() => { chat.setCreatingFolder(false); chat.setNewFolderName(''); }} className="p-1 text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)]">
                           <XIcon className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -388,8 +388,8 @@ export function ChatPage() {
                       return (
                         <div key={folder.id}>
                           <div className={cn(
-                            'group flex items-center gap-1 px-3 py-1.5 rounded-lg cursor-pointer transition-colors',
-                            'text-content-secondary hover:bg-surface-100 dark:hover:bg-surface-800'
+                            'group flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius)] cursor-pointer transition-colors',
+                            'text-[var(--color-content-secondary)] hover:bg-[var(--color-surface-100)] dark:hover:bg-[var(--color-surface-800)]'
                           )}>
                             <button type="button" onClick={() => chat.toggleFolder(folder.id)} className="flex items-center gap-1.5 flex-1 min-w-0">
                               {isExpanded ? <FolderOpen className="h-3.5 w-3.5 flex-shrink-0" /> : <Folder className="h-3.5 w-3.5 flex-shrink-0" />}
@@ -405,26 +405,26 @@ export function ChatPage() {
                                   onBlur={() => { if (chat.renameFolderValue.trim()) chat.renameFolderMutation.mutate({ folderId: folder.id, name: chat.renameFolderValue.trim() }); else chat.setRenamingFolderId(null); }}
                                   autoFocus
                                   maxLength={50}
-                                  className="flex-1 min-w-0 px-1 py-0.5 text-sm rounded bg-white dark:bg-surface-800 border border-brand-300 dark:border-brand-700 text-content-primary focus:outline-none"
+                                  className="flex-1 min-w-0 px-1 py-0.5 text-sm rounded bg-white dark:bg-[var(--color-surface-800)] border border-[var(--color-brand-500)]/30 dark:border-[var(--color-brand-500)]/40 text-[var(--color-content-primary)] focus:outline-none"
                                   onClick={(e) => e.stopPropagation()}
                                 />
                               ) : (
                                 <span className="text-sm font-medium truncate">{folder.name}</span>
                               )}
-                              <span className="text-[10px] text-content-tertiary ml-auto">{folderChatList.length}</span>
+                              <span className="text-[10px] text-[var(--color-content-tertiary)] ml-auto">{folderChatList.length}</span>
                             </button>
                             <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); chat.setRenamingFolderId(folder.id); chat.setRenameFolderValue(folder.name); }}
-                                className="p-0.5 rounded text-content-tertiary hover:text-content-secondary"
+                                className="p-0.5 rounded text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)]"
                               >
                                 <Pencil className="h-3 w-3" />
                               </button>
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); if (confirm(`Delete folder "${folder.name}"? Chats will be moved to Uncategorized.`)) chat.deleteFolderMutation.mutate(folder.id); }}
-                                className="p-0.5 rounded text-content-tertiary hover:text-red-500"
+                                className="p-0.5 rounded text-[var(--color-content-tertiary)] hover:text-red-500"
                               >
                                 <XIcon className="h-3 w-3" />
                               </button>
@@ -435,7 +435,7 @@ export function ChatPage() {
                               {folderChatList.length > 0 ? (
                                 folderChatList.map(renderChatItem)
                               ) : (
-                                <p className="px-3 py-2 text-xs text-content-tertiary">No chats in this folder</p>
+                                <p className="px-2.5 py-2 text-xs text-[var(--color-content-tertiary)]">No chats in this folder</p>
                               )}
                             </div>
                           )}
@@ -448,22 +448,22 @@ export function ChatPage() {
                 {(chat.unfiledChats.length > 0 || (chat.searchQuery.trim() && chat.filteredChats.length > 0)) && (
                   <div>
                     {chat.pinnedChats.length > 0 && chat.folders.length > 0 && !chat.searchQuery.trim() && (
-                      <p className="px-3 py-1.5 text-[11px] font-semibold text-content-tertiary uppercase tracking-wider">All Chats</p>
+                      <p className="px-2.5 py-1.5 text-[11px] font-semibold text-[var(--color-content-tertiary)] uppercase tracking-wider">All Chats</p>
                     )}
                     {(chat.searchQuery.trim() ? chat.filteredChats : chat.unfiledChats).map(renderChatItem)}
                   </div>
                 )}
 
                 {chat.filteredChats.length === 0 && chat.chats.length > 0 && (
-                  <div className="px-3 py-8 text-center">
-                    <Search className="h-6 w-6 text-content-tertiary mx-auto mb-2 opacity-50" />
-                    <p className="text-content-tertiary text-body-sm">No chats match "{chat.searchQuery}"</p>
+                  <div className="px-2.5 py-8 text-center">
+                    <Search className="h-6 w-6 text-[var(--color-content-tertiary)] mx-auto mb-2 opacity-50" />
+                    <p className="text-[var(--color-content-tertiary)] text-sm">No chats match "{chat.searchQuery}"</p>
                   </div>
                 )}
                 {chat.chats.length === 0 && (
-                  <div className="px-3 py-8 text-center">
-                    <MessageSquare className="h-8 w-8 text-content-tertiary mx-auto mb-2 opacity-50" />
-                    <p className="text-content-tertiary text-body-sm">No chats yet</p>
+                  <div className="px-2.5 py-8 text-center">
+                    <MessageSquare className="h-8 w-8 text-[var(--color-content-tertiary)] mx-auto mb-2 opacity-50" />
+                    <p className="text-[var(--color-content-tertiary)] text-sm">No chats yet</p>
                   </div>
                 )}
               </>
@@ -472,7 +472,7 @@ export function ChatPage() {
         </aside>
 
         <div className="flex-1 flex flex-col min-w-0">
-          <div className="border-b border-border-default p-3 bg-white/50 dark:bg-surface-950/50 backdrop-blur-sm flex items-center gap-3 lg:hidden">
+          <div className="border-b border-[var(--color-border-default)] p-3 bg-white/50 dark:bg-[var(--color-surface-950)]/50 backdrop-blur-sm flex items-center gap-3 lg:hidden">
             <div className="flex-1 min-w-0">
               <ModelSelector
                 bundles={chat.bundles}
@@ -482,7 +482,7 @@ export function ChatPage() {
             </div>
           </div>
 
-          <div className="border-b border-border-default px-4 py-2 bg-white/50 dark:bg-surface-950/50 backdrop-blur-sm hidden lg:flex items-center gap-3">
+          <div className="border-b border-[var(--color-border-default)] px-4 py-2 bg-white/50 dark:bg-[var(--color-surface-950)]/50 backdrop-blur-sm hidden lg:flex items-center gap-3">
             <div className="w-64 flex-shrink-0">
               <ModelSelector
                 bundles={chat.bundles}
@@ -490,7 +490,7 @@ export function ChatPage() {
                 onSelect={chat.handleBundleChange}
               />
             </div>
-            <div className="h-5 w-px bg-border-default" />
+            <div className="h-5 w-px bg-[var(--color-border-default)]" />
             <CapabilitySelector
               capabilities={chat.enabledCapabilities}
               selected={chat.currentCapability}
@@ -502,7 +502,7 @@ export function ChatPage() {
                 <button
                   type="button"
                   onClick={() => chat.handleBranch()}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-content-secondary hover:text-content-primary hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[var(--color-content-secondary)] hover:text-[var(--color-content-primary)] hover:bg-[var(--color-surface-100)] dark:hover:bg-[var(--color-surface-800)] transition-colors"
                   title="Create a branch from this conversation"
                 >
                   <GitBranch className="h-3.5 w-3.5" />
@@ -514,8 +514,7 @@ export function ChatPage() {
 
           <div className="flex-1 flex flex-col min-w-0">
             {chat.streamError && !chat.isStreaming && (
-              <div className="mx-4 md:mx-8 mt-3 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200/80 dark:border-red-800/40">
-                <div className="h-8 w-8 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0">
+              <div className="mx-4 md:mx-8 mt-3 flex items-center gap-3 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200/80 dark:border-red-800/40">                <div className="h-8 w-8 rounded-lg bg-red-100 dark:bg-red-900/50 flex items-center justify-center flex-shrink-0">
                   <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -559,31 +558,25 @@ export function ChatPage() {
               />
             ) : (
               <div className="flex-1 flex items-center justify-center p-6 sm:p-8">
-                <div className="text-center max-w-2xl w-full">
-                  <div className="relative mx-auto mb-8 w-fit">
-                    <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/20">
-                      <svg className="h-8 w-8 sm:h-10 sm:w-10 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.24c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                      </svg>
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-brand-100 dark:bg-brand-800 flex items-center justify-center">
-                      <Sparkles className="h-3 w-3 text-brand-600 dark:text-brand-300" />
-                    </div>
+                <div className="text-center max-w-2xl w-full px-6 py-12">
+                  <div className="w-16 h-16 rounded-2xl bg-[var(--color-brand-500)] flex items-center justify-center text-3xl mb-5 shadow-lg mx-auto">
+                    <span className="text-white font-bold text-xl">O</span>
                   </div>
-                  <h2 className="text-heading-xl font-bold text-content-primary mb-2 tracking-tight">
+                  <h2 className="text-2xl font-semibold text-[var(--color-content-primary)] mb-2" style={{ fontFamily: 'Instrument Serif, serif' }}>
                     How can I help you today?
                   </h2>
-                  <p className="text-body text-content-tertiary mb-8 max-w-md mx-auto leading-relaxed">
-                    I can help with writing, analysis, coding, math, and much more. Start a conversation or try one of these suggestions.
+                  <p className="text-sm text-[var(--color-content-tertiary)] mb-8">
+                    Ask questions, analyze files, write, code, research, or create.
                   </p>
 
                   {chat.availableCapabilities.length > 0 && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto mb-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 max-w-2xl mx-auto mb-6">
                       {[
-                        { icon: PenTool, label: 'Creative writing', prompt: 'Help me write a creative short story about a journey through space' },
-                        { icon: Code, label: 'Code assistance', prompt: 'Explain how async/await works in JavaScript with examples' },
-                        { icon: BarChart3, label: 'Data analysis', prompt: 'Help me analyze and visualize this dataset to find trends' },
-                        { icon: BookOpen, label: 'Research', prompt: 'Summarize the key concepts of machine learning for a beginner' },
+                        { icon: PenTool, label: 'Writing', prompt: 'Help me write something', color: 'text-blue-500' },
+                        { icon: Code, label: 'Coding', prompt: 'Help me build or debug code', color: 'text-green-500' },
+                        { icon: BookOpen, label: 'Research', prompt: 'Research a topic for me', color: 'text-orange-500' },
+                        { icon: BarChart3, label: 'Analysis', prompt: 'Analyze my data', color: 'text-purple-500' },
+                        { icon: Sparkles, label: 'Creative', prompt: 'Create something new', color: 'text-pink-500' },
                       ].map((item) => (
                         <button
                           key={item.label}
@@ -603,23 +596,17 @@ export function ChatPage() {
                             }, 100);
                           }}
                           className={cn(
-                            'group flex items-center gap-3 p-3 sm:p-4 rounded-xl text-left transition-all duration-200',
-                            'bg-white dark:bg-surface-900 border border-border-default',
-                            'hover:border-brand-300 dark:hover:border-brand-700 hover:shadow-md hover:shadow-brand-500/5',
+                            'flex flex-col items-start gap-2 p-3 rounded-xl text-left transition-all duration-200',
+                            'bg-white dark:bg-[var(--color-surface-900)] border border-[var(--color-border-default)]',
+                            'hover:border-[var(--color-brand-500)]/40 hover:shadow-sm hover:-translate-y-0.5',
                             'active:scale-[0.98]'
                           )}
                         >
-                          <div className={cn(
-                            'h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors',
-                            'bg-surface-50 dark:bg-surface-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-950/50'
-                          )}>
-                            <item.icon className="h-5 w-5 text-content-tertiary group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" />
+                          <span className={item.color}><item.icon className="h-5 w-5" /></span>
+                          <div>
+                            <p className="text-sm font-medium text-[var(--color-content-primary)]">{item.label}</p>
+                            <p className="text-xs text-[var(--color-content-tertiary)] mt-0.5 leading-snug">{item.prompt}</p>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-body-sm font-medium text-content-primary">{item.label}</p>
-                            <p className="text-body-xs text-content-tertiary truncate mt-0.5">{item.prompt.slice(0, 50)}...</p>
-                          </div>
-                          <Send className="h-4 w-4 text-content-tertiary group-hover:text-brand-500 transition-colors flex-shrink-0" />
                         </button>
                       ))}
                     </div>
@@ -627,7 +614,7 @@ export function ChatPage() {
 
                   <div className="flex flex-wrap gap-2 justify-center">
                     {chat.availableCapabilities.filter(c => !UNSUPPORTED_CAPABILITIES.has(c)).slice(0, 6).map(cap => (
-                      <span key={cap} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-50 dark:bg-surface-800/50 text-body-xs text-content-tertiary border border-border-default/50">
+                      <span key={cap} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)]/50 text-xs text-[var(--color-content-tertiary)] border border-[var(--color-border-default)]/50">
                         {capabilityIcons[cap]}
                         {CAPABILITY_LABELS[cap] || cap.replace(/_/g, ' ')}
                       </span>
