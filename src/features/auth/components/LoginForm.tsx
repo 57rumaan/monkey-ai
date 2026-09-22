@@ -65,7 +65,7 @@ export function LoginForm({ onSwitchToSignup, onForgotPassword }: LoginFormProps
       <div className="space-y-1.5">
         <label htmlFor="login-email" className="label">Email or Username</label>
         <div className="relative group">
-          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
           <Input
             id="login-email"
             type="text"
@@ -85,13 +85,13 @@ export function LoginForm({ onSwitchToSignup, onForgotPassword }: LoginFormProps
           <button
             type="button"
             onClick={onForgotPassword}
-            className="text-body-xs text-brand-600 dark:text-brand-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded transition-colors"
+            className="text-xs text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 rounded transition-colors"
           >
             Forgot password?
           </button>
         </div>
         <div className="relative group">
-          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
           <Input
             id="login-password"
             type={showPassword ? 'text' : 'password'}
@@ -130,12 +130,12 @@ export function LoginForm({ onSwitchToSignup, onForgotPassword }: LoginFormProps
         Sign In
       </Button>
 
-      <p className="text-center text-body-sm text-content-tertiary pt-2">
+      <p className="text-center text-sm text-[var(--color-content-tertiary)] pt-2">
         Don&apos;t have an account?{' '}
         <button
           type="button"
           onClick={onSwitchToSignup}
-          className="text-brand-600 dark:text-brand-400 hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded transition-colors"
+          className="text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)] hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 rounded transition-colors"
         >
           Sign up
         </button>

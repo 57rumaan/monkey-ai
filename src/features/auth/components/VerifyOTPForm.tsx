@@ -186,37 +186,37 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
       <div className="space-y-6">
         <div className="flex items-center gap-3" role="group" aria-label="Signup progress">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-state-success text-white text-body-xs font-semibold">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-state-success text-white text-xs font-semibold">
               <Check className="h-3.5 w-3.5" />
             </div>
-            <span className="text-body-sm text-content-tertiary line-through">Account</span>
+            <span className="text-sm text-[var(--color-content-tertiary)] line-through">Account</span>
           </div>
           <div className="flex-1 h-px bg-state-success" />
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-state-success text-white text-body-xs font-semibold">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-state-success text-white text-xs font-semibold">
               <Check className="h-3.5 w-3.5" />
             </div>
-            <span className="text-body-sm text-content-tertiary line-through">Verify</span>
+            <span className="text-sm text-[var(--color-content-tertiary)] line-through">Verify</span>
           </div>
           <div className="flex-1 h-px bg-state-success" />
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-brand-600 text-white text-body-xs font-semibold step-pulse">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-brand-500)] text-white text-xs font-semibold step-pulse">
               3
             </div>
-            <span className="text-body-sm font-medium text-content-primary">Username</span>
+            <span className="text-sm font-medium text-[var(--color-content-primary)]">Username</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmitUsername(handleSetUsername)} className="space-y-5" noValidate>
           <div className="text-center">
-            <h3 className="text-heading-md font-semibold text-content-primary">Create your username</h3>
-            <p className="text-body-sm text-content-tertiary mt-1.5">This will be your public display name</p>
+            <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">Create your username</h3>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1.5">This will be your public display name</p>
           </div>
 
           <div className="space-y-1.5">
             <label htmlFor="username" className="label">Username</label>
             <div className="relative group">
-              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-content-tertiary group-focus-within:text-brand-500 transition-colors" aria-hidden="true" />
+              <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)] group-focus-within:text-[var(--color-brand-500)] transition-colors" aria-hidden="true" />
               <Input
                 id="username"
                 type="text"
@@ -230,7 +230,7 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
               />
             </div>
             {!usernameErrors.username && (
-              <p id="username-hint" className="text-caption text-content-tertiary">
+              <p id="username-hint" className="text-xs text-[var(--color-content-tertiary)]">
                 3-30 characters. Letters, numbers, underscore, and hyphen only.
               </p>
             )}
@@ -252,32 +252,32 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
     <div className="space-y-6">
       <div className="flex items-center gap-3" role="group" aria-label="Signup progress">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-state-success text-white text-body-xs font-semibold">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-state-success text-white text-xs font-semibold">
             <Check className="h-3.5 w-3.5" />
           </div>
-          <span className="text-body-sm text-content-tertiary line-through">Account</span>
+          <span className="text-sm text-[var(--color-content-tertiary)] line-through">Account</span>
         </div>
         <div className="flex-1 h-px bg-state-success" />
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-brand-600 text-white text-body-xs font-semibold step-pulse">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-brand-500)] text-white text-xs font-semibold step-pulse">
             2
           </div>
-          <span className="text-body-sm font-medium text-content-primary">Verify</span>
+          <span className="text-sm font-medium text-[var(--color-content-primary)]">Verify</span>
         </div>
-        <div className="flex-1 h-px bg-surface-200 dark:bg-surface-700" />
+        <div className="flex-1 h-px bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]" />
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-surface-200 dark:bg-surface-700 text-content-tertiary text-body-xs font-semibold">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)] text-[var(--color-content-tertiary)] text-xs font-semibold">
             3
           </div>
-          <span className="text-body-sm text-content-tertiary">Username</span>
+          <span className="text-sm text-[var(--color-content-tertiary)]">Username</span>
         </div>
       </div>
 
       <div className="text-center">
-        <h3 className="text-heading-md font-semibold text-content-primary">Verify your email</h3>
-        <p className="text-body-sm text-content-tertiary mt-1.5">
+        <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">Verify your email</h3>
+        <p className="text-sm text-[var(--color-content-tertiary)] mt-1.5">
           We sent a 6-digit code to{' '}
-          <strong className="text-content-primary">{email}</strong>
+          <strong className="text-[var(--color-content-primary)]">{email}</strong>
         </p>
       </div>
 
@@ -310,7 +310,7 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
       </div>
 
       {otpError && (
-        <p className="text-center text-body-sm text-state-error shake" role="alert">
+        <p className="text-center text-sm text-[var(--color-state-error)] shake" role="alert">
           {otpError}
         </p>
       )}
@@ -330,7 +330,7 @@ export function VerifyOTPForm({ email, onSuccess, onBack, initialOtp }: VerifyOT
           type="button"
           onClick={handleResend}
           disabled={resendCooldown > 0 || isLoading}
-          className="text-body-sm text-brand-600 dark:text-brand-400 hover:underline disabled:text-content-tertiary disabled:hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 rounded transition-colors"
+          className="text-sm text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)] hover:underline disabled:text-[var(--color-content-tertiary)] disabled:hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-500)] focus-visible:ring-offset-2 rounded transition-colors"
         >
           {resendCooldown > 0 ? (
             <>Resend code in <span className="font-mono font-semibold">{resendCooldown}s</span></>

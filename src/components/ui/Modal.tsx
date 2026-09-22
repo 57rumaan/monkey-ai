@@ -39,10 +39,10 @@ export function ModalContainer({ children, className }: { children: ReactNode; c
 
 export function ModalHeader({ title, description, className }: { title: string; description?: string; className?: string }) {
   return (
-    <div className={cn('flex items-start justify-between px-6 py-4 border-b border-border-default', className)}>
+    <div className={cn('flex items-start justify-between px-6 py-5 border-b border-[var(--color-border-default)]', className)}>
       <div className="min-w-0 flex-1">
-        <h2 className="text-heading-lg font-semibold text-content-primary">{title}</h2>
-        {description && <p className="text-body-sm text-content-tertiary mt-1">{description}</p>}
+        <h2 className="text-lg font-semibold text-[var(--color-content-primary)]">{title}</h2>
+        {description && <p className="text-sm text-[var(--color-content-tertiary)] mt-1">{description}</p>}
       </div>
       <ModalCloseButton />
     </div>
@@ -63,7 +63,7 @@ export function ModalBody({ children, className }: { children: ReactNode; classN
 }
 
 export function ModalFooter({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('flex items-center justify-end gap-3 px-6 py-4 border-t border-border-default bg-surface-50 dark:bg-surface-950/50', className)}>{children}</div>;
+  return <div className={cn('flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--color-border-default)] bg-[var(--color-surface-50)]/50 dark:bg-[var(--color-surface-950)]/30', className)}>{children}</div>;
 }
 
 export function ConfirmModal({

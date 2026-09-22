@@ -35,7 +35,7 @@ export function LoginPage() {
     return (
       <AuthLayout
         title="Create your account"
-        subtitle="Start your journey with MONKEY AI"
+        subtitle="Start your journey with Octix"
       >
         <SignupForm
           onSuccess={handleSignupSuccess}
@@ -65,7 +65,7 @@ export function LoginPage() {
   return (
     <AuthLayout
       title="Welcome back"
-      subtitle="Sign in to your MONKEY AI account"
+      subtitle="Sign in to your account"
     >
       <LoginForm
         onSwitchToSignup={handleSwitchToSignup}

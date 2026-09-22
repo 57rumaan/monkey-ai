@@ -24,7 +24,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="block text-body-sm font-medium text-content-primary mb-1.5">
+          <label htmlFor={id} className="block text-sm font-medium text-[var(--color-content-primary)] mb-1.5">
             {label}
           </label>
         )}
@@ -32,13 +32,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={id}
           className={cn(
-            'w-full rounded-lg border bg-white text-content-primary placeholder:text-content-tertiary transition-colors duration-fast resize-y min-h-[80px]',
-            'hover:border-border-strong',
-            'focus:border-brand-500 focus:outline-2 focus:outline-brand-500/20 focus:outline-offset-0',
-            'disabled:bg-surface-100 disabled:text-content-disabled disabled:cursor-not-allowed',
-            'dark:bg-surface-900 dark:border-border-default dark:hover:border-border-strong dark:focus:border-brand-400 dark:focus:outline-brand-400/20',
+            'w-full rounded-lg border bg-white text-[var(--color-content-primary)] placeholder:text-[var(--color-content-tertiary)] transition-all duration-fast resize-y min-h-[80px]',
+            'hover:border-[var(--color-border-strong)]',
+            'focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/10 focus:outline-none',
+            'disabled:bg-[var(--color-surface-100)] disabled:text-[var(--color-content-disabled)] disabled:cursor-not-allowed',
+            'dark:bg-[var(--color-surface-900)] dark:border-[var(--color-border-default)] dark:hover:border-[var(--color-border-strong)] dark:focus:border-[var(--color-brand-500)] dark:focus:ring-[var(--color-brand-500)]/15',
             sizes[size],
-            error && 'border-state-error focus:border-state-error focus:outline-state-error/20',
+            error && 'border-state-error focus:border-state-error focus:ring-state-error/10',
             className
           )}
           aria-invalid={error ? 'true' : 'false'}
@@ -51,7 +51,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           </p>
         )}
         {hint && !error && (
-          <p id={hintId} className="mt-1.5 text-body-sm text-content-tertiary">
+          <p id={hintId} className="mt-1.5 text-sm text-[var(--color-content-tertiary)]">
             {hint}
           </p>
         )}

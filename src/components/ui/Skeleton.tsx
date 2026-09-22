@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement> & { className?: string }) {
   return (
     <div
-      className={cn('animate-pulse rounded-lg bg-surface-200 dark:bg-surface-700', className)}
+      className={cn('animate-pulse rounded-lg bg-[var(--color-surface-200)] dark:bg-[var(--color-surface-700)]', className)}
       {...props}
     />
   );
@@ -21,7 +21,7 @@ export function SkeletonText({ lines = 3, className }: { lines?: number; classNa
 
 export function SkeletonCard({ className }: { className?: string }) {
   return (
-    <div className={cn('rounded-xl border border-border-default bg-white dark:bg-surface-900 p-6 space-y-4', className)}>
+    <div className={cn('rounded-xl border border-[var(--color-border-default)] bg-white dark:bg-[var(--color-surface-900)] p-6 space-y-4', className)}>
       <div className="flex items-center gap-4">
         <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
         <div className="flex-1 space-y-2">
@@ -51,7 +51,7 @@ export function SkeletonChatMessage({ className }: { className?: string }) {
 
 export function SkeletonComposer({ className }: { className?: string }) {
   return (
-    <div className={cn('rounded-xl border border-border-default bg-white dark:bg-surface-900 p-4', className)}>
+    <div className={cn('rounded-xl border border-[var(--color-border-default)] bg-white dark:bg-[var(--color-surface-900)] p-4', className)}>
       <Skeleton className="h-20 w-full rounded-lg" />
       <div className="flex items-center justify-between mt-4">
         <Skeleton className="h-10 w-24 rounded-lg" />

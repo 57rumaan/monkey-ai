@@ -9,18 +9,18 @@ export interface BadgeProps {
 
 export function Badge({ children, variant = 'neutral', size = 'default', className }: BadgeProps) {
   const variants = {
-    primary: 'bg-brand-100 text-brand-800 dark:bg-brand-900 dark:text-brand-200',
+    primary: 'bg-[var(--color-brand-100)] text-[var(--color-brand-800)] dark:bg-[var(--color-brand-900)] dark:text-[var(--color-brand-200)]',
     success: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
     warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
     error: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    neutral: 'bg-surface-100 text-content-secondary dark:bg-surface-800 dark:text-content-secondary',
+    neutral: 'bg-[var(--color-surface-100)] text-[var(--color-content-secondary)] dark:bg-[var(--color-surface-800)] dark:text-[var(--color-content-secondary)]',
   };
 
   const sizes = {
     xs: 'px-1.5 py-0.5 text-[10px]',
-    sm: 'px-2 py-0.5 text-body-xs',
+    sm: 'px-2 py-0.5 text-xs',
     default: 'px-2.5 py-0.5 text-xs',
-    lg: 'px-3 py-1 text-body-sm',
+    lg: 'px-3 py-1 text-sm',
   };
 
   return (

@@ -71,9 +71,9 @@ export function DropdownItem({ children, onClick, className, disabled, icon, sho
         className
       )}
     >
-      {icon && <span className="h-5 w-5 flex-shrink-0">{icon}</span>}
+      {icon && <span className="h-4 w-4 flex-shrink-0">{icon}</span>}
       <span className="flex-1">{children}</span>
-      {shortcut && <span className="text-body-xs text-content-tertiary font-mono">{shortcut}</span>}
+      {shortcut && <span className="text-xs text-[var(--color-content-tertiary)] font-mono">{shortcut}</span>}
     </button>
   );
 }
@@ -131,10 +131,10 @@ export function SelectDropdown({ value, options, onChange, placeholder, classNam
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <span className={cn('truncate', !selectedOption && !value && 'text-content-tertiary')}>
+        <span className={cn('truncate', !selectedOption && !value && 'text-[var(--color-content-tertiary)]')}>
           {selectedOption?.label || value || placeholder}
         </span>
-        {isOpen ? <ChevronUp className="h-4 w-4 flex-shrink-0 text-content-tertiary" /> : <ChevronDown className="h-4 w-4 flex-shrink-0 text-content-tertiary" />}
+        {isOpen ? <ChevronUp className="h-4 w-4 flex-shrink-0 text-[var(--color-content-tertiary)]" /> : <ChevronDown className="h-4 w-4 flex-shrink-0 text-[var(--color-content-tertiary)]" />}
       </button>
       {isOpen && (
         <div
@@ -152,11 +152,11 @@ export function SelectDropdown({ value, options, onChange, placeholder, classNam
               onClick={() => { if (!disabled && !option.disabled) { onChange(option.value); setIsOpen(false); } }}
               className={cn(
                 'dropdown-item w-full text-left',
-                value === option.value && 'bg-brand-50 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300',
+                value === option.value && 'bg-[var(--color-brand-50)] text-[var(--color-brand-700)] dark:bg-[var(--color-brand-900)]/50 dark:text-[var(--color-brand-300)]',
                 option.disabled && 'opacity-50 cursor-not-allowed'
               )}
             >
-              {option.icon && <span className="h-5 w-5 flex-shrink-0">{option.icon}</span>}
+              {option.icon && <span className="h-4 w-4 flex-shrink-0">{option.icon}</span>}
               <span className="flex-1">{option.label}</span>
             </button>
           ))}

@@ -205,37 +205,40 @@ export function AdminBundlesPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-heading-xl font-bold text-content-primary">Model Bundles</h1>
-            <p className="text-body text-content-tertiary mt-1">Create and manage user-facing AI product bundles</p>
+            <h1 className="text-xl font-bold text-[var(--color-content-primary)]">Model Bundles</h1>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Create and manage user-facing AI product bundles</p>
           </div>
-          <Button onClick={() => setIsCreatingBundle(true)}>
-            <Plus className="h-4 w-4 mr-2" /> Create Bundle
-          </Button>
+          <div className="flex items-center gap-3">
+            <Badge variant="neutral">{bundles.length} bundles</Badge>
+            <Button onClick={() => setIsCreatingBundle(true)}>
+              <Plus className="h-4 w-4 mr-2" /> Create Bundle
+            </Button>
+          </div>
         </div>
 
         {bundlesLoading ? (
           <Card>
             <CardContent className="h-64 flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
+              <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brand-500)]" />
             </CardContent>
           </Card>
         ) : bundlesError ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <AlertCircle className="h-10 w-10 text-state-error mx-auto mb-3" />
-              <h3 className="text-heading-md font-medium text-content-primary mb-1">Failed to load bundles</h3>
-              <p className="text-body-sm text-content-tertiary mb-4">{bundlesError instanceof Error ? bundlesError.message : 'An error occurred'}</p>
+              <AlertCircle className="h-10 w-10 text-[var(--color-state-error)] mx-auto mb-3" />
+              <h3 className="text-lg font-medium text-[var(--color-content-primary)] mb-1">Failed to load bundles</h3>
+              <p className="text-sm text-[var(--color-content-tertiary)] mb-4">{bundlesError instanceof Error ? bundlesError.message : 'An error occurred'}</p>
               <Button variant="secondary" onClick={() => queryClient.invalidateQueries({ queryKey: ['bundles'] })}>Retry</Button>
             </CardContent>
           </Card>
         ) : bundles.length === 0 ? (
           <Card>
             <CardContent className="py-16 text-center">
-              <div className="h-16 w-16 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mx-auto mb-4">
-                <Box className="h-8 w-8 text-content-tertiary" />
+              <div className="h-16 w-16 rounded-full bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] flex items-center justify-center mx-auto mb-4">
+                <Box className="h-8 w-8 text-[var(--color-content-tertiary)]" />
               </div>
-              <h3 className="text-heading-md font-medium text-content-primary mb-2">No bundles yet</h3>
-              <p className="text-body text-content-tertiary mb-6 max-w-sm mx-auto">Create your first model bundle to organize AI capabilities for users</p>
+              <h3 className="text-lg font-medium text-[var(--color-content-primary)] mb-2">No bundles yet</h3>
+              <p className="text-sm text-[var(--color-content-tertiary)] mb-6 max-w-sm mx-auto">Create your first model bundle to organize AI capabilities for users</p>
               <Button onClick={() => setIsCreatingBundle(true)}>
                 <Plus className="h-4 w-4 mr-2" /> Create Bundle
               </Button>
@@ -252,7 +255,7 @@ export function AdminBundlesPage() {
                       <div className="flex items-start gap-3 flex-1 min-w-0 cursor-pointer" onClick={() => toggleBundle(bundle.id)}>
                         <div className={cn(
                           'h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0',
-                          bundle.tier === 'pro' && 'bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300',
+                          bundle.tier === 'pro' && 'bg-[var(--color-brand-100)] text-[var(--color-brand-700)] dark:bg-[var(--color-brand-900)] dark:text-[var(--color-brand-300)]',
                           bundle.tier === 'enterprise' && 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
                           bundle.tier === 'free' && 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
                         )}>
@@ -262,7 +265,7 @@ export function AdminBundlesPage() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-heading-md font-semibold text-content-primary">{bundle.name}</h3>
+                            <h3 className="text-lg font-semibold text-[var(--color-content-primary)]">{bundle.name}</h3>
                             <Badge variant={bundle.tier === 'pro' ? 'primary' : bundle.tier === 'enterprise' ? 'warning' : 'success'}>
                               {bundle.tier}
                             </Badge>
@@ -274,7 +277,7 @@ export function AdminBundlesPage() {
                             </Badge>
                           </div>
                           {bundle.description && (
-                            <p className="text-body-sm text-content-tertiary mt-1">{bundle.description}</p>
+                            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">{bundle.description}</p>
                           )}
                           {bundle.capabilities.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
@@ -286,7 +289,7 @@ export function AdminBundlesPage() {
                             </div>
                           )}
                         </div>
-                        <ChevronRight className={cn('h-5 w-5 text-content-tertiary transition-transform flex-shrink-0 mt-1', isExpanded && 'rotate-90')} />
+                        <ChevronRight className={cn('h-5 w-5 text-[var(--color-content-tertiary)] transition-transform flex-shrink-0 mt-1', isExpanded && 'rotate-90')} />
                       </div>
                       <Dropdown
                         trigger={<Button variant="ghost" size="icon" aria-label="Bundle actions"><svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="3" r="1.5" /><circle cx="8" cy="8" r="1.5" /><circle cx="8" cy="13" r="1.5" /></svg></Button>}
@@ -303,7 +306,7 @@ export function AdminBundlesPage() {
                         <DropdownItem
                           icon={<Trash2 className="h-4 w-4" />}
                           onClick={() => setConfirmDelete({ id: bundle.id, name: bundle.name })}
-                          className="text-state-error"
+                          className="text-[var(--color-state-error)]"
                         >
                           Delete Bundle
                         </DropdownItem>
@@ -312,33 +315,33 @@ export function AdminBundlesPage() {
                   </CardHeader>
                   {isExpanded && (
                     <CardContent className="pt-0">
-                      <div className="border-t border-border-default pt-4">
+                      <div className="border-t border-[var(--color-border-default)] pt-4">
                         {bundle.capabilities.length === 0 ? (
                           <div className="text-center py-8">
-                            <Sparkles className="h-8 w-8 text-content-tertiary mx-auto mb-2" />
-                            <p className="text-body text-content-tertiary">No capabilities configured</p>
+                            <Sparkles className="h-8 w-8 text-[var(--color-content-tertiary)] mx-auto mb-2" />
+                            <p className="text-sm text-[var(--color-content-tertiary)]">No capabilities configured</p>
                             <Button variant="ghost" size="sm" className="mt-2" onClick={() => setAddingCapabilityTo(bundle.id)}>
                               <Plus className="h-3 w-3 mr-1" /> Add Capability
                             </Button>
                           </div>
                         ) : (
                           <>
-                            <h4 className="text-body-sm font-medium text-content-secondary mb-3">Capability Mapping</h4>
+                            <h4 className="text-sm font-medium text-[var(--color-content-secondary)] mb-3">Capability Mapping</h4>
                             <div className="space-y-2">
                               {bundle.capabilities.map((cap) => {
                                 const provider = providers.find(p => p.id === cap.providerId);
                                 const rawModel = provider?.models.find(m => m.id === cap.rawModelId);
                                 return (
-                                  <div key={cap.capabilityId} className="flex items-center justify-between p-3 rounded-lg border border-border-default bg-surface-50 dark:bg-surface-800/50 hover:border-brand-300 dark:hover:border-brand-700 transition-colors">
+                                  <div key={cap.capabilityId} className="flex items-center justify-between p-3 rounded-lg border border-[var(--color-border-default)] bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50 hover:border-[var(--color-brand-300)] dark:hover:border-brand-700 transition-colors">
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                      <div className="h-9 w-9 rounded-lg bg-brand-100 dark:bg-brand-900 flex items-center justify-center flex-shrink-0">
-                                        <span className="text-brand-600 dark:text-brand-400 text-sm font-semibold">
+                                      <div className="h-9 w-9 rounded-lg bg-[var(--color-brand-100)] dark:bg-[var(--color-brand-900)] flex items-center justify-center flex-shrink-0">
+                                        <span className="text-[var(--color-brand-500)] dark:text-[var(--color-brand-400)] text-sm font-semibold">
                                           {getCapLabel(cap.capabilityId).charAt(0)}
                                         </span>
                                       </div>
                                       <div className="min-w-0 flex-1">
-                                        <p className="text-body font-medium text-content-primary">{getCapLabel(cap.capabilityId)}</p>
-                                        <div className="flex items-center gap-1.5 mt-0.5 text-body-xs text-content-tertiary">
+                                        <p className="text-sm font-medium text-[var(--color-content-primary)]">{getCapLabel(cap.capabilityId)}</p>
+                                        <div className="flex items-center gap-1.5 mt-0.5 text-xs text-[var(--color-content-tertiary)]">
                                           <span className="font-medium">{provider?.label || 'Unknown provider'}</span>
                                           <span>→</span>
                                           <span>{rawModel?.customName || 'Unknown model'}</span>
@@ -351,7 +354,7 @@ export function AdminBundlesPage() {
                                       aria-label={`Remove ${getCapLabel(cap.capabilityId)}`}
                                       onClick={() => setConfirmRemoveCap({ bundleId: bundle.id, capabilityId: cap.capabilityId, capLabel: getCapLabel(cap.capabilityId) })}
                                     >
-                                      <Trash2 className="h-4 w-4 text-state-error" />
+                                      <Trash2 className="h-4 w-4 text-[var(--color-state-error)]" />
                                     </Button>
                                   </div>
                                 );
@@ -436,35 +439,35 @@ function BundleFormModal({ bundle, onClose, onSubmit, isLoading }: { bundle: Bun
       />
       <ModalBody>
         <form id="bundle-form" onSubmit={handleSubmit(data => onSubmit(data))} className="space-y-4" noValidate>
-          <Input label="Bundle Name" placeholder="e.g., MONKEY AI PRO" error={errors.name?.message} {...register('name')} />
+          <Input label="Bundle Name" placeholder="e.g., Octix PRO" error={errors.name?.message} {...register('name')} />
           <Textarea label="Description" placeholder="Describe what this bundle offers to users" rows={3} {...register('description')} />
           <div className="space-y-1.5">
             <label className="label">Tier</label>
             <div className="grid grid-cols-3 gap-2">
               {([
                 { value: 'free' as const, label: 'Free', color: 'border-emerald-300 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' },
-                { value: 'pro' as const, label: 'Pro', color: 'border-brand-300 bg-brand-50 dark:border-brand-700 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300' },
+                { value: 'pro' as const, label: 'Pro', color: 'border-[var(--color-brand-300)] bg-[var(--color-brand-50)] dark:border-[var(--color-brand-700)] dark:bg-[var(--color-brand-900)]/30 text-[var(--color-brand-700)] dark:text-[var(--color-brand-300)]' },
                 { value: 'enterprise' as const, label: 'Enterprise', color: 'border-purple-300 bg-purple-50 dark:border-purple-700 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' },
               ]).map(tier => (
                 <label key={tier.value} className={cn(
-                  'flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all text-body-sm font-medium',
-                  watch('tier') === tier.value ? tier.color : 'border-border-default hover:border-border-strong'
+                  'flex items-center justify-center gap-2 cursor-pointer p-3 rounded-lg border-2 transition-all text-sm font-medium',
+                  watch('tier') === tier.value ? tier.color : 'border-[var(--color-border-default)] hover:border-[var(--color-border-strong)]'
                 )}>
                   <input type="radio" value={tier.value} {...register('tier')} className="sr-only" />
                   {tier.label}
                 </label>
               ))}
             </div>
-            {errors.tier && <p className="text-body-sm text-state-error">{errors.tier.message}</p>}
+            {errors.tier && <p className="text-sm text-[var(--color-state-error)]">{errors.tier.message}</p>}
           </div>
-          <label className="flex items-center gap-3 p-3 rounded-lg bg-surface-50 dark:bg-surface-800/50 cursor-pointer">
+          <label className="flex items-center gap-3 p-3 rounded-lg bg-[var(--color-surface-50)] dark:bg-[var(--color-surface-800)]/50 cursor-pointer">
             <input
               type="checkbox"
               checked={watch('enabled')}
               onChange={e => register('enabled').onChange({ target: { checked: e.target.checked } })}
-              className="h-4 w-4 rounded border-border-default text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-[var(--color-border-default)] text-[var(--color-brand-500)] focus:ring-[var(--color-brand-500)]"
             />
-            <span className="text-body font-medium text-content-secondary">Enabled</span>
+            <span className="text-sm font-medium text-[var(--color-content-secondary)]">Enabled</span>
           </label>
         </form>
       </ModalBody>
@@ -521,7 +524,7 @@ function AddCapabilityModal({ bundleId: _bundleId, providers, capabilities, onCl
               ))}
             </select>
             {selectedCapability && filteredProviders.length === 0 && (
-              <p className="text-caption text-state-error">No providers have models with this capability</p>
+              <p className="text-xs text-[var(--color-state-error)]">No providers have models with this capability</p>
             )}
           </div>
 
@@ -539,7 +542,7 @@ function AddCapabilityModal({ bundleId: _bundleId, providers, capabilities, onCl
               ))}
             </select>
             {selectedProvider && filteredModels.length === 0 && (
-              <p className="text-caption text-state-error">No enabled models match this capability</p>
+              <p className="text-xs text-[var(--color-state-error)]">No enabled models match this capability</p>
             )}
           </div>
         </div>

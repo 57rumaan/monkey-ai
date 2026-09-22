@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useToast } from '@/components/ui/Toast';
+import { useTheme } from '@/hooks/useTheme';
 import { cn } from '@/lib/utils';
 
 const profileSchema = z.object({
@@ -48,8 +49,8 @@ function ToggleSwitch({ checked, onChange, disabled }: ToggleSwitchProps) {
       disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900',
-        checked ? 'bg-brand-600' : 'bg-surface-300 dark:bg-surface-600',
+        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-500)] focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900',
+        checked ? 'bg-brand-600' : 'bg-[var(--color-surface-300)] dark:bg-[var(--color-surface-600)]',
         disabled && 'opacity-50 cursor-not-allowed'
       )}
     >
@@ -66,18 +67,12 @@ function ToggleSwitch({ checked, onChange, disabled }: ToggleSwitchProps) {
 export function SettingsPage() {
   const { user, updateProfile, changePassword } = useAuth();
   const { showToast } = useToast();
+  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'preferences'>('profile');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('darkMode');
-      if (stored !== null) return stored === 'true';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const darkMode = theme === 'dark';
 
   const [emailNotifications, setEmailNotifications] = useState(() => {
     const stored = localStorage.getItem('emailNotifications');
@@ -89,17 +84,8 @@ export function SettingsPage() {
     return stored !== null ? stored === 'true' : false;
   });
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', String(darkMode));
-  }, [darkMode]);
-
   const handleToggleDarkMode = (checked: boolean) => {
-    setDarkMode(checked);
+    setTheme(checked ? 'dark' : 'light');
     showToast(checked ? 'Dark mode enabled' : 'Light mode enabled', { variant: 'success', duration: 2000 });
   };
 
@@ -157,22 +143,22 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="max-w-3xl mx-auto space-y-8 p-6">
       <div>
-        <h1 className="text-heading-xl font-bold text-content-primary">Settings</h1>
-        <p className="text-body text-content-tertiary mt-1">Manage your account settings and preferences</p>
+        <h1 className="text-xl font-semibold text-[var(--color-content-primary)]">Settings</h1>
+        <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Manage your account settings and preferences</p>
       </div>
 
-      <div className="flex gap-1 p-1 bg-surface-100 dark:bg-surface-800 rounded-xl">
+      <div className="flex gap-1 p-1 bg-[var(--color-surface-100)] dark:bg-[var(--color-surface-800)] rounded-xl">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2.5 text-body font-medium rounded-lg transition-all',
+              'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all',
               activeTab === tab.id
-                ? 'bg-white dark:bg-surface-700 text-content-primary shadow-sm'
-                : 'text-content-tertiary hover:text-content-secondary'
+                ? 'bg-white dark:bg-[var(--color-surface-700)] text-[var(--color-content-primary)] shadow-sm'
+                : 'text-[var(--color-content-tertiary)] hover:text-[var(--color-content-secondary)]'
             )}
           >
             <tab.icon className="h-4 w-4" />
@@ -184,20 +170,20 @@ export function SettingsPage() {
       {activeTab === 'profile' && (
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-brand-100 dark:bg-brand-900 flex items-center justify-center">
-                <User className="h-4 w-4 text-brand-600 dark:text-brand-400" />
+              <h2 className="text-base font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-[var(--color-brand-100)] dark:bg-[var(--color-brand-900)] flex items-center justify-center">
+                <User className="h-4 w-4 text-[var(--color-brand-600)] dark:text-[var(--color-brand-400)]" />
               </div>
               Profile Information
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Update your personal details and public profile</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Update your personal details and public profile</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmitProfile(handleUpdateProfile)} className="space-y-5" noValidate>
               <div>
                 <label htmlFor="username" className="label">Username</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)]" />
                   <Input
                     id="username"
                     className="pl-10"
@@ -206,13 +192,13 @@ export function SettingsPage() {
                     {...registerProfile('username')}
                   />
                 </div>
-                <p className="text-body-xs text-content-tertiary mt-1.5">Letters, numbers, underscore and hyphen only</p>
+                <p className="text-xs text-[var(--color-content-tertiary)] mt-1.5">Letters, numbers, underscore and hyphen only</p>
               </div>
 
               <div>
                 <label htmlFor="email" className="label">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)]" />
                   <Input
                     id="email"
                     type="email"
@@ -237,20 +223,20 @@ export function SettingsPage() {
       {activeTab === 'password' && (
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
+              <h2 className="text-base font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
                 <Lock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               </div>
               Change Password
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Ensure your account stays secure with a strong password</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Ensure your account stays secure with a strong password</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmitPassword(handleChangePassword)} className="space-y-5" noValidate>
               <div>
                 <label htmlFor="currentPassword" className="label">Current Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)]" />
                   <Input
                     id="currentPassword"
                     type="password"
@@ -267,7 +253,7 @@ export function SettingsPage() {
                 <div>
                   <label htmlFor="newPassword" className="label">New Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)]" />
                     <Input
                       id="newPassword"
                       type="password"
@@ -283,7 +269,7 @@ export function SettingsPage() {
                 <div>
                   <label htmlFor="confirmPassword" className="label">Confirm New Password</label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-content-tertiary" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-content-tertiary)]" />
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -310,43 +296,43 @@ export function SettingsPage() {
       {activeTab === 'preferences' && (
         <Card>
           <CardHeader>
-            <h2 className="text-heading-md font-semibold text-content-primary flex items-center gap-2">
+              <h2 className="text-base font-semibold text-[var(--color-content-primary)] flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
                 <Bell className="h-4 w-4 text-purple-600 dark:text-purple-400" />
               </div>
               Preferences
             </h2>
-            <p className="text-body-sm text-content-tertiary mt-1">Customize your notification and display settings</p>
+            <p className="text-sm text-[var(--color-content-tertiary)] mt-1">Customize your notification and display settings</p>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
-              <div className="flex items-center justify-between p-4 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+              <div className="flex items-center justify-between p-4 rounded-[var(--radius)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]/50 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
                     <MailPlus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-body font-medium text-content-primary">Email Notifications</p>
-                    <p className="text-body-sm text-content-tertiary">Receive email updates about your account</p>
+                    <p className="text-sm font-medium text-[var(--color-content-primary)]">Email Notifications</p>
+                    <p className="text-sm text-[var(--color-content-tertiary)]">Receive email updates about your account</p>
                   </div>
                 </div>
                 <ToggleSwitch checked={emailNotifications} onChange={handleToggleEmailNotifications} />
               </div>
 
-              <div className="flex items-center justify-between p-4 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+              <div className="flex items-center justify-between p-4 rounded-[var(--radius)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]/50 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
                     <Bell className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <p className="text-body font-medium text-content-primary">Marketing Emails</p>
-                    <p className="text-body-sm text-content-tertiary">Receive product updates and tips</p>
+                    <p className="text-sm font-medium text-[var(--color-content-primary)]">Marketing Emails</p>
+                    <p className="text-sm text-[var(--color-content-tertiary)]">Receive product updates and tips</p>
                   </div>
                 </div>
                 <ToggleSwitch checked={marketingEmails} onChange={handleToggleMarketingEmails} />
               </div>
 
-              <div className="flex items-center justify-between p-4 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors">
+              <div className="flex items-center justify-between p-4 rounded-[var(--radius)] hover:bg-[var(--color-surface-50)] dark:hover:bg-[var(--color-surface-800)]/50 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     'h-10 w-10 rounded-lg flex items-center justify-center transition-colors',
@@ -359,8 +345,8 @@ export function SettingsPage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-body font-medium text-content-primary">Dark Mode</p>
-                    <p className="text-body-sm text-content-tertiary">Use dark theme across the application</p>
+                    <p className="text-sm font-medium text-[var(--color-content-primary)]">Dark Mode</p>
+                    <p className="text-sm text-[var(--color-content-tertiary)]">Use dark theme across the application</p>
                   </div>
                 </div>
                 <ToggleSwitch checked={darkMode} onChange={handleToggleDarkMode} />

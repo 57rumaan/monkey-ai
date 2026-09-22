@@ -33,7 +33,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="block text-body-sm font-medium text-content-secondary mb-1.5">
+          <label htmlFor={id} className="block text-sm font-medium text-[var(--color-content-secondary)] mb-1.5">
             {label}
           </label>
         )}
@@ -41,11 +41,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={id}
           className={cn(
-            'w-full rounded-lg border bg-white text-content-primary transition-colors duration-fast appearance-none',
-            'hover:border-border-strong',
-            'focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none',
-            'disabled:bg-surface-100 disabled:text-content-disabled disabled:cursor-not-allowed',
-            'dark:bg-surface-900 dark:border-border-default dark:hover:border-border-strong dark:focus:border-brand-400',
+            'w-full rounded-lg border bg-white text-[var(--color-content-primary)] transition-colors duration-fast appearance-none',
+            'hover:border-[var(--color-border-strong)]',
+            'focus:border-[var(--color-brand-500)] focus:ring-2 focus:ring-[var(--color-brand-500)]/20 focus:outline-none',
+            'disabled:bg-[var(--color-surface-100)] disabled:text-[var(--color-content-disabled)] disabled:cursor-not-allowed',
+            'dark:bg-[var(--color-surface-900)] dark:border-[var(--color-border-default)] dark:hover:border-[var(--color-border-strong)] dark:focus:border-[var(--color-brand-500)]',
             sizes[size],
             error && 'border-state-error focus:border-state-error focus:ring-state-error/20',
             className
@@ -72,7 +72,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </p>
         )}
         {hint && !error && (
-          <p id={hintId} className="mt-1.5 text-body-sm text-content-tertiary">
+          <p id={hintId} className="mt-1.5 text-sm text-[var(--color-content-tertiary)]">
             {hint}
           </p>
         )}
